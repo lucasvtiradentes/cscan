@@ -81,12 +81,6 @@
         "title": "Copy Relative Path"
       }
     ],
-    "submenus": [
-      {
-        "id": "lino.viewMenu",
-        "label": "View & Sort"
-      }
-    ],
     "menus": {
       "view/title": [
         {
@@ -100,21 +94,14 @@
           "group": "navigation@20"
         },
         {
-          "submenu": "lino.viewMenu",
-          "when": "view == linoExplorer",
-          "group": "1_lino"
-        }
-      ],
-      "lino.viewMenu": [
-        {
           "command": "lino.setListView",
-          "when": "linoViewMode == tree",
-          "group": "view@1"
+          "when": "view == linoExplorer && linoViewMode == tree",
+          "group": "navigation@30"
         },
         {
           "command": "lino.setTreeView",
-          "when": "linoViewMode == list",
-          "group": "view@2"
+          "when": "view == linoExplorer && linoViewMode == list",
+          "group": "navigation@30"
         }
       ],
       "view/item/context": [
