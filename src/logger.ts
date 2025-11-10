@@ -1,20 +1,13 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as vscode from 'vscode';
+import * as os from 'os';
 
 class Logger {
   private logFile: string;
 
   constructor() {
-    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
-    const logDir = path.join(workspaceRoot, 'ignore');
-
-    if (!fs.existsSync(logDir)) {
-      fs.mkdirSync(logDir, { recursive: true });
-    }
-
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('T')[0];
-    this.logFile = path.join(logDir, `lino-${timestamp}.log`);
+    const tmpDir = os.tmpdir();
+    this.logFile = path.join(tmpDir, 'linologs.txt');
   }
 
   private write(level: string, message: string) {
