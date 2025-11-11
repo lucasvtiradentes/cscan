@@ -1,5 +1,5 @@
-use crate::config::{CompiledRuleConfig, LinoConfig};
-use crate::rules::{Rule, NoAnyTypeRule, NoConsoleLogRule, NoRelativeImportsRule, PreferTypeOverInterfaceRule};
+use crate::config::{CompiledRuleConfig, LinoConfig, RuleType};
+use crate::rules::{Rule, RegexRule, RuleRegistration};
 use crate::types::Severity;
 use std::collections::HashMap;
 use std::path::Path;
@@ -14,10 +14,9 @@ impl RuleRegistry {
     pub fn new() -> Self {
         let mut rules: HashMap<String, Arc<dyn Rule>> = HashMap::new();
 
-        rules.insert("no-any-type".to_string(), Arc::new(NoAnyTypeRule));
-        rules.insert("no-console-log".to_string(), Arc::new(NoConsoleLogRule));
-        rules.insert("no-relative-imports".to_string(), Arc::new(NoRelativeImportsRule));
-        rules.insert("prefer-type-over-interface".to_string(), Arc::new(PreferTypeOverInterfaceRule));
+        for registration in inventory::iter::<RuleRegistration> {
+            rules.insert(registration.name.to_string(), (registration.factory)());
+        }
 
         Self {
             rules,
@@ -28,7 +27,29 @@ impl RuleRegistry {
     pub fn with_config(config: &LinoConfig) -> Result<Self, Box<dyn std::error::Error>> {
         let mut registry = Self::new();
 
-        for rule_name in registry.rules.keys() {
+        for (rule_name, rule_config) in &config.rules {
+            if rule_config.rule_type == RuleType::Regex {
+                if let Some(pattern) = &rule_config.pattern {
+                    let message = rule_config.message.clone()
+                        .unwrap_or_else(|| format!("Rule '{}' matched", rule_name));
+
+                    match RegexRule::new(
+                        rule_name.clone(),
+                        pattern.clone(),
+                        message,
+                        rule_config.severity,
+                    ) {
+                        Ok(regex_rule) => {
+                            registry.rules.insert(rule_name.clone(), Arc::new(regex_rule));
+                        }
+                        Err(e) => {
+                            eprintln!("Failed to compile regex rule '{}': {}", rule_name, e);
+                            continue;
+                        }
+                    }
+                }
+            }
+
             if let Ok(compiled) = config.compile_rule(rule_name) {
                 registry.compiled_configs.insert(rule_name.clone(), compiled);
             }

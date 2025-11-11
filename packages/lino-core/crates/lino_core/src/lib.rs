@@ -9,7 +9,7 @@ pub mod registry;
 
 pub use scanner::Scanner;
 pub use parser::parse_file;
-pub use rules::{Rule, NoAnyTypeRule, NoConsoleLogRule, NoRelativeImportsRule, PreferTypeOverInterfaceRule};
+pub use rules::{Rule, RegexRule, NoAnyTypeRule, NoConsoleLogRule, NoRelativeImportsRule, PreferTypeOverInterfaceRule};
 pub use types::{Issue, Severity, FileResult, ScanResult};
 pub use cache::FileCache;
 pub use watcher::FileWatcher;

@@ -144,3 +144,65 @@ If no `.lino/rules.json` exists, Lino uses this default:
   "exclude": ["node_modules/**", "dist/**", "build/**", ".git/**"]
 }
 ```
+
+## Creating Custom Regex Rules
+
+You can add custom regex-based rules directly in `rules.json`:
+
+```json
+{
+  "rules": {
+    "no-debugger": {
+      "enabled": true,
+      "type": "regex",
+      "severity": "error",
+      "pattern": "debugger;",
+      "message": "Remove debugger statements before committing"
+    },
+    "no-todo-comments": {
+      "enabled": true,
+      "type": "regex",
+      "severity": "warning",
+      "pattern": "//\\s*TODO:",
+      "message": "TODO comment found - create a ticket instead"
+    },
+    "no-fixme-comments": {
+      "enabled": true,
+      "type": "regex",
+      "severity": "warning",
+      "pattern": "//\\s*FIXME:",
+      "message": "FIXME comment found - create a ticket instead"
+    }
+  }
+}
+```
+
+**Note**: Regex rules are dynamically loaded from the configuration file. You don't need to modify Rust code to add them.
+
+## Testing Configuration Changes
+
+After modifying `.lino/rules.json`:
+
+1. Reload VS Code window (Cmd/Ctrl + Shift + P → "Reload Window")
+2. Run "Lino: Scan Workspace" command
+3. Check the sidebar for updated results
+
+The configuration is loaded on every scan, so changes take effect immediately after reloading.
+
+## Troubleshooting
+
+### Rule not working
+- Check `enabled: true` in configuration
+- Verify glob patterns match your files
+- Ensure regex pattern is valid (test at regex101.com)
+- Rebuild Rust backend: `cd packages/lino-core && cargo build --release`
+
+### Too many false positives
+- Add more specific glob patterns in `include`
+- Add exclusions in `exclude`
+- Change severity from `error` to `warning`
+
+### Performance issues
+- Use AST rules sparingly (they're slower than regex)
+- Add aggressive exclude patterns for large directories
+- Consider using branch mode instead of workspace mode
