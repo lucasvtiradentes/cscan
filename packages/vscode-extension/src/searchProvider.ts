@@ -96,7 +96,20 @@ export class SearchResultProvider implements vscode.TreeDataProvider<SearchResul
       }
 
       if (this._viewMode === 'list') {
-        return Promise.resolve(this.results.map(r => new LineResultItem(r)));
+        const grouped = new Map<string, IssueResult[]>();
+        for (const result of this.results) {
+          const filePath = result.uri.fsPath;
+          if (!grouped.has(filePath)) {
+            grouped.set(filePath, []);
+          }
+          grouped.get(filePath)!.push(result);
+        }
+
+        return Promise.resolve(
+          Array.from(grouped.entries()).map(([path, results]) =>
+            new FileResultItem(path, results)
+          )
+        );
       } else {
         const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
         const tree = buildFolderTree(this.results, workspaceRoot);
@@ -154,7 +167,7 @@ class RuleGroupItem extends vscode.TreeItem {
     public readonly results: IssueResult[],
     public readonly viewMode: ViewMode
   ) {
-    super(rule, vscode.TreeItemCollapsibleState.Expanded);
+    super(rule, vscode.TreeItemCollapsibleState.Collapsed);
 
     this.description = `${results.length} ${results.length === 1 ? 'issue' : 'issues'}`;
     this.iconPath = new vscode.ThemeIcon('list-filter');
@@ -164,7 +177,7 @@ class RuleGroupItem extends vscode.TreeItem {
 
 class FolderResultItem extends vscode.TreeItem {
   constructor(public readonly node: FolderNode) {
-    super(node.name, vscode.TreeItemCollapsibleState.Expanded);
+    super(node.name, vscode.TreeItemCollapsibleState.Collapsed);
 
     const count = getFolderIssueCount(node);
     this.description = `${count} ${count === 1 ? 'issue' : 'issues'}`;

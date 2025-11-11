@@ -36,6 +36,12 @@ struct WatchParams {
     root: PathBuf,
 }
 
+#[derive(Debug, Deserialize)]
+struct ScanFileParams {
+    root: PathBuf,
+    file: PathBuf,
+}
+
 struct ServerState {
     scanner: Option<Scanner>,
     watcher: Option<FileWatcher>,
@@ -207,6 +213,51 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                     id: request.id,
                     result: None,
                     error: Some(format!("Failed to start watcher: {}", e)),
+                },
+            }
+        }
+        "scanFile" => {
+            let params: ScanFileParams = match serde_json::from_value(request.params) {
+                Ok(p) => p,
+                Err(e) => {
+                    return Response {
+                        id: request.id,
+                        result: None,
+                        error: Some(format!("Invalid params: {}", e)),
+                    }
+                }
+            };
+
+            info!("Scanning single file: {:?}", params.file);
+
+            let config = match LinoConfig::load_from_workspace(&params.root) {
+                Ok(c) => c,
+                Err(_) => LinoConfig::default(),
+            };
+
+            let scanner = match Scanner::with_cache(config, state.cache.clone()) {
+                Ok(s) => s,
+                Err(e) => {
+                    return Response {
+                        id: request.id,
+                        result: None,
+                        error: Some(format!("Failed to create scanner: {}", e)),
+                    }
+                }
+            };
+
+            state.scanner = Some(scanner);
+
+            match state.scanner.as_ref().and_then(|s| s.scan_single(&params.file)) {
+                Some(result) => Response {
+                    id: request.id,
+                    result: Some(serde_json::to_value(&result).unwrap()),
+                    error: None,
+                },
+                None => Response {
+                    id: request.id,
+                    result: Some(serde_json::json!({"file": params.file, "issues": []})),
+                    error: None,
                 },
             }
         }

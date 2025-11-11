@@ -560,8 +560,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     try {
       logger.debug(`Scanning single file: ${relativePath}`);
-      const fileFilter = new Set([relativePath]);
-      const newResults = await scanWorkspace(fileFilter);
+      const newResults = await rustClient.scanFile(workspaceFolder.uri.fsPath, uri.fsPath);
 
       const currentResults = searchProvider.getResults();
       const filteredResults = currentResults.filter(r => {
@@ -575,7 +574,7 @@ export function activate(context: vscode.ExtensionContext) {
       searchProvider.setResults(mergedResults);
 
       const serializedResults = mergedResults.map(r => {
-        const { uri, ...rest } = r;
+        const { uri, ...rest} = r;
         return {
           ...rest,
           uriString: uri.toString()

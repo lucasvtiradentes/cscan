@@ -196,6 +196,32 @@ export class RustClient {
     return results;
   }
 
+  async scanFile(workspaceRoot: string, filePath: string): Promise<IssueResult[]> {
+    const result: FileResult = await this.sendRequest('scanFile', {
+      root: workspaceRoot,
+      file: filePath
+    });
+
+    logger.info(`Rust scan completed for single file: ${result.issues.length} issues`);
+
+    const results: IssueResult[] = [];
+    const uri = vscode.Uri.file(result.file);
+
+    for (const issue of result.issues) {
+      results.push({
+        uri,
+        line: issue.line - 1,
+        column: issue.column - 1,
+        text: (issue.line_text || '').trim(),
+        type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
+        rule: issue.rule,
+        severity: issue.severity.toLowerCase() as 'error' | 'warning'
+      });
+    }
+
+    return results;
+  }
+
   async getRulesMetadata(): Promise<RuleMetadata[]> {
     const result = await this.sendRequest('getRulesMetadata', {});
     return result;
