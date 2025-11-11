@@ -36,6 +36,10 @@ export class SearchResultProvider implements vscode.TreeDataProvider<SearchResul
     this._onDidChangeTreeData.fire();
   }
 
+  getResults(): IssueResult[] {
+    return this.results;
+  }
+
   getResultCount(): number {
     return this.results.length;
   }
