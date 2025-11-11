@@ -1,10 +1,13 @@
 use lino_core::{FileCache, FileWatcher, Scanner, LinoConfig};
 use serde::{Deserialize, Serialize};
-use std::io::{self, BufRead, Write};
+use std::io::{self, BufRead, BufWriter, Write};
 use std::path::PathBuf;
 use std::sync::Arc;
 use tracing::{error, info};
 use tracing_subscriber;
+use flate2::write::GzEncoder;
+use flate2::Compression;
+use base64::Engine;
 
 #[derive(Debug, Deserialize)]
 struct Request {
@@ -67,7 +70,7 @@ fn main() {
 
     tracing_subscriber::fmt()
         .with_writer(io::stderr)
-        .with_max_level(tracing::Level::INFO)
+        .with_max_level(tracing::Level::DEBUG)
         .with_timer(timer)
         .init();
 
@@ -100,12 +103,51 @@ fn main() {
 
         let response = handle_request(request, &mut state);
 
+        let serialize_start = std::time::Instant::now();
         if let Ok(json) = serde_json::to_string(&response) {
-            if let Err(e) = writeln!(stdout, "{}", json) {
-                error!("Failed to write response: {}", e);
-            }
-            if let Err(e) = stdout.flush() {
-                error!("Failed to flush stdout: {}", e);
+            let serialize_time = serialize_start.elapsed();
+            let original_size = json.len();
+
+            // Compress JSON with gzip
+            let compress_start = std::time::Instant::now();
+            let mut encoder = GzEncoder::new(Vec::new(), Compression::fast());
+            if let Err(e) = encoder.write_all(json.as_bytes()) {
+                error!("Failed to compress: {}", e);
+            } else if let Ok(compressed) = encoder.finish() {
+                let compress_time = compress_start.elapsed();
+                let compressed_size = compressed.len();
+
+                if serialize_time.as_millis() > 50 || compress_time.as_millis() > 50 {
+                    info!("Serialization took {}ms ({}KB), compression took {}ms ({}KB → {}KB, {:.1}%)",
+                          serialize_time.as_millis(), original_size / 1024,
+                          compress_time.as_millis(), original_size / 1024, compressed_size / 1024,
+                          (compressed_size as f64 / original_size as f64) * 100.0);
+                }
+
+                let write_start = std::time::Instant::now();
+                // Send compressed data with special marker
+                if let Err(e) = stdout.write_all(b"GZIP:") {
+                    error!("Failed to write marker: {}", e);
+                } else {
+                    let encoded = base64::engine::general_purpose::STANDARD.encode(&compressed);
+                    if let Err(e) = stdout.write_all(encoded.as_bytes()) {
+                        error!("Failed to write compressed data: {}", e);
+                    }
+                    if let Err(e) = stdout.write_all(b"\n") {
+                        error!("Failed to write newline: {}", e);
+                    }
+                }
+                let write_time = write_start.elapsed();
+
+                let flush_start = std::time::Instant::now();
+                if let Err(e) = stdout.flush() {
+                    error!("Failed to flush stdout: {}", e);
+                }
+                let flush_time = flush_start.elapsed();
+
+                if write_time.as_millis() > 50 || flush_time.as_millis() > 50 {
+                    info!("Write took {}ms, flush took {}ms", write_time.as_millis(), flush_time.as_millis());
+                }
             }
         }
 
@@ -165,7 +207,13 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                 }
             };
 
-            let scanner = match Scanner::with_cache(config, state.cache.clone()) {
+            let config_hash = config.compute_hash();
+            info!("Config hash: {}", config_hash);
+
+            let cache = Arc::new(FileCache::with_config_hash(config_hash));
+            state.cache = cache.clone();
+
+            let scanner = match Scanner::with_cache(config, cache) {
                 Ok(s) => s,
                 Err(e) => {
                     return Response {

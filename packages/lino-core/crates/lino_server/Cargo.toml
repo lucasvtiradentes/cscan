@@ -18,3 +18,5 @@ tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 anyhow = { workspace = true }
 time = { workspace = true }
+flate2 = "1.0"
+base64 = "0.21"

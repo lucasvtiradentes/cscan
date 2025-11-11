@@ -101,6 +101,8 @@ impl Scanner {
             file_count
         );
 
+        self.cache.flush();
+
         ScanResult {
             files: results,
             total_issues,

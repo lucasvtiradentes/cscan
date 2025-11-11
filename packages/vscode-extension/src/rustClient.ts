@@ -2,6 +2,7 @@ import { spawn, ChildProcess } from 'child_process';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { logger } from './logger';
+import * as zlib from 'zlib';
 
 interface RpcRequest {
   id: number;
@@ -79,6 +80,7 @@ export class RustClient {
     });
 
     this.process.stdout!.on('data', (data: Buffer) => {
+      const chunkSize = data.length;
       this.buffer += data.toString();
 
       const lines = this.buffer.split('\n');
@@ -86,8 +88,28 @@ export class RustClient {
 
       for (const line of lines) {
         if (!line.trim()) continue;
+        const parseStart = Date.now();
         try {
-          const response: RpcResponse = JSON.parse(line);
+          let jsonString = line;
+
+          // Check if response is compressed
+          if (line.startsWith('GZIP:')) {
+            const decompressStart = Date.now();
+            const base64Data = line.substring(5); // Remove "GZIP:" prefix
+            const compressed = Buffer.from(base64Data, 'base64');
+            const decompressed = zlib.gunzipSync(compressed);
+            jsonString = decompressed.toString('utf8');
+            const decompressTime = Date.now() - decompressStart;
+            if (decompressTime > 50) {
+              logger.debug(`Decompression took ${decompressTime}ms (${(compressed.length / 1024).toFixed(1)}KB → ${(decompressed.length / 1024).toFixed(1)}KB)`);
+            }
+          }
+
+          const response: RpcResponse = JSON.parse(jsonString);
+          const parseTime = Date.now() - parseStart;
+          if (parseTime > 50) {
+            logger.debug(`JSON parse took ${parseTime}ms for ${(jsonString.length / 1024 / 1024).toFixed(2)}MB response`);
+          }
           const pending = this.pendingRequests.get(response.id);
           if (pending) {
             this.pendingRequests.delete(response.id);
@@ -98,7 +120,7 @@ export class RustClient {
             }
           }
         } catch (e) {
-          logger.error(`Failed to parse response (length: ${line.length}): ${e}`);
+          logger.error(`Failed to parse response (chunk: ${(chunkSize / 1024).toFixed(1)}KB, line: ${(line.length / 1024).toFixed(1)}KB, buffer: ${(this.buffer.length / 1024).toFixed(1)}KB): ${e}`);
         }
       }
     });
