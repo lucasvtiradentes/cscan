@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
 import { SearchResultProvider } from './searchProvider';
-import { findAnyTypes, dispose as disposeAnyFinder } from './anyFinder';
+import { scanWorkspace, dispose as disposeScanner } from './issueScanner';
 import { logger } from './logger';
 
 export function activate(context: vscode.ExtensionContext) {
   logger.info('Lino extension activated');
   const searchProvider = new SearchResultProvider();
   const viewModeKey = context.workspaceState.get<'list' | 'tree'>('lino.viewMode', 'list');
+  const groupModeKey = context.workspaceState.get<'default' | 'rule'>('lino.groupMode', 'default');
   searchProvider.viewMode = viewModeKey;
+  searchProvider.groupMode = groupModeKey;
 
   const cachedResults = context.workspaceState.get<any[]>('lino.cachedResults', []);
   const deserializedResults = cachedResults.map(r => ({
@@ -17,6 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
   searchProvider.setResults(deserializedResults);
 
   const viewModeContextKey = vscode.commands.executeCommand('setContext', 'linoViewMode', viewModeKey);
+  const groupModeContextKey = vscode.commands.executeCommand('setContext', 'linoGroupMode', groupModeKey);
 
   const treeView = vscode.window.createTreeView('linoExplorer', {
     treeDataProvider: searchProvider
@@ -52,7 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
         progress.report({ increment: 0 });
 
         const startTime = Date.now();
-        const results = await findAnyTypes();
+        const results = await scanWorkspace();
         const elapsed = Date.now() - startTime;
 
         logger.info(`Search completed in ${elapsed}ms, found ${results.length} results`);
@@ -120,9 +123,20 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.executeCommand('setContext', 'linoViewMode', 'tree');
   });
 
-  const refreshCommand = vscode.commands.registerCommand('lino.refresh', () => {
-    searchProvider.setResults(searchProvider['results']);
-    logger.info('Tree view refreshed');
+  const refreshCommand = vscode.commands.registerCommand('lino.refresh', async () => {
+    await vscode.commands.executeCommand('lino.findAny');
+  });
+
+  const setGroupByDefaultCommand = vscode.commands.registerCommand('lino.setGroupByDefault', () => {
+    searchProvider.groupMode = 'default';
+    context.workspaceState.update('lino.groupMode', 'default');
+    vscode.commands.executeCommand('setContext', 'linoGroupMode', 'default');
+  });
+
+  const setGroupByRuleCommand = vscode.commands.registerCommand('lino.setGroupByRule', () => {
+    searchProvider.groupMode = 'rule';
+    context.workspaceState.update('lino.groupMode', 'rule');
+    vscode.commands.executeCommand('setContext', 'linoGroupMode', 'rule');
   });
 
   const copyPathCommand = vscode.commands.registerCommand('lino.copyPath', (item: any) => {
@@ -146,11 +160,13 @@ export function activate(context: vscode.ExtensionContext) {
     setListViewCommand,
     setTreeViewCommand,
     refreshCommand,
+    setGroupByDefaultCommand,
+    setGroupByRuleCommand,
     copyPathCommand,
     copyRelativePathCommand
   );
 }
 
 export function deactivate() {
-  disposeAnyFinder();
+  disposeScanner();
 }

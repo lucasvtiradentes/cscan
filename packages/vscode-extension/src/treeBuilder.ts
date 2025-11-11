@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { AnyUsageResult } from './anyFinder';
+import { IssueResult } from './issueScanner';
 import { logger } from './logger';
 
 export interface FolderNode {
@@ -14,7 +14,7 @@ export interface FileNode {
   type: 'file';
   path: string;
   name: string;
-  results: AnyUsageResult[];
+  results: IssueResult[];
 }
 
 function countIssues(node: FolderNode | FileNode): number {
@@ -33,7 +33,7 @@ export function getFolderIssueCount(node: FolderNode): number {
   return countIssues(node);
 }
 
-export function buildFolderTree(results: AnyUsageResult[], workspaceRoot: string): Map<string, FolderNode | FileNode> {
+export function buildFolderTree(results: IssueResult[], workspaceRoot: string): Map<string, FolderNode | FileNode> {
   const root = new Map<string, FolderNode | FileNode>();
 
   logger.debug(`Building tree with ${results.length} results, workspace: ${workspaceRoot}`);

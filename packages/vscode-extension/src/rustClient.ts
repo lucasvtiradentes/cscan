@@ -35,12 +35,14 @@ interface ScanResult {
   duration_ms: number;
 }
 
-export interface AnyUsageResult {
+export interface IssueResult {
   uri: vscode.Uri;
   line: number;
   column: number;
   text: string;
   type: 'colonAny' | 'asAny';
+  rule: string;
+  severity: 'error' | 'warning';
 }
 
 export class RustClient {
@@ -127,14 +129,14 @@ export class RustClient {
     });
   }
 
-  async scan(workspaceRoot: string): Promise<AnyUsageResult[]> {
+  async scan(workspaceRoot: string): Promise<IssueResult[]> {
     const result: ScanResult = await this.sendRequest('scan', {
       root: workspaceRoot
     });
 
     logger.info(`Rust scan completed: ${result.total_issues} issues in ${result.duration_ms}ms`);
 
-    const results: AnyUsageResult[] = [];
+    const results: IssueResult[] = [];
 
     for (const fileResult of result.files) {
       for (const issue of fileResult.issues) {
@@ -147,7 +149,9 @@ export class RustClient {
           line: issue.line - 1,
           column: issue.column - 1,
           text: lineText.trim(),
-          type: issue.message.includes('as any') ? 'asAny' : 'colonAny'
+          type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
+          rule: issue.rule,
+          severity: issue.severity.toLowerCase() as 'error' | 'warning'
         });
       }
     }

@@ -52,8 +52,18 @@
       },
       {
         "command": "lino.refresh",
-        "title": "Refresh",
+        "title": "Scan Workspace",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "lino.setGroupByDefault",
+        "title": "Group by Folder",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "lino.setGroupByRule",
+        "title": "Group by Rule",
+        "icon": "$(list-filter)"
       },
       {
         "command": "lino.setListView",
@@ -84,13 +94,18 @@
     "menus": {
       "view/title": [
         {
-          "command": "lino.findAny",
+          "command": "lino.refresh",
           "when": "view == linoExplorer && !linoSearching",
           "group": "navigation@10"
         },
         {
-          "command": "lino.refresh",
-          "when": "view == linoExplorer",
+          "command": "lino.setGroupByDefault",
+          "when": "view == linoExplorer && linoGroupMode == rule",
+          "group": "navigation@20"
+        },
+        {
+          "command": "lino.setGroupByRule",
+          "when": "view == linoExplorer && linoGroupMode == default",
           "group": "navigation@20"
         },
         {
