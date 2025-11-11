@@ -1,6 +1,6 @@
 use lino_core::{FileCache, FileWatcher, Scanner, LinoConfig};
 use serde::{Deserialize, Serialize};
-use std::io::{self, BufRead, BufWriter, Write};
+use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 use std::sync::Arc;
 use tracing::{error, info};
@@ -63,15 +63,26 @@ impl ServerState {
 
 fn main() {
     use tracing_subscriber::fmt::time::OffsetTime;
+    use tracing_subscriber::fmt::Layer;
+    use tracing_subscriber::layer::SubscriberExt;
+    use tracing_subscriber::util::SubscriberInitExt;
     use time::UtcOffset;
+    use time::macros::format_description;
 
     let offset = UtcOffset::from_hms(-3, 0, 0).unwrap();
-    let timer = OffsetTime::new(offset, time::format_description::well_known::Rfc3339);
+    let format = format_description!("[year]-[month]-[day]T[hour]:[minute]:[second].[subsecond digits:3][offset_hour sign:mandatory]:[offset_minute]");
+    let timer = OffsetTime::new(offset, format);
 
-    tracing_subscriber::fmt()
-        .with_writer(io::stderr)
-        .with_max_level(tracing::Level::DEBUG)
-        .with_timer(timer)
+    tracing_subscriber::registry()
+        .with(
+            Layer::new()
+                .with_writer(io::stderr)
+                .with_ansi(false)
+                .with_target(false)
+                .with_level(true)
+                .with_timer(timer)
+        )
+        .with(tracing_subscriber::filter::LevelFilter::INFO)
         .init();
 
     info!("Lino server started");

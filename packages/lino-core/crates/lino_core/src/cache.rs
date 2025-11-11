@@ -3,10 +3,8 @@ use dashmap::DashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
-use tracing::{debug, info};
+use tracing::info;
 use serde::{Deserialize, Serialize};
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
 
 #[derive(Clone, Serialize, Deserialize)]
 struct CacheEntry {
@@ -77,38 +75,27 @@ impl FileCache {
     fn load_from_disk(&mut self, cache_dir: &Path, config_hash: u64) {
         let cache_file = cache_dir.join(format!("cache_{}.json", config_hash));
 
-        info!("Attempting to load cache from: {:?}", cache_file);
-        debug!("Cache file exists: {}", cache_file.exists());
-        debug!("Config hash: {}", config_hash);
-
         if !cache_file.exists() {
-            info!("No disk cache found - will create after scan");
             return;
         }
 
         match fs::read_to_string(&cache_file) {
             Ok(content) => {
-                debug!("Successfully read cache file, size: {} bytes", content.len());
                 match serde_json::from_str::<Vec<(PathBuf, CacheEntry)>>(&content) {
                     Ok(entries) => {
-                        debug!("Parsed {} total entries from cache file", entries.len());
                         let mut loaded = 0;
-                        let mut skipped = 0;
                         for (path, entry) in entries {
                             if entry.config_hash == config_hash {
                                 self.entries.insert(path, entry);
                                 loaded += 1;
-                            } else {
-                                skipped += 1;
-                                debug!("Skipped entry with mismatched config_hash: {} vs {}", entry.config_hash, config_hash);
                             }
                         }
-                        info!("✅ Loaded {} cache entries from disk (skipped {} with wrong config)", loaded, skipped);
+                        info!("Loaded {} cache entries", loaded);
                     }
-                    Err(e) => info!("❌ Failed to parse cache file: {}", e),
+                    Err(e) => info!("Failed to parse cache: {}", e),
                 }
             }
-            Err(e) => info!("❌ Failed to read cache file: {}", e),
+            Err(e) => info!("Failed to read cache: {}", e),
         }
     }
 
@@ -121,21 +108,13 @@ impl FileCache {
                 .map(|entry| (entry.key().clone(), entry.value().clone()))
                 .collect();
 
-            info!("Saving {} cache entries to: {:?}", entries.len(), cache_file);
-            debug!("Config hash: {}", self.config_hash);
-
             if let Ok(content) = serde_json::to_string(&entries) {
-                debug!("Serialized cache to JSON, size: {} bytes", content.len());
                 if let Err(e) = fs::write(&cache_file, &content) {
-                    info!("❌ Failed to save cache to disk: {}", e);
+                    info!("Failed to save cache: {}", e);
                 } else {
-                    info!("✅ Successfully saved {} cache entries to disk", entries.len());
+                    info!("Saved {} cache entries", entries.len());
                 }
-            } else {
-                info!("❌ Failed to serialize cache entries to JSON");
             }
-        } else {
-            info!("❌ No cache directory configured, skipping save");
         }
     }
 
@@ -148,13 +127,7 @@ impl FileCache {
             let current_secs = mtime.duration_since(std::time::UNIX_EPOCH).unwrap().as_secs();
 
             if cached_secs == current_secs && entry.config_hash == self.config_hash {
-                debug!("Cache hit: {:?}", path);
                 return Some(entry.issues.clone());
-            } else if cached_secs != current_secs {
-                debug!("Cache stale (mtime changed): {:?} - cached: {}, current: {}",
-                       path, cached_secs, current_secs);
-            } else {
-                debug!("Cache stale (config changed): {:?}", path);
             }
         }
 
@@ -177,12 +150,10 @@ impl FileCache {
     }
 
     pub fn invalidate(&self, path: &Path) {
-        debug!("Invalidating cache: {:?}", path);
         self.entries.remove(path);
     }
 
     pub fn clear(&self) {
-        debug!("Clearing all cache entries");
         self.entries.clear();
     }
 

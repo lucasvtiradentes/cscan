@@ -76,7 +76,13 @@ export class RustClient {
     logger.info(`Starting Rust server: ${this.binaryPath}`);
 
     this.process = spawn(this.binaryPath, [], {
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
+      env: {
+        ...process.env,
+        NO_COLOR: '1',
+        RUST_LOG_STYLE: 'never',
+        RUST_LOG: 'lino_core=info,lino_server=info'
+      }
     });
 
     this.process.stdout!.on('data', (data: Buffer) => {
@@ -126,7 +132,10 @@ export class RustClient {
     });
 
     this.process.stderr!.on('data', (data: Buffer) => {
-      logger.debug(`[Rust stderr] ${data.toString()}`);
+      const text = data.toString().replace(/\x1b\[[0-9;]*m/g, '');
+      if (text.trim()) {
+        logger.debug(`[Rust stderr] ${text}`);
+      }
     });
 
     this.process.on('error', (err) => {

@@ -67,10 +67,7 @@ impl Scanner {
         let results: Vec<FileResult> = files
             .par_iter()
             .filter_map(|path| {
-                let count = processed.fetch_add(1, Ordering::Relaxed) + 1;
-                if count % 100 == 0 {
-                    debug!("Processed {}/{} files", count, file_count);
-                }
+                processed.fetch_add(1, Ordering::Relaxed);
 
                 if let Some(cached_issues) = self.cache.get(path) {
                     cache_hits.fetch_add(1, Ordering::Relaxed);
@@ -90,16 +87,6 @@ impl Scanner {
 
         let total_issues: usize = results.iter().map(|r| r.issues.len()).sum();
         let duration = start.elapsed();
-        let hits = cache_hits.load(Ordering::Relaxed);
-
-        info!(
-            "Scan complete: {} issues in {} files ({:.2}ms, cache hits: {}/{})",
-            total_issues,
-            results.len(),
-            duration.as_millis(),
-            hits,
-            file_count
-        );
 
         self.cache.flush();
 

@@ -33,7 +33,6 @@ impl RuleRegistry {
                     let message = rule_config.message.clone()
                         .unwrap_or_else(|| format!("Rule '{}' matched", rule_name));
 
-                    tracing::debug!("Loading regex rule '{}' with pattern: {}", rule_name, pattern);
                     match RegexRule::new(
                         rule_name.clone(),
                         pattern.clone(),
@@ -42,7 +41,6 @@ impl RuleRegistry {
                     ) {
                         Ok(regex_rule) => {
                             registry.rules.insert(rule_name.clone(), Arc::new(regex_rule));
-                            tracing::info!("Registered regex rule: {}", rule_name);
                         }
                         Err(e) => {
                             tracing::error!("Failed to compile regex rule '{}': {}", rule_name, e);
@@ -53,17 +51,12 @@ impl RuleRegistry {
             }
 
             if let Ok(compiled) = config.compile_rule(rule_name) {
-                if compiled.enabled {
-                    tracing::debug!("Rule '{}' enabled: {:?}", rule_name, compiled.enabled);
-                }
                 registry.compiled_configs.insert(rule_name.clone(), compiled);
             }
         }
 
-        tracing::info!("Registry loaded with {} rules ({} enabled)",
-            registry.rules.len(),
-            registry.compiled_configs.values().filter(|c| c.enabled).count()
-        );
+        let enabled_count = registry.compiled_configs.values().filter(|c| c.enabled).count();
+        tracing::info!("Loaded {} rules ({} enabled)", registry.rules.len(), enabled_count);
 
         Ok(registry)
     }
