@@ -148,3 +148,85 @@ export function invalidateCache(workspaceRoot?: string) {
     logger.debug('Invalidated all cache');
   }
 }
+
+export async function getFileContentAtRef(workspaceRoot: string, filePath: string, ref: string): Promise<string | null> {
+  try {
+    const { execSync } = require('child_process');
+    const content = execSync(`git show ${ref}:${filePath}`, {
+      cwd: workspaceRoot,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore']
+    });
+    return content;
+  } catch (error) {
+    logger.debug(`Failed to get ${filePath} at ${ref}: ${error}`);
+    return null;
+  }
+}
+
+export interface ModifiedLineRange {
+  startLine: number;
+  lineCount: number;
+}
+
+export async function getModifiedLineRanges(
+  workspaceRoot: string,
+  filePath: string,
+  compareBranch: string
+): Promise<ModifiedLineRange[]> {
+  try {
+    const { execSync } = require('child_process');
+    const currentBranch = await getCurrentBranch(workspaceRoot);
+    if (!currentBranch) return [];
+
+    const diff = execSync(`git diff ${compareBranch}...${currentBranch} -- ${filePath}`, {
+      cwd: workspaceRoot,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore']
+    });
+
+    const addedLines = new Set<number>();
+    const lines = diff.split('\n');
+    let currentLine = 0;
+
+    for (const line of lines) {
+      const hunkMatch = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+      if (hunkMatch) {
+        currentLine = parseInt(hunkMatch[1], 10);
+        continue;
+      }
+
+      if (line.startsWith('+') && !line.startsWith('+++')) {
+        addedLines.add(currentLine);
+        currentLine++;
+      } else if (!line.startsWith('-')) {
+        currentLine++;
+      }
+    }
+
+    const sortedLines = Array.from(addedLines).sort((a, b) => a - b);
+    const ranges: ModifiedLineRange[] = [];
+
+    if (sortedLines.length > 0) {
+      let rangeStart = sortedLines[0];
+      let rangeCount = 1;
+
+      for (let i = 1; i < sortedLines.length; i++) {
+        if (sortedLines[i] === sortedLines[i - 1] + 1) {
+          rangeCount++;
+        } else {
+          ranges.push({ startLine: rangeStart, lineCount: rangeCount });
+          rangeStart = sortedLines[i];
+          rangeCount = 1;
+        }
+      }
+      ranges.push({ startLine: rangeStart, lineCount: rangeCount });
+    }
+
+    logger.debug(`Added line ranges for ${filePath}: ${JSON.stringify(ranges)}`);
+    return ranges;
+  } catch (error) {
+    logger.debug(`Failed to get modified lines for ${filePath}: ${error}`);
+    return [];
+  }
+}

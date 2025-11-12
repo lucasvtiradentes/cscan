@@ -258,6 +258,33 @@ export class RustClient {
     return result;
   }
 
+  async scanContent(workspaceRoot: string, filePath: string, content: string): Promise<IssueResult[]> {
+    const result: FileResult = await this.sendRequest('scanContent', {
+      root: workspaceRoot,
+      file: filePath,
+      content
+    });
+
+    logger.debug(`Rust scan completed for content: ${result.issues.length} issues`);
+
+    const results: IssueResult[] = [];
+    const uri = vscode.Uri.file(result.file);
+
+    for (const issue of result.issues) {
+      results.push({
+        uri,
+        line: issue.line - 1,
+        column: issue.column - 1,
+        text: (issue.line_text || '').trim(),
+        type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
+        rule: issue.rule,
+        severity: issue.severity.toLowerCase() as 'error' | 'warning'
+      });
+    }
+
+    return results;
+  }
+
   async clearCache(): Promise<void> {
     await this.sendRequest('clearCache', {});
     logger.info('Rust cache cleared');

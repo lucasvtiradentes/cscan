@@ -45,6 +45,13 @@ struct ScanFileParams {
     file: PathBuf,
 }
 
+#[derive(Debug, Deserialize)]
+struct ScanContentParams {
+    root: PathBuf,
+    file: PathBuf,
+    content: String,
+}
+
 struct ServerState {
     scanner: Option<Scanner>,
     watcher: Option<FileWatcher>,
@@ -328,6 +335,49 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                 id: request.id,
                 result: Some(serde_json::to_value(&metadata).unwrap()),
                 error: None,
+            }
+        }
+        "scanContent" => {
+            let params: ScanContentParams = match serde_json::from_value(request.params) {
+                Ok(p) => p,
+                Err(e) => {
+                    return Response {
+                        id: request.id,
+                        result: None,
+                        error: Some(format!("Invalid params: {}", e)),
+                    }
+                }
+            };
+
+            info!("Scanning content for file: {:?}", params.file);
+
+            let config = match LinoConfig::load_from_workspace(&params.root) {
+                Ok(c) => c,
+                Err(_) => LinoConfig::default(),
+            };
+
+            let scanner = match Scanner::with_cache(config, state.cache.clone()) {
+                Ok(s) => s,
+                Err(e) => {
+                    return Response {
+                        id: request.id,
+                        result: None,
+                        error: Some(format!("Failed to create scanner: {}", e)),
+                    }
+                }
+            };
+
+            match scanner.scan_content(&params.file, &params.content) {
+                Some(result) => Response {
+                    id: request.id,
+                    result: Some(serde_json::to_value(&result).unwrap()),
+                    error: None,
+                },
+                None => Response {
+                    id: request.id,
+                    result: Some(serde_json::json!({"file": params.file, "issues": []})),
+                    error: None,
+                },
             }
         }
         "clearCache" => {

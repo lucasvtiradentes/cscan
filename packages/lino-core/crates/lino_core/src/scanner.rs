@@ -102,6 +102,42 @@ impl Scanner {
         self.analyze_file(path)
     }
 
+    pub fn scan_content(&self, path: &Path, content: &str) -> Option<FileResult> {
+        let program = match parse_file(path, content) {
+            Ok(p) => p,
+            Err(e) => {
+                debug!("Failed to parse {:?}: {}", path, e);
+                return None;
+            }
+        };
+
+        let enabled_rules = self.registry.get_enabled_rules(path, &self.config);
+        let source_lines: Vec<&str> = content.lines().collect();
+
+        let issues: Vec<_> = enabled_rules
+            .iter()
+            .flat_map(|(rule, severity)| {
+                let mut rule_issues = rule.check(&program, path, content);
+                for issue in &mut rule_issues {
+                    issue.severity = *severity;
+                    if issue.line > 0 && issue.line <= source_lines.len() {
+                        issue.line_text = Some(source_lines[issue.line - 1].to_string());
+                    }
+                }
+                rule_issues
+            })
+            .collect();
+
+        if issues.is_empty() {
+            None
+        } else {
+            Some(FileResult {
+                file: path.to_path_buf(),
+                issues,
+            })
+        }
+    }
+
     fn analyze_file(&self, path: &Path) -> Option<FileResult> {
         let source = std::fs::read_to_string(path).ok()?;
 

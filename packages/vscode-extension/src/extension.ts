@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { SearchResultProvider } from './searchProvider';
-import { scanWorkspace, scanFile, clearCache, dispose as disposeScanner } from './issueScanner';
+import { scanWorkspace, scanFile, scanContent, clearCache, dispose as disposeScanner } from './issueScanner';
 import { logger } from './logger';
-import { getAllBranches, getChangedFiles, getCurrentBranch, invalidateCache } from './gitHelper';
+import { getAllBranches, getChangedFiles, getCurrentBranch, invalidateCache, getFileContentAtRef, getModifiedLineRanges } from './gitHelper';
+import { getNewIssues } from './issueComparator';
 
 let isActivated = false;
 
@@ -424,15 +425,15 @@ export function activate(context: vscode.ExtensionContext) {
           const gitDiffTime = Date.now() - gitDiffStart;
           logger.debug(`Git diff completed in ${gitDiffTime}ms: ${changedFiles.size} files`);
 
-          const scanStart = Date.now();
-          const scanResults = await scanWorkspace(changedFiles);
-          const scanTime = Date.now() - scanStart;
-          logger.debug(`Workspace scan completed in ${scanTime}ms`);
+          const scanCurrentStart = Date.now();
+          const currentResults = await scanWorkspace(changedFiles);
+          const scanCurrentTime = Date.now() - scanCurrentStart;
+          logger.debug(`Current branch scan completed in ${scanCurrentTime}ms`);
 
           const filterStart = Date.now();
           const pathCache = new Map<string, string>();
 
-          results = scanResults.filter(result => {
+          const currentFiltered = currentResults.filter(result => {
             const uriStr = result.uri.toString();
             let relativePath = pathCache.get(uriStr);
 
@@ -445,7 +446,25 @@ export function activate(context: vscode.ExtensionContext) {
           });
 
           const filterTime = Date.now() - filterStart;
-          logger.info(`Filtered ${scanResults.length} → ${results.length} issues in ${changedFiles.size} changed files (${filterTime}ms)`);
+          logger.debug(`Filtered ${currentResults.length} → ${currentFiltered.length} issues in ${changedFiles.size} changed files (${filterTime}ms)`);
+
+          const rangesStart = Date.now();
+          const modifiedRanges = new Map<string, any>();
+
+          for (const relPath of changedFiles) {
+            const fullPath = vscode.Uri.joinPath(workspaceFolder.uri, relPath).fsPath;
+            const ranges = await getModifiedLineRanges(workspaceFolder.uri.fsPath, relPath, currentCompareBranch);
+            modifiedRanges.set(fullPath, ranges);
+          }
+
+          const rangesTime = Date.now() - rangesStart;
+          logger.debug(`Got modified line ranges in ${rangesTime}ms`);
+
+          const compareStart = Date.now();
+          results = getNewIssues(currentFiltered, modifiedRanges);
+          const compareTime = Date.now() - compareStart;
+
+          logger.info(`Branch comparison: ${currentFiltered.length} issues → ${results.length} in modified lines (${compareTime}ms)`);
         } else {
           results = await scanWorkspace();
         }
@@ -592,7 +611,15 @@ export function activate(context: vscode.ExtensionContext) {
 
     try {
       logger.debug(`Scanning single file: ${relativePath}`);
-      const newResults = await scanFile(uri.fsPath);
+      let newResults = await scanFile(uri.fsPath);
+
+      if (currentScanMode === 'branch') {
+        const ranges = await getModifiedLineRanges(workspaceFolder.uri.fsPath, relativePath, currentCompareBranch);
+        const modifiedRanges = new Map();
+        modifiedRanges.set(uri.fsPath, ranges);
+        newResults = getNewIssues(newResults, modifiedRanges);
+        logger.debug(`Filtered ${newResults.length} issues to modified lines only`);
+      }
 
       const currentResults = searchProvider.getResults();
       const filteredResults = currentResults.filter(r => {
