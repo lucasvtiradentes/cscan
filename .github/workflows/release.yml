@@ -94,7 +94,7 @@ jobs:
         run: pnpm install
 
       - name: Build extension
-        run: pnpm --filter vscode-extension build
+        run: pnpm --filter vscode-extension bundle
 
       - name: Package extension
         run: |

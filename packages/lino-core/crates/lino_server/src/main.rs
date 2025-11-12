@@ -4,7 +4,6 @@ use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 use std::sync::Arc;
 use tracing::{error, info};
-use tracing_subscriber;
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use base64::Engine;
@@ -296,10 +295,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
 
             info!("Scanning single file: {:?}", params.file);
 
-            let config = match LinoConfig::load_from_workspace(&params.root) {
-                Ok(c) => c,
-                Err(_) => LinoConfig::default(),
-            };
+            let config = LinoConfig::load_from_workspace(&params.root).unwrap_or_default();
 
             let scanner = match Scanner::with_cache(config, state.cache.clone()) {
                 Ok(s) => s,
@@ -351,10 +347,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
 
             info!("Scanning content for file: {:?}", params.file);
 
-            let config = match LinoConfig::load_from_workspace(&params.root) {
-                Ok(c) => c,
-                Err(_) => LinoConfig::default(),
-            };
+            let config = LinoConfig::load_from_workspace(&params.root).unwrap_or_default();
 
             let scanner = match Scanner::with_cache(config, state.cache.clone()) {
                 Ok(s) => s,
