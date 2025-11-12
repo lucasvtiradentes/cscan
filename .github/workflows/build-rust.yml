@@ -1,16 +1,7 @@
-name: Rust CI
+name: Build Rust (Reusable)
 
 on:
-  push:
-    branches: [main, feature/**]
-    paths:
-      - 'packages/lino-core/**'
-      - '.github/workflows/rust.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'packages/lino-core/**'
-      - '.github/workflows/rust.yml'
+  workflow_call:
 
 env:
   CARGO_TERM_COLOR: always

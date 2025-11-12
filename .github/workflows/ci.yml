@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  push:
+    branches: [main, feature/**]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rust:
+    uses: ./.github/workflows/build-rust.yml
+
+  extension:
+    uses: ./.github/workflows/build-extension.yml

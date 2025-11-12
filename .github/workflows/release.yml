@@ -6,7 +6,14 @@ on:
       - 'v*'
 
 jobs:
+  test-rust:
+    uses: ./.github/workflows/build-rust.yml
+
+  test-extension:
+    uses: ./.github/workflows/build-extension.yml
+
   build-binaries:
+    needs: [test-rust, test-extension]
     strategy:
       matrix:
         include:
@@ -80,21 +87,27 @@ jobs:
       - name: Download all binaries
         uses: actions/download-artifact@v4
         with:
-          path: packages/vscode-extension/binaries
+          path: artifacts
 
-      - name: Organize binaries
+      - name: Organize binaries into extension
         run: |
           mkdir -p packages/vscode-extension/binaries
-          find packages/vscode-extension/binaries -type f -name 'lino-server-*' -exec mv {} packages/vscode-extension/binaries/ \;
-          find packages/vscode-extension/binaries -type d -empty -delete
-          chmod +x packages/vscode-extension/binaries/lino-server-*
+          find artifacts -type f -name 'lino-server-*' -exec cp {} packages/vscode-extension/binaries/ \;
+          chmod +x packages/vscode-extension/binaries/lino-server-* 2>/dev/null || true
           ls -lah packages/vscode-extension/binaries/
 
       - name: Install dependencies
         run: pnpm install
 
       - name: Build extension
-        run: pnpm --filter lino-vscode bundle
+        run: pnpm --filter lino-vscode bundle:ci
+
+      - name: Verify build output
+        run: |
+          ls -la packages/vscode-extension/out/
+          test -f packages/vscode-extension/out/extension.js || (echo "extension.js not found" && exit 1)
+          echo "Binaries in package:"
+          ls -lah packages/vscode-extension/binaries/
 
       - name: Package extension
         run: |

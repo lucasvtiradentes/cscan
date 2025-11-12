@@ -1,16 +1,7 @@
-name: Extension CI
+name: Build Extension (Reusable)
 
 on:
-  push:
-    branches: [main, feature/**]
-    paths:
-      - 'packages/vscode-extension/**'
-      - '.github/workflows/extension.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'packages/vscode-extension/**'
-      - '.github/workflows/extension.yml'
+  workflow_call:
 
 jobs:
   test:
