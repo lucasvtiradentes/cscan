@@ -1,9 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as https from 'node:https';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const BINARY_DIR = path.join(__dirname, '..', 'binaries');
-const PLATFORM_MAP = {
+
+const PLATFORM_MAP: Record<string, string> = {
   'linux-x64': 'x86_64-unknown-linux-gnu',
   'linux-arm64': 'aarch64-unknown-linux-gnu',
   'darwin-x64': 'x86_64-apple-darwin',
@@ -11,7 +16,7 @@ const PLATFORM_MAP = {
   'win32-x64': 'x86_64-pc-windows-msvc',
 };
 
-function getPlatformTarget() {
+function getPlatformTarget(): string | null {
   const platform = `${process.platform}-${process.arch}`;
   const target = PLATFORM_MAP[platform];
 
@@ -23,20 +28,23 @@ function getPlatformTarget() {
   return target;
 }
 
-function ensureBinaryDir() {
+function ensureBinaryDir(): void {
   if (!fs.existsSync(BINARY_DIR)) {
     fs.mkdirSync(BINARY_DIR, { recursive: true });
   }
 }
 
-function getBinaryPath(target) {
+function getBinaryPath(target: string): string {
   const binaryName = process.platform === 'win32' ? 'lino-server.exe' : 'lino-server';
   return path.join(BINARY_DIR, `${binaryName}-${target}`);
 }
 
-function downloadBinary(target) {
+function downloadBinary(target: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    const version = require('../package.json').version;
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8')
+    );
+    const version = packageJson.version;
     const binaryName = process.platform === 'win32' ? 'lino-server.exe' : 'lino-server';
     const url = `https://github.com/lucasvtiradentes/lino/releases/download/v${version}/lino-server-${target}${process.platform === 'win32' ? '.exe' : ''}`;
 
@@ -74,7 +82,7 @@ function downloadBinary(target) {
   });
 }
 
-function checkLocalBinary() {
+function checkLocalBinary(): boolean {
   const localBinaryPath = path.join(__dirname, '..', '..', 'lino-core', 'target', 'debug', 'lino-server');
 
   if (fs.existsSync(localBinaryPath)) {
@@ -85,7 +93,7 @@ function checkLocalBinary() {
   return false;
 }
 
-async function main() {
+async function main(): Promise<void> {
   console.log('Lino: Checking for Rust binary...');
 
   ensureBinaryDir();
@@ -115,7 +123,7 @@ async function main() {
       console.log('Lino: Binary download skipped. Extension will use TypeScript implementation until Rust core is released.');
     }
   } catch (error) {
-    console.warn(`Lino: Failed to download binary: ${error.message}`);
+    console.warn(`Lino: Failed to download binary: ${(error as Error).message}`);
     console.log('Lino: Extension will use TypeScript implementation.');
   }
 }

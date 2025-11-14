@@ -17,13 +17,13 @@
   "main": "./out/extension.js",
   "scripts": {
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "dev": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --watch",
-    "bundle": "node extension-scripts/postinstall.js && esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "bundle": "npm run script:setup-rust-binary && npm run bundle:ci",
     "bundle:ci": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify",
     "build": "pnpm run bundle",
-    "postbuild": "tsx extension-scripts/install-local.ts",
-    "postinstall": "node extension-scripts/postinstall.js"
+    "postbuild": "npm run script:install-locally",
+    "postinstall": "npm run script:setup-rust-binary",
+    "script:setup-rust-binary": "tsx extension-scripts/setup-rust-binary.ts",
+    "script:install-locally": "tsx extension-scripts/install-local.ts"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
