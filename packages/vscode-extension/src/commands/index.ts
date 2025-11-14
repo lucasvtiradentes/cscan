@@ -18,6 +18,11 @@ import {
   createRefreshCommand,
   createHardScanCommand
 } from './scan';
+import {
+  createGoToNextIssueCommand,
+  createGoToPreviousIssueCommand,
+  resetIssueIndex
+} from './issueNavigation';
 
 export interface CommandContext {
   searchProvider: SearchResultProvider;
@@ -56,6 +61,10 @@ export function registerAllCommands(ctx: CommandContext): vscode.Disposable[] {
     createCopyPathCommand(),
     createCopyRelativePathCommand(),
     createRefreshCommand(),
-    createHardScanCommand(ctx.isSearchingRef)
+    createHardScanCommand(ctx.isSearchingRef),
+    createGoToNextIssueCommand(ctx.searchProvider),
+    createGoToPreviousIssueCommand(ctx.searchProvider)
   ];
 }
+
+export { resetIssueIndex };

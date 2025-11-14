@@ -119,6 +119,28 @@
       {
         "command": "lino.openSettingsMenu",
         "title": "Lino: Open Settings"
+      },
+      {
+        "command": "lino.goToNextIssue",
+        "title": "Lino: Go to Next Issue",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "lino.goToPreviousIssue",
+        "title": "Lino: Go to Previous Issue",
+        "icon": "$(arrow-up)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "lino.goToNextIssue",
+        "key": "f8",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "lino.goToPreviousIssue",
+        "key": "shift+f8",
+        "when": "editorTextFocus"
       }
     ],
     "menus": {

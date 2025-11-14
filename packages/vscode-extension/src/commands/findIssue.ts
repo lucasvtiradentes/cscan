@@ -4,6 +4,7 @@ import { scanWorkspace } from '../lib/scanner';
 import { getChangedFiles, getModifiedLineRanges } from '../utils/gitHelper';
 import { getNewIssues } from '../utils/issueComparator';
 import { logger } from '../utils/logger';
+import { resetIssueIndex } from './issueNavigation';
 
 export function createFindIssueCommand(
   searchProvider: SearchResultProvider,
@@ -102,6 +103,7 @@ export function createFindIssueCommand(
 
         progress.report({ increment: 100 });
 
+        resetIssueIndex();
         searchProvider.setResults(results);
 
         const serializedResults = results.map(r => {
