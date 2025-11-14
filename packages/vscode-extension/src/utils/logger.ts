@@ -1,13 +1,12 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as os from 'os';
+import { appendFileSync } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
+
+
+export const LOG_FILE_PATH = join(tmpdir(), 'linologs.txt');
 
 class Logger {
-  private logFile: string;
-
   constructor() {
-    const tmpDir = os.tmpdir();
-    this.logFile = path.join(tmpDir, 'linologs.txt');
   }
 
   private write(level: string, message: string) {
@@ -17,7 +16,7 @@ class Logger {
     const logMessage = `[${timestamp}] [${level}] ${message}\n`;
 
     try {
-      fs.appendFileSync(this.logFile, logMessage);
+      appendFileSync(LOG_FILE_PATH, logMessage);
     } catch (error) {
       console.error('Failed to write log:', error);
     }

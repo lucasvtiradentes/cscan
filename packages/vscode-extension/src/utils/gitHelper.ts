@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import { logger } from './logger';
+import { ModifiedLineRange } from '../types';
+import { execSync } from 'node:child_process';
 
 type GitExtension = {
   getAPI(version: 1): GitAPI;
@@ -60,7 +62,7 @@ export async function getCurrentBranch(workspaceRoot: string): Promise<string | 
 
 export async function getAllBranches(workspaceRoot: string): Promise<string[]> {
   try {
-    const { execSync } = require('child_process');
+   
     const output = execSync('git branch -a', {
       cwd: workspaceRoot,
       encoding: 'utf-8',
@@ -69,10 +71,10 @@ export async function getAllBranches(workspaceRoot: string): Promise<string[]> {
 
     const branches = output
       .split('\n')
-      .map(line => line.trim())
-      .filter(line => line && !line.includes('HEAD'))
-      .map(line => line.replace(/^\*\s+/, ''))
-      .map(line => {
+      .map((line: string) => line.trim())
+      .filter((line: string) => line && !line.includes('HEAD'))
+      .map((line: string) => line.replace(/^\*\s+/, ''))
+      .map((line: string) => {
         if (line.startsWith('remotes/origin/')) {
           return 'origin/' + line.replace('remotes/origin/', '');
         }
@@ -151,7 +153,7 @@ export function invalidateCache(workspaceRoot?: string) {
 
 export async function getFileContentAtRef(workspaceRoot: string, filePath: string, ref: string): Promise<string | null> {
   try {
-    const { execSync } = require('child_process');
+   
     const content = execSync(`git show ${ref}:${filePath}`, {
       cwd: workspaceRoot,
       encoding: 'utf-8',
@@ -164,18 +166,13 @@ export async function getFileContentAtRef(workspaceRoot: string, filePath: strin
   }
 }
 
-export interface ModifiedLineRange {
-  startLine: number;
-  lineCount: number;
-}
-
 export async function getModifiedLineRanges(
   workspaceRoot: string,
   filePath: string,
   compareBranch: string
 ): Promise<ModifiedLineRange[]> {
   try {
-    const { execSync } = require('child_process');
+   
     const currentBranch = await getCurrentBranch(workspaceRoot);
     if (!currentBranch) return [];
 

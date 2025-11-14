@@ -1,18 +1,9 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
 import { RustClient } from './rustClient';
-import { logger } from './logger';
-
-export interface IssueResult {
-  uri: vscode.Uri;
-  line: number;
-  column: number;
-  text: string;
-  type: 'colonAny' | 'asAny';
-  rule: string;
-  severity: 'error' | 'warning';
-}
+import { LOG_FILE_PATH, logger } from '../utils/logger';
+import { IssueResult } from '../types';
+import { join } from 'node:path';
+import { existsSync } from 'node:fs';
 
 let rustClient: RustClient | null = null;
 
@@ -27,23 +18,23 @@ export function getRustBinaryPath(): string | null {
 
   const binaryName = process.platform === 'win32' ? 'lino-server.exe' : 'lino-server';
 
-  const bundledBinary = path.join(extensionPath, 'binaries', binaryName);
+  const bundledBinary = join(extensionPath, 'binaries', binaryName);
   logger.debug(`Checking bundled binary: ${bundledBinary}`);
-  if (fs.existsSync(bundledBinary)) {
+  if (existsSync(bundledBinary)) {
     logger.info(`Found bundled binary: ${bundledBinary}`);
     return bundledBinary;
   }
 
-  const devBinaryRelease = path.join(extensionPath, '..', '..', 'lino-core', 'target', 'release', binaryName);
+  const devBinaryRelease = join(extensionPath, '..', '..', 'lino-core', 'target', 'release', binaryName);
   logger.debug(`Checking dev release binary: ${devBinaryRelease}`);
-  if (fs.existsSync(devBinaryRelease)) {
+  if (existsSync(devBinaryRelease)) {
     logger.info(`Found dev release binary: ${devBinaryRelease}`);
     return devBinaryRelease;
   }
 
-  const devBinaryDebug = path.join(extensionPath, '..', '..', 'lino-core', 'target', 'debug', binaryName);
+  const devBinaryDebug = join(extensionPath, '..', '..', 'lino-core', 'target', 'debug', binaryName);
   logger.debug(`Checking dev debug binary: ${devBinaryDebug}`);
-  if (fs.existsSync(devBinaryDebug)) {
+  if (existsSync(devBinaryDebug)) {
     logger.info(`Found dev debug binary: ${devBinaryDebug}`);
     return devBinaryDebug;
   }
@@ -64,11 +55,11 @@ export async function scanWorkspace(fileFilter?: Set<string>): Promise<IssueResu
     vscode.window.showErrorMessage(
       'Lino: Rust binary not found. Please build the Rust core:\n\n' +
       'cd packages/lino-core && cargo build --release\n\n' +
-      'Check logs at /tmp/linologs.txt for details.',
+      `Check logs at ${LOG_FILE_PATH} for details.`,
       'Open Logs'
     ).then(selection => {
       if (selection === 'Open Logs') {
-        vscode.workspace.openTextDocument('/tmp/linologs.txt').then(doc => {
+        vscode.workspace.openTextDocument(LOG_FILE_PATH).then(doc => {
           vscode.window.showTextDocument(doc);
         });
       }
@@ -92,11 +83,11 @@ export async function scanWorkspace(fileFilter?: Set<string>): Promise<IssueResu
   } catch (error) {
     logger.error(`Rust backend failed: ${error}`);
     vscode.window.showErrorMessage(
-      `Lino: Rust backend error: ${error}\n\nCheck logs at /tmp/linologs.txt`,
+      `Lino: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`,
       'Open Logs'
     ).then(selection => {
       if (selection === 'Open Logs') {
-        vscode.workspace.openTextDocument('/tmp/linologs.txt').then(doc => {
+        vscode.workspace.openTextDocument(LOG_FILE_PATH).then(doc => {
           vscode.window.showTextDocument(doc);
         });
       }

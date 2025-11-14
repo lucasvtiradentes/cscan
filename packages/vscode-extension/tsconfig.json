@@ -5,7 +5,7 @@
     "lib": ["ES2024"],
     "outDir": "out",
     "sourceMap": true,
-    "rootDir": "src",
+    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,

@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from './searchProvider';
-import { scanWorkspace, scanFile, scanContent, clearCache, dispose as disposeScanner } from './issueScanner';
-import { logger } from './logger';
-import { getAllBranches, getChangedFiles, getCurrentBranch, invalidateCache, getFileContentAtRef, getModifiedLineRanges } from './gitHelper';
-import { getNewIssues } from './issueComparator';
+import { SearchResultProvider } from './ui/searchProvider';
+import { scanFile, dispose as disposeScanner } from './lib/scanner';
+import { logger } from './utils/logger';
+import { getChangedFiles, invalidateCache, getModifiedLineRanges } from './utils/gitHelper';
+import { getNewIssues } from './utils/issueComparator';
+import { registerAllCommands } from './commands';
 
 let isActivated = false;
 
@@ -14,6 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
   }
   isActivated = true;
   logger.info('Lino extension activated');
+
   const searchProvider = new SearchResultProvider();
   const viewModeKey = context.workspaceState.get<'list' | 'tree'>('lino.viewMode', 'list');
   const groupModeKey = context.workspaceState.get<'default' | 'rule'>('lino.groupMode', 'default');
@@ -38,9 +40,9 @@ export function activate(context: vscode.ExtensionContext) {
     treeDataProvider: searchProvider
   });
 
-  let isSearching = false;
-  let currentScanMode = scanModeKey;
-  let currentCompareBranch = compareBranch;
+  const isSearchingRef = { current: false };
+  const currentScanModeRef = { current: scanModeKey };
+  const currentCompareBranchRef = { current: compareBranch };
 
   logger.info('Creating status bar item...');
   const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
@@ -63,8 +65,8 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const icon = hasConfig ? '$(gear)' : '$(warning)';
-    const modeText = currentScanMode === 'workspace' ? 'Codebase' : 'Branch';
-    const branchText = currentScanMode === 'branch' ? ` (${currentCompareBranch})` : '';
+    const modeText = currentScanModeRef.current === 'workspace' ? 'Codebase' : 'Branch';
+    const branchText = currentScanModeRef.current === 'branch' ? ` (${currentCompareBranchRef.current})` : '';
     const configWarning = hasConfig ? '' : ' [No rules configured]';
 
     statusBarItem.text = `${icon} Lino: ${modeText}${branchText}${configWarning}`;
@@ -76,302 +78,6 @@ export function activate(context: vscode.ExtensionContext) {
     statusBarItem.show();
     logger.info('Status bar item show() called');
   };
-
-  const openSettingsMenuCommand = vscode.commands.registerCommand('lino.openSettingsMenu', async () => {
-    logger.info('openSettingsMenu command called');
-    const mainMenuItems: vscode.QuickPickItem[] = [
-      {
-        label: '$(checklist) Manage Default Rules',
-        detail: 'Enable/disable built-in rules and generate configuration'
-      },
-      {
-        label: '$(gear) Manage Scan Settings',
-        detail: 'Choose between Codebase or Branch scan mode'
-      }
-    ];
-
-    const selected = await vscode.window.showQuickPick(mainMenuItems, {
-      placeHolder: 'Lino Settings',
-      ignoreFocusOut: false
-    });
-
-    if (!selected) return;
-
-    if (selected.label.includes('Manage Default Rules')) {
-      await vscode.commands.executeCommand('lino.manageRules');
-      return;
-    }
-
-    if (selected.label.includes('Manage Scan Settings')) {
-      await showScanSettingsMenu();
-      return;
-    }
-  });
-
-  async function showScanSettingsMenu() {
-    const scanModeItems: vscode.QuickPickItem[] = [
-      {
-        label: '$(file-directory) Codebase',
-        description: currentScanMode === 'workspace' ? '✓ Active' : '',
-        detail: 'Scan all files in workspace'
-      },
-      {
-        label: '$(git-branch) Branch',
-        description: currentScanMode === 'branch' ? '✓ Active' : '',
-        detail: 'Scan only changed files in current branch'
-      }
-    ];
-
-    const selected = await vscode.window.showQuickPick(scanModeItems, {
-      placeHolder: 'Change checking mode',
-      ignoreFocusOut: false
-    });
-
-    if (!selected) return;
-
-    if (selected.label.includes('Codebase')) {
-      currentScanMode = 'workspace';
-      context.workspaceState.update('lino.scanMode', 'workspace');
-      vscode.commands.executeCommand('setContext', 'linoScanMode', 'workspace');
-      invalidateCache();
-      updateStatusBar();
-      vscode.commands.executeCommand('lino.findIssue');
-    } else if (selected.label.includes('Branch')) {
-      const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-      if (!workspaceFolder) {
-        vscode.window.showErrorMessage('No workspace folder open');
-        return;
-      }
-
-      const currentBranch = await getCurrentBranch(workspaceFolder.uri.fsPath);
-      if (!currentBranch) {
-        vscode.window.showErrorMessage('Not in a git repository');
-        return;
-      }
-
-      const branchOptions: vscode.QuickPickItem[] = [
-        {
-          label: `Current value: ${currentCompareBranch}`,
-          description: '✓',
-          detail: 'Currently comparing against this branch'
-        },
-        {
-          label: '$(list-selection) Choose another branch',
-          detail: 'Select a different branch to compare against'
-        }
-      ];
-
-      const branchSelected = await vscode.window.showQuickPick(branchOptions, {
-        placeHolder: 'Branch settings',
-        ignoreFocusOut: false
-      });
-
-      if (!branchSelected) return;
-
-      if (branchSelected.label.includes('Choose another branch')) {
-        const branches = await getAllBranches(workspaceFolder.uri.fsPath);
-
-        if (branches.length === 0) {
-          vscode.window.showErrorMessage('No branches found');
-          return;
-        }
-
-        const otherBranches = branches.filter(b => b !== currentBranch);
-
-        const localBranches = otherBranches.filter(b => !b.startsWith('origin/'));
-        const remoteBranches = otherBranches.filter(b => b.startsWith('origin/'));
-
-        const branchItems: vscode.QuickPickItem[] = [];
-
-        if (localBranches.length > 0) {
-          branchItems.push(
-            { label: 'Branches', kind: vscode.QuickPickItemKind.Separator },
-            ...localBranches.map(branch => ({
-              label: `$(git-branch) ${branch}`,
-              description: branch === currentCompareBranch ? '$(check) Current compare target' : '',
-              detail: branch
-            }))
-          );
-        }
-
-        if (remoteBranches.length > 0) {
-          branchItems.push(
-            { label: 'Remote branches', kind: vscode.QuickPickItemKind.Separator },
-            ...remoteBranches.map(branch => ({
-              label: `$(cloud) ${branch}`,
-              description: branch === currentCompareBranch ? '$(check) Current compare target' : '',
-              detail: branch
-            }))
-          );
-        }
-
-        const selectedBranch = await vscode.window.showQuickPick(branchItems, {
-          placeHolder: `Select branch to compare against (current: ${currentBranch})`,
-          matchOnDescription: true,
-          matchOnDetail: true,
-          ignoreFocusOut: true
-        });
-
-        if (!selectedBranch || !selectedBranch.detail) return;
-
-        currentCompareBranch = selectedBranch.detail;
-        context.workspaceState.update('lino.compareBranch', currentCompareBranch);
-      }
-
-      currentScanMode = 'branch';
-      context.workspaceState.update('lino.scanMode', 'branch');
-      vscode.commands.executeCommand('setContext', 'linoScanMode', 'branch');
-      invalidateCache();
-      updateStatusBar();
-      vscode.commands.executeCommand('lino.findIssue');
-    }
-  }
-
-  const manageRulesCommand = vscode.commands.registerCommand('lino.manageRules', async () => {
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    if (!workspaceFolder) {
-      vscode.window.showErrorMessage('No workspace folder open');
-      return;
-    }
-
-    const { RustClient } = await import('./rustClient');
-    const { getRustBinaryPath } = await import('./issueScanner');
-
-    const binaryPath = getRustBinaryPath();
-    if (!binaryPath) {
-      vscode.window.showErrorMessage('Lino: Rust binary not found. Please build the Rust core first.');
-      return;
-    }
-
-    const client = new RustClient(binaryPath);
-    await client.start();
-
-    try {
-      const rules = await client.getRulesMetadata();
-
-      const configDir = vscode.Uri.joinPath(workspaceFolder.uri, '.lino');
-      const configPath = vscode.Uri.joinPath(configDir, 'rules.json');
-      let existingConfig: any = null;
-
-      try {
-        const configData = await vscode.workspace.fs.readFile(configPath);
-        existingConfig = JSON.parse(Buffer.from(configData).toString('utf8'));
-      } catch {
-        existingConfig = null;
-      }
-
-      interface RuleQuickPickItem extends vscode.QuickPickItem {
-        ruleName: string;
-        picked: boolean;
-        isCustom: boolean;
-      }
-
-      const builtinRuleNames = new Set(rules.map(r => r.name));
-      const customRules: RuleQuickPickItem[] = [];
-      const defaultRules: RuleQuickPickItem[] = [];
-
-      if (existingConfig?.rules) {
-        for (const [ruleName, ruleConfig] of Object.entries(existingConfig.rules)) {
-          if (!builtinRuleNames.has(ruleName) && (ruleConfig as any).pattern) {
-            customRules.push({
-              label: `$(regex) ${ruleName}`,
-              description: `[REGEX] custom`,
-              detail: (ruleConfig as any).message || (ruleConfig as any).pattern,
-              ruleName,
-              picked: (ruleConfig as any).enabled ?? true,
-              isCustom: true
-            });
-          }
-        }
-      }
-
-      for (const rule of rules) {
-        const existingRule = existingConfig?.rules?.[rule.name];
-        const isEnabled = existingRule?.enabled ?? false;
-
-        defaultRules.push({
-          label: `$(${rule.category === 'typesafety' ? 'shield' : rule.category === 'codequality' ? 'beaker' : 'symbol-color'}) ${rule.displayName}`,
-          description: `[${rule.ruleType.toUpperCase()}] ${rule.defaultSeverity}`,
-          detail: rule.description,
-          ruleName: rule.name,
-          picked: isEnabled,
-          isCustom: false
-        });
-      }
-
-      const items: RuleQuickPickItem[] = [
-        ...(customRules.length > 0 ? [
-          { label: 'Custom Rules', kind: vscode.QuickPickItemKind.Separator } as any,
-          ...customRules
-        ] : []),
-        { label: 'Default Rules', kind: vscode.QuickPickItemKind.Separator } as any,
-        ...defaultRules
-      ];
-
-      const selected = await vscode.window.showQuickPick(items, {
-        placeHolder: 'Select rules to enable (Space to toggle, Enter to confirm)',
-        canPickMany: true,
-        ignoreFocusOut: true
-      });
-
-      if (!selected) {
-        await client.stop();
-        return;
-      }
-
-      const enabledRules = new Set(
-        selected
-          .filter((item): item is RuleQuickPickItem => 'ruleName' in item)
-          .map(item => item.ruleName)
-      );
-
-      const config: any = existingConfig || {
-        rules: {},
-        include: ['**/*.ts', '**/*.tsx'],
-        exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**']
-      };
-
-      if (!config.rules) {
-        config.rules = {};
-      }
-
-      for (const rule of rules) {
-        const existingRule = config.rules[rule.name];
-
-        if (enabledRules.has(rule.name)) {
-          config.rules[rule.name] = existingRule || {
-            enabled: true,
-            type: rule.ruleType,
-            severity: rule.defaultSeverity,
-            message: null,
-            include: [],
-            exclude: []
-          };
-          config.rules[rule.name].enabled = true;
-        } else {
-          if (existingRule) {
-            existingRule.enabled = false;
-          }
-        }
-      }
-
-      await vscode.workspace.fs.createDirectory(configDir);
-      await vscode.workspace.fs.writeFile(
-        configPath,
-        Buffer.from(JSON.stringify(config, null, 2))
-      );
-
-      await client.stop();
-
-      await updateStatusBar();
-
-      await vscode.commands.executeCommand('lino.findIssue');
-    } catch (error) {
-      logger.error(`Failed to manage rules: ${error}`);
-      await client.stop();
-      vscode.window.showErrorMessage(`Failed to load rules: ${error}`);
-    }
-  });
 
   logger.info('Setting status bar command...');
   statusBarItem.command = 'lino.openSettingsMenu';
@@ -386,213 +92,19 @@ export function activate(context: vscode.ExtensionContext) {
 
   updateBadge();
 
-  const findIssueCommand = vscode.commands.registerCommand('lino.findIssue', async () => {
-    if (isSearching) {
-      vscode.window.showWarningMessage('Search already in progress');
-      return;
-    }
-
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    if (!workspaceFolder) {
-      vscode.window.showErrorMessage('No workspace folder open');
-      return;
-    }
-
-    isSearching = true;
-    vscode.commands.executeCommand('setContext', 'linoSearching', true);
-    treeView.badge = { value: 0, tooltip: 'Searching...' };
-
-    const scanTitle = currentScanMode === 'branch'
-      ? `Scanning issues (diff vs ${currentCompareBranch})`
-      : 'Searching for issues';
-
-    logger.info(`Starting scan in ${currentScanMode} mode`);
-
-    try {
-      await vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: scanTitle,
-        cancellable: false
-      }, async (progress) => {
-        progress.report({ increment: 0 });
-
-        const startTime = Date.now();
-        let results;
-
-        if (currentScanMode === 'branch') {
-          const gitDiffStart = Date.now();
-          const changedFiles = await getChangedFiles(workspaceFolder.uri.fsPath, currentCompareBranch);
-          const gitDiffTime = Date.now() - gitDiffStart;
-          logger.debug(`Git diff completed in ${gitDiffTime}ms: ${changedFiles.size} files`);
-
-          const scanCurrentStart = Date.now();
-          const currentResults = await scanWorkspace(changedFiles);
-          const scanCurrentTime = Date.now() - scanCurrentStart;
-          logger.debug(`Current branch scan completed in ${scanCurrentTime}ms`);
-
-          const filterStart = Date.now();
-          const pathCache = new Map<string, string>();
-
-          const currentFiltered = currentResults.filter(result => {
-            const uriStr = result.uri.toString();
-            let relativePath = pathCache.get(uriStr);
-
-            if (!relativePath) {
-              relativePath = vscode.workspace.asRelativePath(result.uri);
-              pathCache.set(uriStr, relativePath);
-            }
-
-            return changedFiles.has(relativePath);
-          });
-
-          const filterTime = Date.now() - filterStart;
-          logger.debug(`Filtered ${currentResults.length} → ${currentFiltered.length} issues in ${changedFiles.size} changed files (${filterTime}ms)`);
-
-          const rangesStart = Date.now();
-          const modifiedRanges = new Map<string, any>();
-
-          for (const relPath of changedFiles) {
-            const fullPath = vscode.Uri.joinPath(workspaceFolder.uri, relPath).fsPath;
-            const ranges = await getModifiedLineRanges(workspaceFolder.uri.fsPath, relPath, currentCompareBranch);
-            modifiedRanges.set(fullPath, ranges);
-          }
-
-          const rangesTime = Date.now() - rangesStart;
-          logger.debug(`Got modified line ranges in ${rangesTime}ms`);
-
-          const compareStart = Date.now();
-          results = getNewIssues(currentFiltered, modifiedRanges);
-          const compareTime = Date.now() - compareStart;
-
-          logger.info(`Branch comparison: ${currentFiltered.length} issues → ${results.length} in modified lines (${compareTime}ms)`);
-        } else {
-          results = await scanWorkspace();
-        }
-
-        const elapsed = Date.now() - startTime;
-        logger.info(`Search completed in ${elapsed}ms, found ${results.length} results`);
-
-        progress.report({ increment: 100 });
-
-        searchProvider.setResults(results);
-
-        const serializedResults = results.map(r => {
-          const { uri, ...rest } = r;
-          return {
-            ...rest,
-            uriString: uri.toString()
-          };
-        });
-        context.workspaceState.update('lino.cachedResults', serializedResults);
-        updateBadge();
-
-        if (searchProvider.viewMode === 'tree') {
-          setTimeout(() => {
-            const folders = searchProvider.getAllFolderItems();
-            folders.forEach(folder => {
-              treeView.reveal(folder, { expand: true, select: false, focus: false });
-            });
-          }, 100);
-        }
-
-        if (results.length === 0) {
-          vscode.window.showInformationMessage('No issues found!');
-        } else {
-          vscode.window.showInformationMessage(`Found ${results.length} issue${results.length === 1 ? '' : 's'}`);
-        }
-      });
-    } finally {
-      isSearching = false;
-      vscode.commands.executeCommand('setContext', 'linoSearching', false);
-    }
-  });
-
-  const openFileCommand = vscode.commands.registerCommand(
-    'lino.openFile',
-    (uri: vscode.Uri, line: number, column: number) => {
-      vscode.workspace.openTextDocument(uri).then(doc => {
-        vscode.window.showTextDocument(doc).then(editor => {
-          const position = new vscode.Position(line, column);
-          editor.selection = new vscode.Selection(position, position);
-          editor.revealRange(
-            new vscode.Range(position, position),
-            vscode.TextEditorRevealType.InCenter
-          );
-        });
-      });
-    }
-  );
-
-  const setListViewCommand = vscode.commands.registerCommand('lino.setListView', () => {
-    searchProvider.viewMode = 'list';
-    context.workspaceState.update('lino.viewMode', 'list');
-    vscode.commands.executeCommand('setContext', 'linoViewMode', 'list');
-  });
-
-  const setTreeViewCommand = vscode.commands.registerCommand('lino.setTreeView', () => {
-    searchProvider.viewMode = 'tree';
-    context.workspaceState.update('lino.viewMode', 'tree');
-    vscode.commands.executeCommand('setContext', 'linoViewMode', 'tree');
-  });
-
-  const refreshCommand = vscode.commands.registerCommand('lino.refresh', async () => {
-    await vscode.commands.executeCommand('lino.findIssue');
-  });
-
-  const hardScanCommand = vscode.commands.registerCommand('lino.hardScan', async () => {
-    if (isSearching) {
-      vscode.window.showWarningMessage('Search already in progress');
-      return;
-    }
-
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-    if (!workspaceFolder) {
-      vscode.window.showErrorMessage('No workspace folder open');
-      return;
-    }
-
-    logger.info('Starting hard scan (clearing cache)');
-
-    try {
-      await clearCache();
-      invalidateCache();
-      vscode.window.showInformationMessage('Cache cleared, rescanning...');
-      await vscode.commands.executeCommand('lino.findIssue');
-    } catch (error) {
-      logger.error(`Hard scan failed: ${error}`);
-      vscode.window.showErrorMessage(`Hard scan failed: ${error}`);
-    }
-  });
-
-  const setGroupByDefaultCommand = vscode.commands.registerCommand('lino.setGroupByDefault', () => {
-    searchProvider.groupMode = 'default';
-    context.workspaceState.update('lino.groupMode', 'default');
-    vscode.commands.executeCommand('setContext', 'linoGroupMode', 'default');
-  });
-
-  const setGroupByRuleCommand = vscode.commands.registerCommand('lino.setGroupByRule', () => {
-    searchProvider.groupMode = 'rule';
-    context.workspaceState.update('lino.groupMode', 'rule');
-    vscode.commands.executeCommand('setContext', 'linoGroupMode', 'rule');
-  });
-
-  const copyPathCommand = vscode.commands.registerCommand('lino.copyPath', (item: any) => {
-    if (item && item.resourceUri) {
-      vscode.env.clipboard.writeText(item.resourceUri.fsPath);
-      vscode.window.showInformationMessage(`Copied: ${item.resourceUri.fsPath}`);
-    }
-  });
-
-  const copyRelativePathCommand = vscode.commands.registerCommand('lino.copyRelativePath', (item: any) => {
-    if (item && item.resourceUri) {
-      const relativePath = vscode.workspace.asRelativePath(item.resourceUri);
-      vscode.env.clipboard.writeText(relativePath);
-      vscode.window.showInformationMessage(`Copied: ${relativePath}`);
-    }
+  const commands = registerAllCommands({
+    searchProvider,
+    context,
+    treeView,
+    updateBadge,
+    updateStatusBar,
+    isSearchingRef,
+    currentScanModeRef,
+    currentCompareBranchRef
   });
 
   const updateSingleFile = async (uri: vscode.Uri) => {
-    if (isSearching) return;
+    if (isSearchingRef.current) return;
 
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     if (!workspaceFolder) return;
@@ -600,9 +112,9 @@ export function activate(context: vscode.ExtensionContext) {
     const relativePath = vscode.workspace.asRelativePath(uri);
     logger.debug(`File changed: ${relativePath}`);
 
-    if (currentScanMode === 'branch') {
+    if (currentScanModeRef.current === 'branch') {
       invalidateCache();
-      const changedFiles = await getChangedFiles(workspaceFolder.uri.fsPath, currentCompareBranch);
+      const changedFiles = await getChangedFiles(workspaceFolder.uri.fsPath, currentCompareBranchRef.current);
       if (!changedFiles.has(relativePath)) {
         logger.debug(`File not in changed files set, skipping: ${relativePath}`);
         return;
@@ -613,8 +125,8 @@ export function activate(context: vscode.ExtensionContext) {
       logger.debug(`Scanning single file: ${relativePath}`);
       let newResults = await scanFile(uri.fsPath);
 
-      if (currentScanMode === 'branch') {
-        const ranges = await getModifiedLineRanges(workspaceFolder.uri.fsPath, relativePath, currentCompareBranch);
+      if (currentScanModeRef.current === 'branch') {
+        const ranges = await getModifiedLineRanges(workspaceFolder.uri.fsPath, relativePath, currentCompareBranchRef.current);
         const modifiedRanges = new Map();
         modifiedRanges.set(uri.fsPath, ranges);
         newResults = getNewIssues(newResults, modifiedRanges);
@@ -653,7 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
     const relativePath = vscode.workspace.asRelativePath(uri);
     logger.debug(`File deleted: ${relativePath}`);
 
-    if (currentScanMode === 'branch') {
+    if (currentScanModeRef.current === 'branch') {
       invalidateCache();
     }
 
@@ -679,20 +191,8 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-
   context.subscriptions.push(
-    findIssueCommand,
-    openFileCommand,
-    setListViewCommand,
-    setTreeViewCommand,
-    refreshCommand,
-    hardScanCommand,
-    setGroupByDefaultCommand,
-    setGroupByRuleCommand,
-    copyPathCommand,
-    copyRelativePathCommand,
-    openSettingsMenuCommand,
-    manageRulesCommand,
+    ...commands,
     fileWatcher,
     statusBarItem
   );

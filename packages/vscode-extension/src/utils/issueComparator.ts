@@ -1,5 +1,4 @@
-import { IssueResult } from './issueScanner';
-import { ModifiedLineRange } from './gitHelper';
+import { IssueResult, ModifiedLineRange } from '../types';
 
 function isLineInRanges(line: number, ranges: ModifiedLineRange[]): boolean {
   return ranges.some(range => {

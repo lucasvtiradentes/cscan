@@ -1,8 +1,8 @@
 import { spawn, ChildProcess } from 'child_process';
-import * as path from 'path';
 import * as vscode from 'vscode';
-import { logger } from './logger';
 import * as zlib from 'zlib';
+import { logger } from '../utils/logger';
+import { IssueResult, RuleMetadata, ScanResult, FileResult } from '../types';
 
 interface RpcRequest {
   id: number;
@@ -14,47 +14,6 @@ interface RpcResponse {
   id: number;
   result?: any;
   error?: string;
-}
-
-interface Issue {
-  rule: string;
-  file: string;
-  line: number;
-  column: number;
-  message: string;
-  severity: 'Error' | 'Warning';
-  line_text?: string;
-}
-
-interface FileResult {
-  file: string;
-  issues: Issue[];
-}
-
-interface ScanResult {
-  files: FileResult[];
-  total_issues: number;
-  duration_ms: number;
-}
-
-export interface IssueResult {
-  uri: vscode.Uri;
-  line: number;
-  column: number;
-  text: string;
-  type: 'colonAny' | 'asAny';
-  rule: string;
-  severity: 'error' | 'warning';
-}
-
-export interface RuleMetadata {
-  name: string;
-  displayName: string;
-  description: string;
-  ruleType: 'ast' | 'regex';
-  defaultSeverity: 'error' | 'warning';
-  defaultEnabled: boolean;
-  category: 'typesafety' | 'codequality' | 'style' | 'performance';
 }
 
 export class RustClient {
@@ -98,10 +57,9 @@ export class RustClient {
         try {
           let jsonString = line;
 
-          // Check if response is compressed
           if (line.startsWith('GZIP:')) {
             const decompressStart = Date.now();
-            const base64Data = line.substring(5); // Remove "GZIP:" prefix
+            const base64Data = line.substring(5);
             const compressed = Buffer.from(base64Data, 'base64');
             const decompressed = zlib.gunzipSync(compressed);
             jsonString = decompressed.toString('utf8');

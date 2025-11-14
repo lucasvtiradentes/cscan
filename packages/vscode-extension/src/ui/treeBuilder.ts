@@ -1,21 +1,6 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
-import { IssueResult } from './issueScanner';
-import { logger } from './logger';
-
-export interface FolderNode {
-  type: 'folder';
-  path: string;
-  name: string;
-  children: Map<string, FolderNode | FileNode>;
-}
-
-export interface FileNode {
-  type: 'file';
-  path: string;
-  name: string;
-  results: IssueResult[];
-}
+import { join, relative, sep } from 'node:path';
+import { IssueResult, FolderNode, FileNode } from '../types';
+import { logger } from '../utils/logger';
 
 function countIssues(node: FolderNode | FileNode): number {
   if (node.type === 'file') {
@@ -39,14 +24,14 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
   logger.debug(`Building tree with ${results.length} results, workspace: ${workspaceRoot}`);
 
   for (const result of results) {
-    let relativePath = path.relative(workspaceRoot, result.uri.fsPath);
+    let relativePath = relative(workspaceRoot, result.uri.fsPath);
 
     if (relativePath.startsWith('..')) {
       logger.warn(`File outside workspace: ${result.uri.fsPath}`);
       relativePath = result.uri.fsPath;
     }
 
-    const parts = relativePath.split(path.sep).filter(p => p && p !== '.');
+    const parts = relativePath.split(sep).filter(p => p && p !== '.');
 
     if (parts.length === 0) {
       logger.error(`No parts for path: ${result.uri.fsPath}`);
@@ -58,7 +43,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
 
     for (let i = 0; i < parts.length - 1; i++) {
       const part = parts[i];
-      currentPath = path.join(currentPath, part);
+      currentPath = join(currentPath, part);
 
       if (!current.has(part)) {
         current.set(part, {
@@ -76,7 +61,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
     }
 
     const fileName = parts[parts.length - 1];
-    const filePath = path.join(currentPath, fileName);
+    const filePath = join(currentPath, fileName);
 
     if (!current.has(fileName)) {
       current.set(fileName, {
