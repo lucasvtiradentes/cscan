@@ -105,8 +105,8 @@ impl LinoConfig {
         ];
 
         for (rule1, rule2) in &conflicting_rules {
-            let rule1_enabled = self.rules.get(*rule1).map_or(false, |r| r.enabled);
-            let rule2_enabled = self.rules.get(*rule2).map_or(false, |r| r.enabled);
+            let rule1_enabled = self.rules.get(*rule1).is_some_and(|r| r.enabled);
+            let rule2_enabled = self.rules.get(*rule2).is_some_and(|r| r.enabled);
 
             if rule1_enabled && rule2_enabled {
                 errors.push(format!(

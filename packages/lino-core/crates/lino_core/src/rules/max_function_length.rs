@@ -85,7 +85,7 @@ impl<'a> Visit for MaxFunctionLengthVisitor<'a> {
 
     fn visit_fn_decl(&mut self, n: &FnDecl) {
         if let Some(body) = &n.function.body {
-            self.check_function_length(body, n.function.span, &n.ident.sym.to_string());
+            self.check_function_length(body, n.function.span, n.ident.sym.as_ref());
         }
         n.visit_children_with(self);
     }
