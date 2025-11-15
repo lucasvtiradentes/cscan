@@ -31,9 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
   searchProvider.groupMode = groupModeKey;
 
   const cachedResults = context.workspaceState.get<any[]>('lino.cachedResults', []);
-  const deserializedResults = cachedResults.map(r => ({
+  const deserializedResults = cachedResults.map((r) => ({
     ...r,
-    uri: vscode.Uri.parse(r.uriString)
+    uri: vscode.Uri.parse(r.uriString),
   }));
   searchProvider.setResults(deserializedResults);
 
@@ -42,7 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand('setContext', 'linoScanMode', scanModeKey);
 
   const treeView = vscode.window.createTreeView('linoExplorer', {
-    treeDataProvider: searchProvider
+    treeDataProvider: searchProvider,
   });
 
   const isSearchingRef = { current: false };
@@ -73,9 +73,7 @@ export function activate(context: vscode.ExtensionContext) {
     const configWarning = hasConfig ? '' : ' [No rules configured]';
 
     statusBarItem.text = `${icon} Lino: ${modeText}${branchText}${configWarning}`;
-    statusBarItem.tooltip = hasConfig
-      ? 'Click to change scan settings'
-      : 'No rules configured. Click to set up rules.';
+    statusBarItem.tooltip = hasConfig ? 'Click to change scan settings' : 'No rules configured. Click to set up rules.';
 
     logger.debug(`Status bar text set to: ${statusBarItem.text}`);
     statusBarItem.show();
@@ -103,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
     updateStatusBar,
     isSearchingRef,
     currentScanModeRef,
-    currentCompareBranchRef
+    currentCompareBranchRef,
   });
 
   const updateSingleFile = async (uri: vscode.Uri) => {
@@ -133,7 +131,11 @@ export function activate(context: vscode.ExtensionContext) {
       let newResults = await scanContent(uri.fsPath, content, config);
 
       if (currentScanModeRef.current === 'branch') {
-        const ranges = await getModifiedLineRanges(workspaceFolder.uri.fsPath, relativePath, currentCompareBranchRef.current);
+        const ranges = await getModifiedLineRanges(
+          workspaceFolder.uri.fsPath,
+          relativePath,
+          currentCompareBranchRef.current,
+        );
         const modifiedRanges = new Map();
         modifiedRanges.set(uri.fsPath, ranges);
         newResults = getNewIssues(newResults, modifiedRanges);
@@ -141,21 +143,23 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const currentResults = searchProvider.getResults();
-      const filteredResults = currentResults.filter(r => {
+      const filteredResults = currentResults.filter((r) => {
         const resultPath = vscode.workspace.asRelativePath(r.uri);
         return resultPath !== relativePath;
       });
 
       const mergedResults = [...filteredResults, ...newResults];
-      logger.debug(`Updated results: removed ${currentResults.length - filteredResults.length}, added ${newResults.length}, total ${mergedResults.length}`);
+      logger.debug(
+        `Updated results: removed ${currentResults.length - filteredResults.length}, added ${newResults.length}, total ${mergedResults.length}`,
+      );
 
       searchProvider.setResults(mergedResults);
 
-      const serializedResults = mergedResults.map(r => {
-        const { uri, ...rest} = r;
+      const serializedResults = mergedResults.map((r) => {
+        const { uri, ...rest } = r;
         return {
           ...rest,
-          uriString: uri.toString()
+          uriString: uri.toString(),
         };
       });
       context.workspaceState.update('lino.cachedResults', serializedResults);
@@ -177,7 +181,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const currentResults = searchProvider.getResults();
-    const filteredResults = currentResults.filter(r => {
+    const filteredResults = currentResults.filter((r) => {
       const resultPath = vscode.workspace.asRelativePath(r.uri);
       return resultPath !== relativePath;
     });
@@ -186,11 +190,11 @@ export function activate(context: vscode.ExtensionContext) {
       logger.debug(`Removed ${currentResults.length - filteredResults.length} issues from deleted file`);
       searchProvider.setResults(filteredResults);
 
-      const serializedResults = filteredResults.map(r => {
+      const serializedResults = filteredResults.map((r) => {
         const { uri, ...rest } = r;
         return {
           ...rest,
-          uriString: uri.toString()
+          uriString: uri.toString(),
         };
       });
       context.workspaceState.update('lino.cachedResults', serializedResults);
@@ -198,11 +202,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  context.subscriptions.push(
-    ...commands,
-    fileWatcher,
-    statusBarItem
-  );
+  context.subscriptions.push(...commands, fileWatcher, statusBarItem);
 
   setTimeout(() => {
     logger.info('Running initial scan after 2s delay...');

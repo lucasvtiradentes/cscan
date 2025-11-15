@@ -7,6 +7,19 @@
     "build": "pnpm build:rust && pnpm build:extension",
     "build:extension": "pnpm --filter lino-vscode build",
     "build:rust": "cd packages/lino-core && cargo build --release",
-    "build:rust:all": "./packages/lino-core/scripts/build-binaries.sh"
+    "build:rust:all": "./packages/lino-core/scripts/build-binaries.sh",
+    "format": "pnpm format:ts && pnpm format:rust",
+    "format:ts": "biome format --write .",
+    "format:rust": "cd packages/lino-core && cargo fmt",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,json}": ["biome format --write"],
+    "packages/lino-core/**/*.rs": ["sh -c 'cd packages/lino-core && cargo fmt'"]
   }
 }

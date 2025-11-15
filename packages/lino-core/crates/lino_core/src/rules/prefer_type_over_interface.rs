@@ -68,5 +68,4 @@ impl<'a> Visit for InterfaceVisitor<'a> {
     }
 }
 
-impl<'a> InterfaceVisitor<'a> {
-}
+impl<'a> InterfaceVisitor<'a> {}

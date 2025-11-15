@@ -69,5 +69,4 @@ impl<'a> Visit for NoVarVisitor<'a> {
     }
 }
 
-impl<'a> NoVarVisitor<'a> {
-}
+impl<'a> NoVarVisitor<'a> {}

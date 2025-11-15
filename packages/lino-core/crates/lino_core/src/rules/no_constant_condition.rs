@@ -81,7 +81,6 @@ impl<'a> ConstantConditionVisitor<'a> {
             });
         }
     }
-
 }
 
 impl<'a> Visit for ConstantConditionVisitor<'a> {

@@ -69,5 +69,4 @@ impl<'a> Visit for EmptyClassVisitor<'a> {
     }
 }
 
-impl<'a> EmptyClassVisitor<'a> {
-}
+impl<'a> EmptyClassVisitor<'a> {}

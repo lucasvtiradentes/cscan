@@ -45,9 +45,13 @@ function getRepository(workspaceRoot: string): Repository | null {
   if (!api) return null;
 
   const workspaceUri = vscode.Uri.file(workspaceRoot);
-  return api.repositories.find(repo => {
-    return workspaceUri.fsPath.startsWith(repo.state.HEAD?.commit || '');
-  }) || api.repositories[0] || null;
+  return (
+    api.repositories.find((repo) => {
+      return workspaceUri.fsPath.startsWith(repo.state.HEAD?.commit || '');
+    }) ||
+    api.repositories[0] ||
+    null
+  );
 }
 
 export async function getCurrentBranch(workspaceRoot: string): Promise<string | null> {
@@ -65,7 +69,7 @@ export async function branchExists(workspaceRoot: string, branchName: string): P
     execSync(`git rev-parse --verify ${branchName}`, {
       cwd: workspaceRoot,
       encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
     return true;
   } catch {
@@ -75,11 +79,10 @@ export async function branchExists(workspaceRoot: string, branchName: string): P
 
 export async function getAllBranches(workspaceRoot: string): Promise<string[]> {
   try {
-
     const output = execSync('git branch -a', {
       cwd: workspaceRoot,
       encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'ignore']
+      stdio: ['pipe', 'pipe', 'ignore'],
     });
 
     const branches = output
@@ -123,16 +126,12 @@ export async function getChangedFiles(workspaceRoot: string, compareBranch: stri
 
     const changedFromHead = await repo.diffWithHEAD();
 
-    const uncommittedFiles = new Set(
-      changedFromHead.map(change => vscode.workspace.asRelativePath(change.uri))
-    );
+    const uncommittedFiles = new Set(changedFromHead.map((change) => vscode.workspace.asRelativePath(change.uri)));
 
     const currentBranch = repo.state.HEAD?.name || 'HEAD';
     const committedChanges = await repo.diffBetween(compareBranch, currentBranch);
 
-    const committedFiles = new Set(
-      committedChanges.map(change => vscode.workspace.asRelativePath(change.uri))
-    );
+    const committedFiles = new Set(committedChanges.map((change) => vscode.workspace.asRelativePath(change.uri)));
 
     const allFiles = new Set([...uncommittedFiles, ...committedFiles]);
 
@@ -140,7 +139,9 @@ export async function getChangedFiles(workspaceRoot: string, compareBranch: stri
     lastCacheUpdate.set(cacheKey, now);
 
     const elapsed = Date.now() - startTime;
-    logger.debug(`Git diff via VSCode API: ${uncommittedFiles.size} uncommitted + ${committedFiles.size} committed = ${allFiles.size} total (${elapsed}ms)`);
+    logger.debug(
+      `Git diff via VSCode API: ${uncommittedFiles.size} uncommitted + ${committedFiles.size} committed = ${allFiles.size} total (${elapsed}ms)`,
+    );
 
     return allFiles;
   } catch (error) {
@@ -151,8 +152,8 @@ export async function getChangedFiles(workspaceRoot: string, compareBranch: stri
 
 export function invalidateCache(workspaceRoot?: string) {
   if (workspaceRoot) {
-    const keys = Array.from(changedFilesCache.keys()).filter(k => k.startsWith(workspaceRoot));
-    keys.forEach(k => {
+    const keys = Array.from(changedFilesCache.keys()).filter((k) => k.startsWith(workspaceRoot));
+    keys.forEach((k) => {
       changedFilesCache.delete(k);
       lastCacheUpdate.delete(k);
     });
@@ -164,13 +165,16 @@ export function invalidateCache(workspaceRoot?: string) {
   }
 }
 
-export async function getFileContentAtRef(workspaceRoot: string, filePath: string, ref: string): Promise<string | null> {
+export async function getFileContentAtRef(
+  workspaceRoot: string,
+  filePath: string,
+  ref: string,
+): Promise<string | null> {
   try {
-   
     const content = execSync(`git show ${ref}:${filePath}`, {
       cwd: workspaceRoot,
       encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'ignore']
+      stdio: ['pipe', 'pipe', 'ignore'],
     });
     return content;
   } catch (error) {
@@ -182,17 +186,16 @@ export async function getFileContentAtRef(workspaceRoot: string, filePath: strin
 export async function getModifiedLineRanges(
   workspaceRoot: string,
   filePath: string,
-  compareBranch: string
+  compareBranch: string,
 ): Promise<ModifiedLineRange[]> {
   try {
-   
     const currentBranch = await getCurrentBranch(workspaceRoot);
     if (!currentBranch) return [];
 
     const diff = execSync(`git diff ${compareBranch}...${currentBranch} -- ${filePath}`, {
       cwd: workspaceRoot,
       encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'ignore']
+      stdio: ['pipe', 'pipe', 'ignore'],
     });
 
     const addedLines = new Set<number>();

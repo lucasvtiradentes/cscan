@@ -58,7 +58,9 @@ impl<'a> Visit for DynamicImportVisitor<'a> {
                 file: self.path.clone(),
                 line,
                 column,
-                message: "Dynamic import() is not allowed. Use static imports at the top of the file.".to_string(),
+                message:
+                    "Dynamic import() is not allowed. Use static imports at the top of the file."
+                        .to_string(),
                 severity: Severity::Warning,
                 line_text: None,
             });

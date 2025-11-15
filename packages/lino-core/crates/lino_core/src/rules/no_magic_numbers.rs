@@ -73,5 +73,4 @@ impl<'a> Visit for MagicNumberVisitor<'a> {
     }
 }
 
-impl<'a> MagicNumberVisitor<'a> {
-}
+impl<'a> MagicNumberVisitor<'a> {}

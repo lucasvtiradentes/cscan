@@ -50,7 +50,6 @@ struct NestedRequireVisitor<'a> {
     depth: usize,
 }
 
-
 impl<'a> Visit for NestedRequireVisitor<'a> {
     fn visit_function(&mut self, n: &Function) {
         self.depth += 1;

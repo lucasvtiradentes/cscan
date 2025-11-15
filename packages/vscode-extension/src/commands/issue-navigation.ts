@@ -23,15 +23,9 @@ export function createGoToNextIssueCommand(searchProvider: SearchResultProvider)
 
     const position = new vscode.Position(issue.line, issue.column);
     editor.selection = new vscode.Selection(position, position);
-    editor.revealRange(
-      new vscode.Range(position, position),
-      vscode.TextEditorRevealType.InCenter
-    );
+    editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
 
-    vscode.window.setStatusBarMessage(
-      `Issue ${currentIssueIndex + 1}/${results.length}: ${issue.rule}`,
-      3000
-    );
+    vscode.window.setStatusBarMessage(`Issue ${currentIssueIndex + 1}/${results.length}: ${issue.rule}`, 3000);
   });
 }
 
@@ -59,15 +53,9 @@ export function createGoToPreviousIssueCommand(searchProvider: SearchResultProvi
 
     const position = new vscode.Position(issue.line, issue.column);
     editor.selection = new vscode.Selection(position, position);
-    editor.revealRange(
-      new vscode.Range(position, position),
-      vscode.TextEditorRevealType.InCenter
-    );
+    editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
 
-    vscode.window.setStatusBarMessage(
-      `Issue ${currentIssueIndex + 1}/${results.length}: ${issue.rule}`,
-      3000
-    );
+    vscode.window.setStatusBarMessage(`Issue ${currentIssueIndex + 1}/${results.length}: ${issue.rule}`, 3000);
   });
 }
 

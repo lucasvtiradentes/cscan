@@ -11,9 +11,7 @@
   "engines": {
     "vscode": "^1.100.0"
   },
-  "categories": [
-    "Linters"
-  ],
+  "categories": ["Linters"],
   "main": "./out/extension.js",
   "scripts": {
     "compile": "tsc -p ./",
@@ -32,9 +30,7 @@
     "tsx": "^4.20.6",
     "typescript": "^5.7.0"
   },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
+  "activationEvents": ["onStartupFinished"],
   "contributes": {
     "viewsContainers": {
       "activitybar": [

@@ -1,21 +1,15 @@
 import * as vscode from 'vscode';
 
 export function createOpenFileCommand() {
-  return vscode.commands.registerCommand(
-    'lino.openFile',
-    (uri: vscode.Uri, line: number, column: number) => {
-      vscode.workspace.openTextDocument(uri).then(doc => {
-        vscode.window.showTextDocument(doc).then(editor => {
-          const position = new vscode.Position(line, column);
-          editor.selection = new vscode.Selection(position, position);
-          editor.revealRange(
-            new vscode.Range(position, position),
-            vscode.TextEditorRevealType.InCenter
-          );
-        });
+  return vscode.commands.registerCommand('lino.openFile', (uri: vscode.Uri, line: number, column: number) => {
+    vscode.workspace.openTextDocument(uri).then((doc) => {
+      vscode.window.showTextDocument(doc).then((editor) => {
+        const position = new vscode.Position(line, column);
+        editor.selection = new vscode.Selection(position, position);
+        editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
       });
-    }
-  );
+    });
+  });
 }
 
 export function createCopyPathCommand() {

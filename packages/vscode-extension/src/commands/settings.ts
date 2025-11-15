@@ -9,28 +9,28 @@ export function createOpenSettingsMenuCommand(
   currentScanModeRef: { current: 'workspace' | 'branch' },
   currentCompareBranchRef: { current: string },
   context: vscode.ExtensionContext,
-  searchProvider: SearchResultProvider
+  searchProvider: SearchResultProvider,
 ) {
   return vscode.commands.registerCommand('lino.openSettingsMenu', async () => {
     logger.info('openSettingsMenu command called');
     const mainMenuItems: vscode.QuickPickItem[] = [
       {
         label: '$(checklist) Manage Rules',
-        detail: 'Enable/disable built-in rules and generate configuration'
+        detail: 'Enable/disable built-in rules and generate configuration',
       },
       {
         label: '$(gear) Manage Scan Settings',
-        detail: 'Choose between Codebase or Branch scan mode'
+        detail: 'Choose between Codebase or Branch scan mode',
       },
       {
         label: '$(edit) Open Project Lino Configs',
-        detail: 'Edit .lino/rules.json or global extension config'
-      }
+        detail: 'Edit .lino/rules.json or global extension config',
+      },
     ];
 
     const selected = await vscode.window.showQuickPick(mainMenuItems, {
       placeHolder: 'Lino Settings',
-      ignoreFocusOut: false
+      ignoreFocusOut: false,
     });
 
     if (!selected) return;
@@ -41,13 +41,7 @@ export function createOpenSettingsMenuCommand(
     }
 
     if (selected.label.includes('Manage Scan Settings')) {
-      await showScanSettingsMenu(
-        updateStatusBar,
-        currentScanModeRef,
-        currentCompareBranchRef,
-        context,
-        searchProvider
-      );
+      await showScanSettingsMenu(updateStatusBar, currentScanModeRef, currentCompareBranchRef, context, searchProvider);
       return;
     }
 
@@ -94,24 +88,24 @@ async function showScanSettingsMenu(
   currentScanModeRef: { current: 'workspace' | 'branch' },
   currentCompareBranchRef: { current: string },
   context: vscode.ExtensionContext,
-  searchProvider: SearchResultProvider
+  searchProvider: SearchResultProvider,
 ) {
   const scanModeItems: vscode.QuickPickItem[] = [
     {
       label: '$(file-directory) Codebase',
       description: currentScanModeRef.current === 'workspace' ? '✓ Active' : '',
-      detail: 'Scan all files in workspace'
+      detail: 'Scan all files in workspace',
     },
     {
       label: '$(git-branch) Branch',
       description: currentScanModeRef.current === 'branch' ? '✓ Active' : '',
-      detail: 'Scan only changed files in current branch'
-    }
+      detail: 'Scan only changed files in current branch',
+    },
   ];
 
   const selected = await vscode.window.showQuickPick(scanModeItems, {
     placeHolder: 'Change checking mode',
-    ignoreFocusOut: false
+    ignoreFocusOut: false,
   });
 
   if (!selected) return;
@@ -141,17 +135,17 @@ async function showScanSettingsMenu(
       {
         label: `Current value: ${currentCompareBranchRef.current}`,
         description: '✓',
-        detail: 'Currently comparing against this branch'
+        detail: 'Currently comparing against this branch',
       },
       {
         label: '$(list-selection) Choose another branch',
-        detail: 'Select a different branch to compare against'
-      }
+        detail: 'Select a different branch to compare against',
+      },
     ];
 
     const branchSelected = await vscode.window.showQuickPick(branchOptions, {
       placeHolder: 'Branch settings',
-      ignoreFocusOut: false
+      ignoreFocusOut: false,
     });
 
     if (!branchSelected) return;
@@ -164,32 +158,32 @@ async function showScanSettingsMenu(
         return;
       }
 
-      const otherBranches = branches.filter(b => b !== currentBranch);
+      const otherBranches = branches.filter((b) => b !== currentBranch);
 
-      const localBranches = otherBranches.filter(b => !b.startsWith('origin/'));
-      const remoteBranches = otherBranches.filter(b => b.startsWith('origin/'));
+      const localBranches = otherBranches.filter((b) => !b.startsWith('origin/'));
+      const remoteBranches = otherBranches.filter((b) => b.startsWith('origin/'));
 
       const branchItems: vscode.QuickPickItem[] = [];
 
       if (localBranches.length > 0) {
         branchItems.push(
           { label: 'Branches', kind: vscode.QuickPickItemKind.Separator },
-          ...localBranches.map(branch => ({
+          ...localBranches.map((branch) => ({
             label: `$(git-branch) ${branch}`,
             description: branch === currentCompareBranchRef.current ? '$(check) Current compare target' : '',
-            detail: branch
-          }))
+            detail: branch,
+          })),
         );
       }
 
       if (remoteBranches.length > 0) {
         branchItems.push(
           { label: 'Remote branches', kind: vscode.QuickPickItemKind.Separator },
-          ...remoteBranches.map(branch => ({
+          ...remoteBranches.map((branch) => ({
             label: `$(cloud) ${branch}`,
             description: branch === currentCompareBranchRef.current ? '$(check) Current compare target' : '',
-            detail: branch
-          }))
+            detail: branch,
+          })),
         );
       }
 
@@ -197,7 +191,7 @@ async function showScanSettingsMenu(
         placeHolder: `Select branch to compare against (current: ${currentBranch})`,
         matchOnDescription: true,
         matchOnDetail: true,
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
 
       if (!selectedBranch || !selectedBranch.detail) return;

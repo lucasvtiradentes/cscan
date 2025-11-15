@@ -7,22 +7,11 @@ import {
   createSetListViewCommand,
   createSetTreeViewCommand,
   createSetGroupByDefaultCommand,
-  createSetGroupByRuleCommand
+  createSetGroupByRuleCommand,
 } from './view-mode';
-import {
-  createOpenFileCommand,
-  createCopyPathCommand,
-  createCopyRelativePathCommand
-} from './navigation';
-import {
-  createRefreshCommand,
-  createHardScanCommand
-} from './scan';
-import {
-  createGoToNextIssueCommand,
-  createGoToPreviousIssueCommand,
-  resetIssueIndex
-} from './issue-navigation';
+import { createOpenFileCommand, createCopyPathCommand, createCopyRelativePathCommand } from './navigation';
+import { createRefreshCommand, createHardScanCommand } from './scan';
+import { createGoToNextIssueCommand, createGoToPreviousIssueCommand, resetIssueIndex } from './issue-navigation';
 import { createShowLogsCommand } from './show-logs';
 
 export interface CommandContext {
@@ -46,7 +35,7 @@ export function registerAllCommands(ctx: CommandContext): vscode.Disposable[] {
       ctx.updateStatusBar,
       ctx.isSearchingRef,
       ctx.currentScanModeRef,
-      ctx.currentCompareBranchRef
+      ctx.currentCompareBranchRef,
     ),
     createManageRulesCommand(ctx.updateStatusBar, ctx.context),
     createOpenSettingsMenuCommand(
@@ -54,7 +43,7 @@ export function registerAllCommands(ctx: CommandContext): vscode.Disposable[] {
       ctx.currentScanModeRef,
       ctx.currentCompareBranchRef,
       ctx.context,
-      ctx.searchProvider
+      ctx.searchProvider,
     ),
     createSetListViewCommand(ctx.searchProvider, ctx.context),
     createSetTreeViewCommand(ctx.searchProvider, ctx.context),
@@ -67,7 +56,7 @@ export function registerAllCommands(ctx: CommandContext): vscode.Disposable[] {
     createHardScanCommand(ctx.isSearchingRef),
     createGoToNextIssueCommand(ctx.searchProvider),
     createGoToPreviousIssueCommand(ctx.searchProvider),
-    createShowLogsCommand()
+    createShowLogsCommand(),
   ];
 }
 

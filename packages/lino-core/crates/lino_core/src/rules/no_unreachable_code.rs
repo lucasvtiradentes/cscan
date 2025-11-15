@@ -83,7 +83,6 @@ impl<'a> UnreachableCodeVisitor<'a> {
             }
         }
     }
-
 }
 
 impl<'a> Visit for UnreachableCodeVisitor<'a> {

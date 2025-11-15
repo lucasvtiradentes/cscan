@@ -69,7 +69,6 @@ impl<'a> EmptyFunctionVisitor<'a> {
             });
         }
     }
-
 }
 
 impl<'a> Visit for EmptyFunctionVisitor<'a> {

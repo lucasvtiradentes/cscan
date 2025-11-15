@@ -86,5 +86,4 @@ impl<'a> Visit for DuplicateImportsVisitor<'a> {
     }
 }
 
-impl<'a> DuplicateImportsVisitor<'a> {
-}
+impl<'a> DuplicateImportsVisitor<'a> {}

@@ -79,5 +79,4 @@ impl<'a> Visit for RelativeImportVisitor<'a> {
     }
 }
 
-impl<'a> RelativeImportVisitor<'a> {
-}
+impl<'a> RelativeImportVisitor<'a> {}

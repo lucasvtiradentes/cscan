@@ -19,10 +19,13 @@ interface RpcResponse {
 export class RustClient {
   private process: ChildProcess | null = null;
   private requestId = 0;
-  private pendingRequests = new Map<number, {
-    resolve: (result: any) => void;
-    reject: (error: Error) => void;
-  }>();
+  private pendingRequests = new Map<
+    number,
+    {
+      resolve: (result: any) => void;
+      reject: (error: Error) => void;
+    }
+  >();
   private buffer = '';
 
   constructor(private binaryPath: string) {}
@@ -40,8 +43,8 @@ export class RustClient {
         ...process.env,
         NO_COLOR: '1',
         RUST_LOG_STYLE: 'never',
-        RUST_LOG: 'lino_core=warn,lino_server=info'
-      }
+        RUST_LOG: 'lino_core=warn,lino_server=info',
+      },
     });
 
     this.process.stdout!.on('data', (data: Buffer) => {
@@ -65,14 +68,18 @@ export class RustClient {
             jsonString = decompressed.toString('utf8');
             const decompressTime = Date.now() - decompressStart;
             if (decompressTime > 50) {
-              logger.debug(`Decompression took ${decompressTime}ms (${(compressed.length / 1024).toFixed(1)}KB → ${(decompressed.length / 1024).toFixed(1)}KB)`);
+              logger.debug(
+                `Decompression took ${decompressTime}ms (${(compressed.length / 1024).toFixed(1)}KB → ${(decompressed.length / 1024).toFixed(1)}KB)`,
+              );
             }
           }
 
           const response: RpcResponse = JSON.parse(jsonString);
           const parseTime = Date.now() - parseStart;
           if (parseTime > 50) {
-            logger.debug(`JSON parse took ${parseTime}ms for ${(jsonString.length / 1024 / 1024).toFixed(2)}MB response`);
+            logger.debug(
+              `JSON parse took ${parseTime}ms for ${(jsonString.length / 1024 / 1024).toFixed(2)}MB response`,
+            );
           }
           const pending = this.pendingRequests.get(response.id);
           if (pending) {
@@ -84,7 +91,9 @@ export class RustClient {
             }
           }
         } catch (e) {
-          logger.error(`Failed to parse response (chunk: ${(chunkSize / 1024).toFixed(1)}KB, line: ${(line.length / 1024).toFixed(1)}KB, buffer: ${(this.buffer.length / 1024).toFixed(1)}KB): ${e}`);
+          logger.error(
+            `Failed to parse response (chunk: ${(chunkSize / 1024).toFixed(1)}KB, line: ${(line.length / 1024).toFixed(1)}KB, buffer: ${(this.buffer.length / 1024).toFixed(1)}KB): ${e}`,
+          );
         }
       }
     });
@@ -132,22 +141,24 @@ export class RustClient {
   async scan(workspaceRoot: string, fileFilter?: Set<string>, config?: any): Promise<IssueResult[]> {
     const result: ScanResult = await this.sendRequest('scan', {
       root: workspaceRoot,
-      config
+      config,
     });
 
     logger.info(`Rust scan completed: ${result.total_issues} issues in ${result.duration_ms}ms`);
 
     const processStart = Date.now();
 
-    let filesToLoad = [...new Set(result.files.map(f => f.file))];
+    let filesToLoad = [...new Set(result.files.map((f) => f.file))];
 
     if (fileFilter && fileFilter.size > 0) {
-      filesToLoad = filesToLoad.filter(filePath => {
+      filesToLoad = filesToLoad.filter((filePath) => {
         const relativePath = vscode.workspace.asRelativePath(vscode.Uri.file(filePath));
         return fileFilter.has(relativePath);
       });
 
-      logger.debug(`Filtered ${result.files.length} → ${filesToLoad.length} files to load (fileFilter has ${fileFilter.size} entries)`);
+      logger.debug(
+        `Filtered ${result.files.length} → ${filesToLoad.length} files to load (fileFilter has ${fileFilter.size} entries)`,
+      );
     }
 
     const results: IssueResult[] = [];
@@ -175,13 +186,15 @@ export class RustClient {
           text: lineText.trim(),
           type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
           rule: issue.rule,
-          severity: issue.severity.toLowerCase() as 'error' | 'warning'
+          severity: issue.severity.toLowerCase() as 'error' | 'warning',
         });
       }
     }
 
     const processTime = Date.now() - processStart;
-    logger.debug(`Post-processing ${result.total_issues} issues from ${filesToLoad.length} files took ${processTime}ms total`);
+    logger.debug(
+      `Post-processing ${result.total_issues} issues from ${filesToLoad.length} files took ${processTime}ms total`,
+    );
 
     return results;
   }
@@ -189,7 +202,7 @@ export class RustClient {
   async scanFile(workspaceRoot: string, filePath: string): Promise<IssueResult[]> {
     const result: FileResult = await this.sendRequest('scanFile', {
       root: workspaceRoot,
-      file: filePath
+      file: filePath,
     });
 
     logger.info(`Rust scan completed for single file: ${result.issues.length} issues`);
@@ -205,7 +218,7 @@ export class RustClient {
         text: (issue.line_text || '').trim(),
         type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
         rule: issue.rule,
-        severity: issue.severity.toLowerCase() as 'error' | 'warning'
+        severity: issue.severity.toLowerCase() as 'error' | 'warning',
       });
     }
 
@@ -222,7 +235,7 @@ export class RustClient {
       root: workspaceRoot,
       file: filePath,
       content,
-      config
+      config,
     });
 
     logger.debug(`Rust scan completed for content: ${result.issues.length} issues`);
@@ -238,7 +251,7 @@ export class RustClient {
         text: (issue.line_text || '').trim(),
         type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
         rule: issue.rule,
-        severity: issue.severity.toLowerCase() as 'error' | 'warning'
+        severity: issue.severity.toLowerCase() as 'error' | 'warning',
       });
     }
 

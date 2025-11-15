@@ -52,18 +52,20 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
   const binaryPath = getRustBinaryPath();
 
   if (!binaryPath) {
-    vscode.window.showErrorMessage(
-      'Lino: Rust binary not found. Please build the Rust core:\n\n' +
-      'cd packages/lino-core && cargo build --release\n\n' +
-      `Check logs at ${LOG_FILE_PATH} for details.`,
-      'Open Logs'
-    ).then(selection => {
-      if (selection === 'Open Logs') {
-        vscode.workspace.openTextDocument(LOG_FILE_PATH).then(doc => {
-          vscode.window.showTextDocument(doc);
-        });
-      }
-    });
+    vscode.window
+      .showErrorMessage(
+        'Lino: Rust binary not found. Please build the Rust core:\n\n' +
+          'cd packages/lino-core && cargo build --release\n\n' +
+          `Check logs at ${LOG_FILE_PATH} for details.`,
+        'Open Logs',
+      )
+      .then((selection) => {
+        if (selection === 'Open Logs') {
+          vscode.workspace.openTextDocument(LOG_FILE_PATH).then((doc) => {
+            vscode.window.showTextDocument(doc);
+          });
+        }
+      });
     throw new Error('Rust binary not found');
   }
 
@@ -82,16 +84,15 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
     return results;
   } catch (error) {
     logger.error(`Rust backend failed: ${error}`);
-    vscode.window.showErrorMessage(
-      `Lino: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`,
-      'Open Logs'
-    ).then(selection => {
-      if (selection === 'Open Logs') {
-        vscode.workspace.openTextDocument(LOG_FILE_PATH).then(doc => {
-          vscode.window.showTextDocument(doc);
-        });
-      }
-    });
+    vscode.window
+      .showErrorMessage(`Lino: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`, 'Open Logs')
+      .then((selection) => {
+        if (selection === 'Open Logs') {
+          vscode.workspace.openTextDocument(LOG_FILE_PATH).then((doc) => {
+            vscode.window.showTextDocument(doc);
+          });
+        }
+      });
     throw error;
   }
 }

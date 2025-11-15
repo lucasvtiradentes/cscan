@@ -69,5 +69,4 @@ impl<'a> Visit for TypeAliasVisitor<'a> {
     }
 }
 
-impl<'a> TypeAliasVisitor<'a> {
-}
+impl<'a> TypeAliasVisitor<'a> {}

@@ -41,9 +41,7 @@ function getBinaryPath(target: string): string {
 
 function downloadBinary(target: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    const packageJson = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8')
-    );
+    const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
     const version = packageJson.version;
     const binaryName = process.platform === 'win32' ? 'lino-server.exe' : 'lino-server';
     const url = `https://github.com/lucasvtiradentes/lino/releases/download/v${version}/lino-server-${target}${process.platform === 'win32' ? '.exe' : ''}`;
@@ -53,32 +51,34 @@ function downloadBinary(target: string): Promise<boolean> {
     const binaryPath = getBinaryPath(target);
     const file = fs.createWriteStream(binaryPath);
 
-    https.get(url, (response) => {
-      if (response.statusCode === 404) {
-        console.log('Binary not yet available in releases. Skipping download.');
-        file.close();
+    https
+      .get(url, (response) => {
+        if (response.statusCode === 404) {
+          console.log('Binary not yet available in releases. Skipping download.');
+          file.close();
+          fs.unlinkSync(binaryPath);
+          resolve(false);
+          return;
+        }
+
+        if (response.statusCode !== 200) {
+          reject(new Error(`Failed to download: ${response.statusCode}`));
+          return;
+        }
+
+        response.pipe(file);
+
+        file.on('finish', () => {
+          file.close();
+          fs.chmodSync(binaryPath, 0o755);
+          console.log(`Successfully downloaded and installed Rust binary for ${target}`);
+          resolve(true);
+        });
+      })
+      .on('error', (err) => {
         fs.unlinkSync(binaryPath);
-        resolve(false);
-        return;
-      }
-
-      if (response.statusCode !== 200) {
-        reject(new Error(`Failed to download: ${response.statusCode}`));
-        return;
-      }
-
-      response.pipe(file);
-
-      file.on('finish', () => {
-        file.close();
-        fs.chmodSync(binaryPath, 0o755);
-        console.log(`Successfully downloaded and installed Rust binary for ${target}`);
-        resolve(true);
+        reject(err);
       });
-    }).on('error', (err) => {
-      fs.unlinkSync(binaryPath);
-      reject(err);
-    });
   });
 }
 
@@ -120,7 +120,9 @@ async function main(): Promise<void> {
   try {
     const downloaded = await downloadBinary(target);
     if (!downloaded) {
-      console.log('Lino: Binary download skipped. Extension will use TypeScript implementation until Rust core is released.');
+      console.log(
+        'Lino: Binary download skipped. Extension will use TypeScript implementation until Rust core is released.',
+      );
     }
   } catch (error) {
     console.warn(`Lino: Failed to download binary: ${(error as Error).message}`);

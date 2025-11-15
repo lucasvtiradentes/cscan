@@ -18,7 +18,8 @@ inventory::submit!(RuleMetadataRegistration {
     metadata: RuleMetadata {
         name: "no-absolute-imports",
         display_name: "No Absolute Imports",
-        description: "Disallows absolute imports without alias. Prefer relative or aliased imports.",
+        description:
+            "Disallows absolute imports without alias. Prefer relative or aliased imports.",
         rule_type: RuleType::Ast,
         default_severity: Severity::Warning,
         default_enabled: false,
@@ -58,10 +59,36 @@ impl<'a> Visit for AbsoluteImportVisitor<'a> {
             let src_slice = &self.source[import_start..import_end];
             let import_path = src_slice.trim_matches('"').trim_matches('\'');
 
-            if !import_path.starts_with('.') && !import_path.starts_with('@') && !import_path.starts_with("node:") {
+            if !import_path.starts_with('.')
+                && !import_path.starts_with('@')
+                && !import_path.starts_with("node:")
+            {
                 let is_builtin = matches!(
                     import_path,
-                    "fs" | "path" | "http" | "https" | "crypto" | "os" | "util" | "events" | "stream" | "buffer" | "child_process" | "url" | "querystring" | "zlib" | "net" | "tls" | "dns" | "assert" | "cluster" | "dgram" | "readline" | "repl" | "tty" | "vm" | "worker_threads"
+                    "fs" | "path"
+                        | "http"
+                        | "https"
+                        | "crypto"
+                        | "os"
+                        | "util"
+                        | "events"
+                        | "stream"
+                        | "buffer"
+                        | "child_process"
+                        | "url"
+                        | "querystring"
+                        | "zlib"
+                        | "net"
+                        | "tls"
+                        | "dns"
+                        | "assert"
+                        | "cluster"
+                        | "dgram"
+                        | "readline"
+                        | "repl"
+                        | "tty"
+                        | "vm"
+                        | "worker_threads"
                 );
 
                 if !is_builtin {
@@ -72,7 +99,8 @@ impl<'a> Visit for AbsoluteImportVisitor<'a> {
                         file: self.path.clone(),
                         line,
                         column,
-                        message: "Use relative or aliased imports instead of absolute imports".to_string(),
+                        message: "Use relative or aliased imports instead of absolute imports"
+                            .to_string(),
                         severity: Severity::Warning,
                         line_text: None,
                     });
@@ -83,5 +111,4 @@ impl<'a> Visit for AbsoluteImportVisitor<'a> {
     }
 }
 
-impl<'a> AbsoluteImportVisitor<'a> {
-}
+impl<'a> AbsoluteImportVisitor<'a> {}

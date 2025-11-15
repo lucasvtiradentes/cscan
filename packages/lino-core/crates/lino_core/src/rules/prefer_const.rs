@@ -70,8 +70,7 @@ struct VariableCollector<'a> {
     source: &'a str,
 }
 
-impl<'a> VariableCollector<'a> {
-}
+impl<'a> VariableCollector<'a> {}
 
 impl<'a> Visit for VariableCollector<'a> {
     fn visit_var_decl(&mut self, n: &VarDecl) {

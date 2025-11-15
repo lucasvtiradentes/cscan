@@ -94,7 +94,10 @@ impl LinoConfig {
                         errors.push(format!("Rule '{}' has invalid regex pattern: {}", name, e));
                     }
                 } else {
-                    errors.push(format!("Rule '{}' is type 'regex' but has no 'pattern' field", name));
+                    errors.push(format!(
+                        "Rule '{}' is type 'regex' but has no 'pattern' field",
+                        name
+                    ));
                 }
             }
         }

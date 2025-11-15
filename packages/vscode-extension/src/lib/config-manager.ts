@@ -45,7 +45,10 @@ export async function loadConfig(configPath: vscode.Uri): Promise<LinoConfig | n
   }
 }
 
-export async function getEffectiveConfigPath(context: vscode.ExtensionContext, workspacePath: string): Promise<vscode.Uri> {
+export async function getEffectiveConfigPath(
+  context: vscode.ExtensionContext,
+  workspacePath: string,
+): Promise<vscode.Uri> {
   const hasLocal = await hasLocalConfig(workspacePath);
   if (hasLocal) {
     logger.info(`Using local config for workspace: ${workspacePath}`);
@@ -56,20 +59,24 @@ export async function getEffectiveConfigPath(context: vscode.ExtensionContext, w
   return getGlobalConfigPath(context, workspacePath);
 }
 
-export async function loadEffectiveConfig(context: vscode.ExtensionContext, workspacePath: string): Promise<LinoConfig | null> {
+export async function loadEffectiveConfig(
+  context: vscode.ExtensionContext,
+  workspacePath: string,
+): Promise<LinoConfig | null> {
   const configPath = await getEffectiveConfigPath(context, workspacePath);
   return loadConfig(configPath);
 }
 
-export async function saveGlobalConfig(context: vscode.ExtensionContext, workspacePath: string, config: LinoConfig): Promise<void> {
+export async function saveGlobalConfig(
+  context: vscode.ExtensionContext,
+  workspacePath: string,
+  config: LinoConfig,
+): Promise<void> {
   const configPath = getGlobalConfigPath(context, workspacePath);
   const configDir = vscode.Uri.joinPath(configPath, '..');
 
   await vscode.workspace.fs.createDirectory(configDir);
-  await vscode.workspace.fs.writeFile(
-    configPath,
-    Buffer.from(JSON.stringify(config, null, 2))
-  );
+  await vscode.workspace.fs.writeFile(configPath, Buffer.from(JSON.stringify(config, null, 2)));
 
   logger.info(`Saved global config for workspace: ${workspacePath} at ${configPath.fsPath}`);
 }
@@ -79,10 +86,7 @@ export async function saveLocalConfig(workspacePath: string, config: LinoConfig)
   const localConfigPath = getLocalConfigPath(workspacePath);
 
   await vscode.workspace.fs.createDirectory(localConfigDir);
-  await vscode.workspace.fs.writeFile(
-    localConfigPath,
-    Buffer.from(JSON.stringify(config, null, 2))
-  );
+  await vscode.workspace.fs.writeFile(localConfigPath, Buffer.from(JSON.stringify(config, null, 2)));
 
   logger.info(`Saved local config for workspace: ${workspacePath}`);
 }
@@ -91,7 +95,7 @@ export function getDefaultConfig(): LinoConfig {
   return {
     rules: {},
     include: ['**/*.ts', '**/*.tsx'],
-    exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**']
+    exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**'],
   };
 }
 
@@ -119,8 +123,7 @@ export async function syncGlobalToLocal(context: vscode.ExtensionContext, worksp
       logger.info(`Local config exists and is user-managed, skipping sync for ${workspacePath}`);
       return;
     }
-  } catch {
-  }
+  } catch {}
 
   const globalConfig = await loadConfig(getGlobalConfigPath(context, workspacePath));
   if (!globalConfig) {
@@ -149,7 +152,10 @@ export async function shouldSyncToLocal(workspacePath: string): Promise<boolean>
   }
 }
 
-export async function ensureLocalConfigForScan(context: vscode.ExtensionContext, workspacePath: string): Promise<boolean> {
+export async function ensureLocalConfigForScan(
+  context: vscode.ExtensionContext,
+  workspacePath: string,
+): Promise<boolean> {
   const localPath = getLocalConfigPath(workspacePath);
 
   try {

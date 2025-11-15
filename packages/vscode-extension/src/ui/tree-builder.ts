@@ -31,7 +31,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
       relativePath = result.uri.fsPath;
     }
 
-    const parts = relativePath.split(sep).filter(p => p && p !== '.');
+    const parts = relativePath.split(sep).filter((p) => p && p !== '.');
 
     if (parts.length === 0) {
       logger.error(`No parts for path: ${result.uri.fsPath}`);
@@ -50,7 +50,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
           type: 'folder',
           path: currentPath,
           name: part,
-          children: new Map()
+          children: new Map(),
         });
       }
 
@@ -68,7 +68,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
         type: 'file',
         path: filePath,
         name: fileName,
-        results: []
+        results: [],
       });
     }
 

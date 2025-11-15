@@ -162,7 +162,6 @@ impl<'a> ImplicitAnyVisitor<'a> {
             _ => {}
         }
     }
-
 }
 
 impl<'a> Visit for ImplicitAnyVisitor<'a> {

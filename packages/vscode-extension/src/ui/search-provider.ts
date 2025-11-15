@@ -87,9 +87,7 @@ export class SearchResultProvider implements vscode.TreeDataProvider<SearchResul
       if (this._groupMode === 'rule') {
         const grouped = this.groupByRule();
         return Promise.resolve(
-          Array.from(grouped.entries()).map(([rule, results]) =>
-            new RuleGroupItem(rule, results, this._viewMode)
-          )
+          Array.from(grouped.entries()).map(([rule, results]) => new RuleGroupItem(rule, results, this._viewMode)),
         );
       }
 
@@ -104,9 +102,7 @@ export class SearchResultProvider implements vscode.TreeDataProvider<SearchResul
         }
 
         return Promise.resolve(
-          Array.from(grouped.entries()).map(([path, results]) =>
-            new FileResultItem(path, results)
-          )
+          Array.from(grouped.entries()).map(([path, results]) => new FileResultItem(path, results)),
         );
       } else {
         const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
@@ -124,7 +120,7 @@ export class SearchResultProvider implements vscode.TreeDataProvider<SearchResul
       }
     } else if (element instanceof RuleGroupItem) {
       if (element.viewMode === 'list') {
-        return Promise.resolve(element.results.map(r => new LineResultItem(r)));
+        return Promise.resolve(element.results.map((r) => new LineResultItem(r)));
       } else {
         const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || '';
         const tree = buildFolderTree(element.results, workspaceRoot);
@@ -150,9 +146,7 @@ export class SearchResultProvider implements vscode.TreeDataProvider<SearchResul
       }
       return Promise.resolve(items);
     } else if (element instanceof FileResultItem) {
-      return Promise.resolve(
-        element.results.map(r => new LineResultItem(r))
-      );
+      return Promise.resolve(element.results.map((r) => new LineResultItem(r)));
     }
 
     return Promise.resolve([]);

@@ -2,12 +2,10 @@ import { appendFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
-
 export const LOG_FILE_PATH = join(tmpdir(), 'linologs.txt');
 
 class Logger {
-  constructor() {
-  }
+  constructor() {}
 
   private write(level: string, message: string) {
     const now = new Date();

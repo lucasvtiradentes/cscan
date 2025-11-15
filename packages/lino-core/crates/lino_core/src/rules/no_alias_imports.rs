@@ -56,7 +56,11 @@ impl<'a> Visit for AliasImportVisitor<'a> {
 
         if import_start < self.source.len() && import_end <= self.source.len() {
             let src_slice = &self.source[import_start..import_end];
-            if src_slice.trim_matches('"').trim_matches('\'').starts_with('@') {
+            if src_slice
+                .trim_matches('"')
+                .trim_matches('\'')
+                .starts_with('@')
+            {
                 let (line, column) = get_line_col(self.source, import_start);
 
                 self.issues.push(Issue {
@@ -74,5 +78,4 @@ impl<'a> Visit for AliasImportVisitor<'a> {
     }
 }
 
-impl<'a> AliasImportVisitor<'a> {
-}
+impl<'a> AliasImportVisitor<'a> {}

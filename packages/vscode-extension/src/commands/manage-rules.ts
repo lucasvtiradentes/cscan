@@ -9,7 +9,7 @@ import {
   shouldSyncToLocal,
   syncGlobalToLocal,
   getDefaultConfig,
-  LinoConfig
+  LinoConfig,
 } from '../lib/config-manager';
 
 interface RuleQuickPickItem extends vscode.QuickPickItem {
@@ -26,15 +26,12 @@ function getCategoryIcon(category: string): string {
     codequality: 'beaker',
     bugprevention: 'bug',
     style: 'symbol-color',
-    performance: 'dashboard'
+    performance: 'dashboard',
   };
   return icons[category] || 'circle-outline';
 }
 
-export function createManageRulesCommand(
-  updateStatusBar: () => Promise<void>,
-  context: vscode.ExtensionContext
-) {
+export function createManageRulesCommand(updateStatusBar: () => Promise<void>, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand('lino.manageRules', async () => {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     if (!workspaceFolder) {
@@ -56,9 +53,9 @@ export function createManageRulesCommand(
     try {
       const rules = await client.getRulesMetadata();
 
-      const existingConfig = await loadEffectiveConfig(context, workspacePath) || getDefaultConfig();
+      const existingConfig = (await loadEffectiveConfig(context, workspacePath)) || getDefaultConfig();
 
-      const builtinRuleNames = new Set(rules.map(r => r.name));
+      const builtinRuleNames = new Set(rules.map((r) => r.name));
       const customRules: RuleQuickPickItem[] = [];
 
       if (existingConfig?.rules) {
@@ -70,7 +67,7 @@ export function createManageRulesCommand(
               detail: (ruleConfig as any).message || (ruleConfig as any).pattern,
               ruleName,
               picked: (ruleConfig as any).enabled ?? true,
-              isCustom: true
+              isCustom: true,
             });
           }
         }
@@ -88,7 +85,7 @@ export function createManageRulesCommand(
           detail: rule.description,
           ruleName: rule.name,
           picked: isEnabled,
-          isCustom: false
+          isCustom: false,
         };
 
         const category = rule.category;
@@ -98,7 +95,15 @@ export function createManageRulesCommand(
         rulesByCategory.get(category)!.push(ruleItem);
       }
 
-      const categoryOrder = ['typesafety', 'variables', 'imports', 'codequality', 'bugprevention', 'style', 'performance'];
+      const categoryOrder = [
+        'typesafety',
+        'variables',
+        'imports',
+        'codequality',
+        'bugprevention',
+        'style',
+        'performance',
+      ];
       const categoryLabels: Record<string, string> = {
         typesafety: 'Type Safety',
         variables: 'Variables',
@@ -106,14 +111,13 @@ export function createManageRulesCommand(
         codequality: 'Code Quality',
         bugprevention: 'Bug Prevention',
         style: 'Style',
-        performance: 'Performance'
+        performance: 'Performance',
       };
 
       const items: RuleQuickPickItem[] = [
-        ...(customRules.length > 0 ? [
-          { label: 'Custom Rules', kind: vscode.QuickPickItemKind.Separator } as any,
-          ...customRules
-        ] : [])
+        ...(customRules.length > 0
+          ? [{ label: 'Custom Rules', kind: vscode.QuickPickItemKind.Separator } as any, ...customRules]
+          : []),
       ];
 
       for (const category of categoryOrder) {
@@ -121,7 +125,7 @@ export function createManageRulesCommand(
         if (categoryRules && categoryRules.length > 0) {
           items.push(
             { label: categoryLabels[category], kind: vscode.QuickPickItemKind.Separator } as any,
-            ...categoryRules
+            ...categoryRules,
           );
         }
       }
@@ -129,7 +133,7 @@ export function createManageRulesCommand(
       const selected = await vscode.window.showQuickPick(items, {
         placeHolder: 'Select rules to enable (Space to toggle, Enter to confirm)',
         canPickMany: true,
-        ignoreFocusOut: true
+        ignoreFocusOut: true,
       });
 
       if (!selected) {
@@ -138,9 +142,7 @@ export function createManageRulesCommand(
       }
 
       const enabledRules = new Set(
-        selected
-          .filter((item): item is RuleQuickPickItem => 'ruleName' in item)
-          .map(item => item.ruleName)
+        selected.filter((item): item is RuleQuickPickItem => 'ruleName' in item).map((item) => item.ruleName),
       );
 
       logger.info(`User selected ${enabledRules.size} rules: ${Array.from(enabledRules).join(', ')}`);
@@ -159,7 +161,7 @@ export function createManageRulesCommand(
             enabled: true,
             type: rule.ruleType,
             severity: rule.defaultSeverity,
-            message: null
+            message: null,
           };
           config.rules[rule.name].enabled = true;
         } else {
@@ -177,23 +179,26 @@ export function createManageRulesCommand(
         await saveLocalConfig(workspacePath, config);
         logger.info('Updated user-managed local .lino/rules.json');
       } else {
-        const locationChoice = await vscode.window.showQuickPick([
+        const locationChoice = await vscode.window.showQuickPick(
+          [
+            {
+              label: '$(cloud) Extension Storage (Recommended)',
+              description: 'Managed by extension, synced across projects',
+              detail: 'Config saved in extension folder',
+              value: 'global',
+            },
+            {
+              label: '$(file) Project Folder',
+              description: 'Local to this project only',
+              detail: 'Creates .lino/rules.json in project (can be committed to git)',
+              value: 'local',
+            },
+          ],
           {
-            label: '$(cloud) Extension Storage (Recommended)',
-            description: 'Managed by extension, synced across projects',
-            detail: 'Config saved in extension folder',
-            value: 'global'
+            placeHolder: 'Where do you want to save the rules configuration?',
+            ignoreFocusOut: true,
           },
-          {
-            label: '$(file) Project Folder',
-            description: 'Local to this project only',
-            detail: 'Creates .lino/rules.json in project (can be committed to git)',
-            value: 'local'
-          }
-        ], {
-          placeHolder: 'Where do you want to save the rules configuration?',
-          ignoreFocusOut: true
-        });
+        );
 
         if (!locationChoice) {
           await client.stop();

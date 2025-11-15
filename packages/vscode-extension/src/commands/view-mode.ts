@@ -1,10 +1,7 @@
 import * as vscode from 'vscode';
 import { SearchResultProvider } from '../ui/search-provider';
 
-export function createSetListViewCommand(
-  searchProvider: SearchResultProvider,
-  context: vscode.ExtensionContext
-) {
+export function createSetListViewCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand('lino.setListView', () => {
     searchProvider.viewMode = 'list';
     context.workspaceState.update('lino.viewMode', 'list');
@@ -12,10 +9,7 @@ export function createSetListViewCommand(
   });
 }
 
-export function createSetTreeViewCommand(
-  searchProvider: SearchResultProvider,
-  context: vscode.ExtensionContext
-) {
+export function createSetTreeViewCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand('lino.setTreeView', () => {
     searchProvider.viewMode = 'tree';
     context.workspaceState.update('lino.viewMode', 'tree');
@@ -23,10 +17,7 @@ export function createSetTreeViewCommand(
   });
 }
 
-export function createSetGroupByDefaultCommand(
-  searchProvider: SearchResultProvider,
-  context: vscode.ExtensionContext
-) {
+export function createSetGroupByDefaultCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand('lino.setGroupByDefault', () => {
     searchProvider.groupMode = 'default';
     context.workspaceState.update('lino.groupMode', 'default');
@@ -34,10 +25,7 @@ export function createSetGroupByDefaultCommand(
   });
 }
 
-export function createSetGroupByRuleCommand(
-  searchProvider: SearchResultProvider,
-  context: vscode.ExtensionContext
-) {
+export function createSetGroupByRuleCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand('lino.setGroupByRule', () => {
     searchProvider.groupMode = 'rule';
     context.workspaceState.update('lino.groupMode', 'rule');
