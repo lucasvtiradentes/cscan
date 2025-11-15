@@ -7,14 +7,13 @@ import { getNewIssues } from './utils/issue-comparator';
 import { registerAllCommands } from './commands';
 import { loadEffectiveConfig } from './lib/config-manager';
 
-let isActivated = false;
-
 export function activate(context: vscode.ExtensionContext) {
+  const isActivated = context.workspaceState.get<boolean>('lino.isActivated', false);
   if (isActivated) {
     logger.warn('Extension already activated, skipping duplicate activation');
     return;
   }
-  isActivated = true;
+  context.workspaceState.update('lino.isActivated', true);
   logger.info('Lino extension activated');
 
   const searchProvider = new SearchResultProvider();

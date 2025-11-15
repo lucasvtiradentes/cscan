@@ -183,7 +183,7 @@ export function createManageRulesCommand(
           {
             label: '$(cloud) Extension Storage (Recommended)',
             description: 'Managed by extension, synced across projects',
-            detail: 'Config saved in extension folder and auto-synced to .lino/rules.json',
+            detail: 'Config saved in extension folder',
             value: 'global'
           },
           {

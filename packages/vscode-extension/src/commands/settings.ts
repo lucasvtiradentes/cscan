@@ -14,7 +14,7 @@ export function createOpenSettingsMenuCommand(
     logger.info('openSettingsMenu command called');
     const mainMenuItems: vscode.QuickPickItem[] = [
       {
-        label: '$(checklist) Manage Default Rules',
+        label: '$(checklist) Manage Rules',
         detail: 'Enable/disable built-in rules and generate configuration'
       },
       {
@@ -30,7 +30,7 @@ export function createOpenSettingsMenuCommand(
 
     if (!selected) return;
 
-    if (selected.label.includes('Manage Default Rules')) {
+    if (selected.label.includes('Manage Rules')) {
       await vscode.commands.executeCommand('lino.manageRules');
       return;
     }
