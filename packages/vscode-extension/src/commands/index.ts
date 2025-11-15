@@ -42,6 +42,7 @@ export function registerAllCommands(ctx: CommandContext): vscode.Disposable[] {
       ctx.context,
       ctx.treeView,
       ctx.updateBadge,
+      ctx.updateStatusBar,
       ctx.isSearchingRef,
       ctx.currentScanModeRef,
       ctx.currentCompareBranchRef
@@ -51,7 +52,8 @@ export function registerAllCommands(ctx: CommandContext): vscode.Disposable[] {
       ctx.updateStatusBar,
       ctx.currentScanModeRef,
       ctx.currentCompareBranchRef,
-      ctx.context
+      ctx.context,
+      ctx.searchProvider
     ),
     createSetListViewCommand(ctx.searchProvider, ctx.context),
     createSetTreeViewCommand(ctx.searchProvider, ctx.context),

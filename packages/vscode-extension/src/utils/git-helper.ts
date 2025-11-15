@@ -60,9 +60,22 @@ export async function getCurrentBranch(workspaceRoot: string): Promise<string | 
   return repo.state.HEAD?.name || null;
 }
 
+export async function branchExists(workspaceRoot: string, branchName: string): Promise<boolean> {
+  try {
+    execSync(`git rev-parse --verify ${branchName}`, {
+      cwd: workspaceRoot,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function getAllBranches(workspaceRoot: string): Promise<string[]> {
   try {
-   
+
     const output = execSync('git branch -a', {
       cwd: workspaceRoot,
       encoding: 'utf-8',

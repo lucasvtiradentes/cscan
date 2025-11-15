@@ -1,16 +1,18 @@
 import * as vscode from 'vscode';
 import { SearchResultProvider } from '../ui/search-provider';
 import { scanWorkspace } from '../lib/scanner';
-import { getChangedFiles, getModifiedLineRanges } from '../utils/git-helper';
+import { getChangedFiles, getModifiedLineRanges, branchExists } from '../utils/git-helper';
 import { getNewIssues } from '../utils/issue-comparator';
 import { logger } from '../utils/logger';
 import { resetIssueIndex } from './issue-navigation';
+import { ensureLocalConfigForScan } from '../lib/config-manager';
 
 export function createFindIssueCommand(
   searchProvider: SearchResultProvider,
   context: vscode.ExtensionContext,
   treeView: vscode.TreeView<any>,
   updateBadge: () => void,
+  updateStatusBar: () => Promise<void>,
   isSearchingRef: { current: boolean },
   currentScanModeRef: { current: 'workspace' | 'branch' },
   currentCompareBranchRef: { current: string }
@@ -29,6 +31,42 @@ export function createFindIssueCommand(
         vscode.window.showErrorMessage('No workspace folder open');
       }
       return;
+    }
+
+    const hasConfig = await ensureLocalConfigForScan(context, workspaceFolder.uri.fsPath);
+    if (!hasConfig) {
+      if (!options?.silent) {
+        const action = await vscode.window.showWarningMessage(
+          'No rules configured for this workspace',
+          'Configure Rules'
+        );
+        if (action === 'Configure Rules') {
+          await vscode.commands.executeCommand('lino.manageRules');
+        }
+      }
+      return;
+    }
+
+    if (currentScanModeRef.current === 'branch') {
+      const branchExistsCheck = await branchExists(workspaceFolder.uri.fsPath, currentCompareBranchRef.current);
+      if (!branchExistsCheck) {
+        const action = await vscode.window.showErrorMessage(
+          `Branch '${currentCompareBranchRef.current}' does not exist in this repository`,
+          'Change Branch',
+          'Switch to Workspace Mode'
+        );
+
+        if (action === 'Change Branch') {
+          await vscode.commands.executeCommand('lino.openSettingsMenu');
+        } else if (action === 'Switch to Workspace Mode') {
+          currentScanModeRef.current = 'workspace';
+          context.workspaceState.update('lino.scanMode', 'workspace');
+          vscode.commands.executeCommand('setContext', 'linoScanMode', 'workspace');
+          await updateStatusBar();
+          await vscode.commands.executeCommand('lino.findIssue', { silent: true });
+        }
+        return;
+      }
     }
 
     isSearchingRef.current = true;
@@ -53,6 +91,7 @@ export function createFindIssueCommand(
         let results;
 
         if (currentScanModeRef.current === 'branch') {
+
           const gitDiffStart = Date.now();
           const changedFiles = await getChangedFiles(workspaceFolder.uri.fsPath, currentCompareBranchRef.current);
           const gitDiffTime = Date.now() - gitDiffStart;

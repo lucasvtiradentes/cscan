@@ -49,14 +49,15 @@
       "lino": [
         {
           "id": "linoExplorer",
-          "name": "Issues"
+          "name": "Issues",
+          "icon": "resources/icon.svg"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "linoExplorer",
-        "contents": "No issues found.\n[Scan Workspace](command:lino.findIssue)",
+        "contents": "No issues found.",
         "when": "workbenchState != empty"
       },
       {

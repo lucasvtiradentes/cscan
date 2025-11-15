@@ -5,7 +5,7 @@ import { logger } from './utils/logger';
 import { getChangedFiles, invalidateCache, getModifiedLineRanges } from './utils/git-helper';
 import { getNewIssues } from './utils/issue-comparator';
 import { registerAllCommands } from './commands';
-import { syncGlobalToLocal } from './lib/config-manager';
+import { loadEffectiveConfig } from './lib/config-manager';
 
 let isActivated = false;
 
@@ -16,13 +16,6 @@ export function activate(context: vscode.ExtensionContext) {
   }
   isActivated = true;
   logger.info('Lino extension activated');
-
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-  if (workspaceFolder) {
-    syncGlobalToLocal(context, workspaceFolder.uri.fsPath).catch(err => {
-      logger.error(`Failed to sync global config to local: ${err}`);
-    });
-  }
 
   const searchProvider = new SearchResultProvider();
   const viewModeKey = context.workspaceState.get<'list' | 'tree'>('lino.viewMode', 'list');
@@ -63,13 +56,8 @@ export function activate(context: vscode.ExtensionContext) {
     let hasConfig = false;
 
     if (workspaceFolder) {
-      const configPath = vscode.Uri.joinPath(workspaceFolder.uri, '.lino', 'rules.json');
-      try {
-        await vscode.workspace.fs.stat(configPath);
-        hasConfig = true;
-      } catch {
-        hasConfig = false;
-      }
+      const config = await loadEffectiveConfig(context, workspaceFolder.uri.fsPath);
+      hasConfig = config !== null && Object.keys(config.rules).length > 0;
     }
 
     const icon = hasConfig ? '$(gear)' : '$(warning)';

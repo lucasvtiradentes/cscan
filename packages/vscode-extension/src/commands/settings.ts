@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
 import { getAllBranches, getCurrentBranch, invalidateCache } from '../utils/git-helper';
 import { logger } from '../utils/logger';
+import { SearchResultProvider } from '../ui/search-provider';
 
 export function createOpenSettingsMenuCommand(
   updateStatusBar: () => Promise<void>,
   currentScanModeRef: { current: 'workspace' | 'branch' },
   currentCompareBranchRef: { current: string },
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
+  searchProvider: SearchResultProvider
 ) {
   return vscode.commands.registerCommand('lino.openSettingsMenu', async () => {
     logger.info('openSettingsMenu command called');
@@ -38,7 +40,8 @@ export function createOpenSettingsMenuCommand(
         updateStatusBar,
         currentScanModeRef,
         currentCompareBranchRef,
-        context
+        context,
+        searchProvider
       );
       return;
     }
@@ -49,7 +52,8 @@ async function showScanSettingsMenu(
   updateStatusBar: () => Promise<void>,
   currentScanModeRef: { current: 'workspace' | 'branch' },
   currentCompareBranchRef: { current: string },
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
+  searchProvider: SearchResultProvider
 ) {
   const scanModeItems: vscode.QuickPickItem[] = [
     {
@@ -72,6 +76,7 @@ async function showScanSettingsMenu(
   if (!selected) return;
 
   if (selected.label.includes('Codebase')) {
+    searchProvider.setResults([]);
     currentScanModeRef.current = 'workspace';
     context.workspaceState.update('lino.scanMode', 'workspace');
     vscode.commands.executeCommand('setContext', 'linoScanMode', 'workspace');
@@ -160,6 +165,7 @@ async function showScanSettingsMenu(
       context.workspaceState.update('lino.compareBranch', currentCompareBranchRef.current);
     }
 
+    searchProvider.setResults([]);
     currentScanModeRef.current = 'branch';
     context.workspaceState.update('lino.scanMode', 'branch');
     vscode.commands.executeCommand('setContext', 'linoScanMode', 'branch');

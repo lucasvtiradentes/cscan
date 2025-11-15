@@ -148,3 +148,23 @@ export async function shouldSyncToLocal(workspacePath: string): Promise<boolean>
     return true;
   }
 }
+
+export async function ensureLocalConfigForScan(context: vscode.ExtensionContext, workspacePath: string): Promise<boolean> {
+  const localPath = getLocalConfigPath(workspacePath);
+
+  try {
+    await vscode.workspace.fs.stat(localPath);
+    logger.debug('Local config already exists, using it for scan');
+    return true;
+  } catch {
+    const globalConfig = await loadConfig(getGlobalConfigPath(context, workspacePath));
+    if (!globalConfig) {
+      logger.info('No config found (neither local nor global)');
+      return false;
+    }
+
+    await syncGlobalToLocal(context, workspacePath);
+    logger.info('Synced global config to local .lino/rules.json for Rust scanner');
+    return true;
+  }
+}

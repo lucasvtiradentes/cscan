@@ -130,15 +130,48 @@ export function createManageRulesCommand(
         }
       }
 
-      await saveGlobalConfig(context, workspacePath, config);
+      const isUserManaged = !(await shouldSyncToLocal(workspacePath));
 
-      const shouldSync = await shouldSyncToLocal(workspacePath);
-      if (shouldSync) {
-        await syncGlobalToLocal(context, workspacePath);
-        logger.info('Saved rules to global config and synced to local .lino/rules.json');
-      } else {
+      let saveLocation: 'global' | 'local' | undefined;
+
+      if (isUserManaged) {
         await saveLocalConfig(workspacePath, config);
-        logger.info('Saved rules to user-managed local .lino/rules.json');
+        logger.info('Updated user-managed local .lino/rules.json');
+      } else {
+        const locationChoice = await vscode.window.showQuickPick([
+          {
+            label: '$(cloud) Extension Storage (Recommended)',
+            description: 'Managed by extension, synced across projects',
+            detail: 'Config saved in extension folder and auto-synced to .lino/rules.json',
+            value: 'global'
+          },
+          {
+            label: '$(file) Project Folder',
+            description: 'Local to this project only',
+            detail: 'Creates .lino/rules.json in project (can be committed to git)',
+            value: 'local'
+          }
+        ], {
+          placeHolder: 'Where do you want to save the rules configuration?',
+          ignoreFocusOut: true
+        });
+
+        if (!locationChoice) {
+          await client.stop();
+          return;
+        }
+
+        saveLocation = locationChoice.value as 'global' | 'local';
+
+        if (saveLocation === 'global') {
+          await saveGlobalConfig(context, workspacePath, config);
+          logger.info('Saved to global config (extension storage)');
+          vscode.window.showInformationMessage('Rules saved to extension storage');
+        } else {
+          await saveLocalConfig(workspacePath, config);
+          logger.info('Saved to local .lino/rules.json (user-managed)');
+          vscode.window.showInformationMessage('Rules saved to .lino/rules.json');
+        }
       }
 
       await client.stop();
