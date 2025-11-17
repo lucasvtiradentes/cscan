@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from '../ui/search-provider';
+import { SearchResultProvider } from '../sidebar/search-provider';
 import { createFindIssueCommand } from './find-issue';
 import { createManageRulesCommand } from './manage-rules';
 import { createOpenSettingsMenuCommand } from './settings';

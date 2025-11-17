@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { RustClient } from '../lib/rust-client';
-import { getRustBinaryPath } from '../lib/scanner';
-import { logger } from '../utils/logger';
+import { RustClient } from '../common/lib/rust-client';
+import { getRustBinaryPath } from '../common/lib/scanner';
+import { logger } from '../common/utils/logger';
 import {
   loadEffectiveConfig,
   saveGlobalConfig,
@@ -10,7 +10,7 @@ import {
   syncGlobalToLocal,
   getDefaultConfig,
   LinoConfig,
-} from '../lib/config-manager';
+} from '../common/lib/config-manager';
 
 interface RuleQuickPickItem extends vscode.QuickPickItem {
   ruleName: string;

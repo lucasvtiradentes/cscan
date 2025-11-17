@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { clearCache } from '../lib/scanner';
-import { invalidateCache } from '../utils/git-helper';
-import { logger } from '../utils/logger';
+import { clearCache } from '../common/lib/scanner';
+import { invalidateCache } from '../common/utils/git-helper';
+import { logger } from '../common/utils/logger';
 
 export function createRefreshCommand() {
   return vscode.commands.registerCommand('lino.refresh', async () => {

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from '../ui/search-provider';
-import { logger } from '../utils/logger';
+import { SearchResultProvider } from '../sidebar/search-provider';
+import { logger } from '../common/utils/logger';
 
 let currentIssueIndex = -1;
 

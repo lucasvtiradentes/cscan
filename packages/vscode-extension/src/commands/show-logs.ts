@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { LOG_FILE_PATH } from '../utils/logger';
+import { LOG_FILE_PATH } from '../common/utils/logger';
 
 export function createShowLogsCommand() {
   return vscode.commands.registerCommand('lino.showLogs', async () => {

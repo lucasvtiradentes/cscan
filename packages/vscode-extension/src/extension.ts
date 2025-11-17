@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from './ui/search-provider';
-import { dispose as disposeScanner, scanContent } from './lib/scanner';
-import { logger } from './utils/logger';
-import { getChangedFiles, invalidateCache, getModifiedLineRanges } from './utils/git-helper';
-import { getNewIssues } from './utils/issue-comparator';
+import { SearchResultProvider } from './sidebar/search-provider';
+import { dispose as disposeScanner, scanContent } from './common/lib/scanner';
+import { logger } from './common/utils/logger';
+import { getChangedFiles, invalidateCache, getModifiedLineRanges } from './common/utils/git-helper';
+import { getNewIssues } from './common/utils/issue-comparator';
 import { registerAllCommands } from './commands';
-import { loadEffectiveConfig } from './lib/config-manager';
+import { loadEffectiveConfig } from './common/lib/config-manager';
+import { StatusBarManager } from './status-bar/status-bar-manager';
 
 let activationKey: string | undefined;
 
@@ -49,40 +50,11 @@ export function activate(context: vscode.ExtensionContext) {
   const currentScanModeRef = { current: scanModeKey };
   const currentCompareBranchRef = { current: compareBranch };
 
-  logger.info('Creating status bar item...');
-  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-  logger.info(`Status bar item created: ${statusBarItem ? 'YES' : 'NO'}`);
-
+  logger.info('Creating status bar manager...');
+  const statusBarManager = new StatusBarManager(context, currentScanModeRef, currentCompareBranchRef);
   const updateStatusBar = async () => {
-    logger.debug('updateStatusBar called');
-
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-
-    if (!workspaceFolder) {
-      statusBarItem.hide();
-      return;
-    }
-
-    let hasConfig = false;
-    const config = await loadEffectiveConfig(context, workspaceFolder.uri.fsPath);
-    hasConfig = config !== null && Object.keys(config.rules).length > 0;
-
-    const icon = hasConfig ? '$(gear)' : '$(warning)';
-    const modeText = currentScanModeRef.current === 'workspace' ? 'Codebase' : 'Branch';
-    const branchText = currentScanModeRef.current === 'branch' ? ` (${currentCompareBranchRef.current})` : '';
-    const configWarning = hasConfig ? '' : ' [No rules configured]';
-
-    statusBarItem.text = `${icon} Lino: ${modeText}${branchText}${configWarning}`;
-    statusBarItem.tooltip = hasConfig ? 'Click to change scan settings' : 'No rules configured. Click to set up rules.';
-
-    logger.debug(`Status bar text set to: ${statusBarItem.text}`);
-    statusBarItem.show();
-    logger.info('Status bar item show() called');
+    await statusBarManager.update();
   };
-
-  logger.info('Setting status bar command...');
-  statusBarItem.command = 'lino.openSettingsMenu';
-  logger.info('Calling updateStatusBar for first time...');
   updateStatusBar();
   logger.info('Status bar setup complete');
 
@@ -202,7 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  context.subscriptions.push(...commands, fileWatcher, statusBarItem);
+  context.subscriptions.push(...commands, fileWatcher, statusBarManager.getDisposable());
 
   setTimeout(() => {
     logger.info('Running initial scan after 2s delay...');

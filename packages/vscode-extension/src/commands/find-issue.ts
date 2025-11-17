@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from '../ui/search-provider';
-import { scanWorkspace } from '../lib/scanner';
-import { getChangedFiles, getModifiedLineRanges, branchExists } from '../utils/git-helper';
-import { getNewIssues } from '../utils/issue-comparator';
-import { logger } from '../utils/logger';
+import { SearchResultProvider } from '../sidebar/search-provider';
+import { scanWorkspace } from '../common/lib/scanner';
+import { getChangedFiles, getModifiedLineRanges, branchExists } from '../common/utils/git-helper';
+import { getNewIssues } from '../common/utils/issue-comparator';
+import { logger } from '../common/utils/logger';
 import { resetIssueIndex } from './issue-navigation';
-import { loadEffectiveConfig, hasLocalConfig } from '../lib/config-manager';
+import { loadEffectiveConfig, hasLocalConfig } from '../common/lib/config-manager';
 
 export function createFindIssueCommand(
   searchProvider: SearchResultProvider,

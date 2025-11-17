@@ -1,6 +1,6 @@
 import { join, relative, sep } from 'node:path';
-import { IssueResult, FolderNode, FileNode } from '../types';
-import { logger } from '../utils/logger';
+import { IssueResult, FolderNode, FileNode } from '../common/types';
+import { logger } from '../common/utils/logger';
 
 function countIssues(node: FolderNode | FileNode): number {
   if (node.type === 'file') {

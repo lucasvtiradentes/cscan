@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { getAllBranches, getCurrentBranch, invalidateCache } from '../utils/git-helper';
-import { logger } from '../utils/logger';
-import { SearchResultProvider } from '../ui/search-provider';
-import { getGlobalConfigPath, getLocalConfigPath } from '../lib/config-manager';
+import { getAllBranches, getCurrentBranch, invalidateCache } from '../common/utils/git-helper';
+import { logger } from '../common/utils/logger';
+import { SearchResultProvider } from '../sidebar/search-provider';
+import { getGlobalConfigPath, getLocalConfigPath } from '../common/lib/config-manager';
 
 export function createOpenSettingsMenuCommand(
   updateStatusBar: () => Promise<void>,

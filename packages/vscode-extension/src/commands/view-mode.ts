@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from '../ui/search-provider';
+import { SearchResultProvider } from '../sidebar/search-provider';
 
 export function createSetListViewCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand('lino.setListView', () => {
