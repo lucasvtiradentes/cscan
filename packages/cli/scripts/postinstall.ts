@@ -43,14 +43,19 @@ if (!platformKey) {
 }
 
 const packageName = PLATFORM_MAP[platformKey];
+const isWorkspace = process.env.PNPM_SCRIPT_SRC_DIR !== undefined;
 
 try {
   require.resolve(packageName);
-  console.log(`✅ cscan binary installed successfully (${platformKey})`);
+  if (!isWorkspace) {
+    console.log(`✅ cscan binary installed successfully (${platformKey})`);
+  }
 } catch (e) {
-  console.warn(
-    `\nWarning: Failed to install cscan binary for ${platformKey}\n` +
-      `Expected package: ${packageName}\n` +
-      `This might happen if optional dependencies were not installed.\n`,
-  );
+  if (!isWorkspace) {
+    console.warn(
+      `\nWarning: Failed to install cscan binary for ${platformKey}\n` +
+        `Expected package: ${packageName}\n` +
+        `This might happen if optional dependencies were not installed.\n`,
+    );
+  }
 }

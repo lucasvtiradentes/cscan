@@ -21,7 +21,7 @@
     "@cscan/win32-x64": "workspace:*"
   },
   "scripts": {
-    "postinstall": "node ./dist/scripts/postinstall.js",
+    "postinstall": "tsx ./scripts/safe-postinstall.ts",
     "build": "tsc && ./scripts/copy-binaries.sh",
     "start": "node ./dist/src/cscan.js",
     "typecheck": "tsc --noEmit",
@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.0"
   }
 }
