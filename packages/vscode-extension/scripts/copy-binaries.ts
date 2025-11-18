@@ -4,7 +4,7 @@ import { BINARY_BASE_NAME, PLATFORM_TARGET_MAP, getBinaryName } from '../src/com
 
 const extensionRoot = resolve(__dirname, '..');
 const outBinariesDir = join(extensionRoot, 'out', 'binaries');
-const rustCoreDir = join(extensionRoot, '..', 'lino-core');
+const rustCoreDir = join(extensionRoot, '..', 'cscan-core');
 
 console.log('Copying Rust binaries to out/binaries...');
 
@@ -16,7 +16,7 @@ const sourceBinary = existsSync(releaseBinary) ? releaseBinary : existsSync(debu
 
 if (!sourceBinary) {
   console.warn('⚠️  Rust binary not found');
-  console.log('Run: cd packages/lino-core && cargo build --release');
+  console.log('Run: cd packages/cscan-core && cargo build --release');
 } else {
   if (!existsSync(outBinariesDir)) {
     mkdirSync(outBinariesDir, { recursive: true });

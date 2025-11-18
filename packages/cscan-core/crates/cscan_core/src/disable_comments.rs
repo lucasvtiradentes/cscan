@@ -3,11 +3,11 @@ use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
 static DISABLE_FILE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"//\s*lino-disable-file").unwrap());
+    LazyLock::new(|| Regex::new(r"//\s*cscan-disable-file").unwrap());
 static DISABLE_LINE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"//\s*lino-disable(?:-line)?\s+(.+)").unwrap());
+    LazyLock::new(|| Regex::new(r"//\s*cscan-disable(?:-line)?\s+(.+)").unwrap());
 static DISABLE_NEXT_LINE_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"//\s*lino-disable-next-line\s+(.+)").unwrap());
+    LazyLock::new(|| Regex::new(r"//\s*cscan-disable-next-line\s+(.+)").unwrap());
 
 #[derive(Debug, Clone)]
 pub struct DisableDirectives {
@@ -79,7 +79,7 @@ mod tests {
     #[test]
     fn test_disable_file() {
         let source = r#"
-// lino-disable-file
+// cscan-disable-file
 const x: any = 5;
 "#;
         let directives = DisableDirectives::from_source(source);
@@ -89,7 +89,7 @@ const x: any = 5;
     #[test]
     fn test_disable_line() {
         let source = r#"
-const x: any = 5; // lino-disable no-any-type
+const x: any = 5; // cscan-disable no-any-type
 const y: any = 10;
 "#;
         let directives = DisableDirectives::from_source(source);
@@ -100,7 +100,7 @@ const y: any = 10;
     #[test]
     fn test_disable_next_line() {
         let source = r#"
-// lino-disable-next-line no-any-type
+// cscan-disable-next-line no-any-type
 const x: any = 5;
 const y: any = 10;
 "#;
@@ -112,7 +112,7 @@ const y: any = 10;
     #[test]
     fn test_disable_multiple_rules() {
         let source = r#"
-// lino-disable-next-line no-any-type, no-console-log
+// cscan-disable-next-line no-any-type, no-console-log
 const x: any = 5;
 console.log(x);
 "#;

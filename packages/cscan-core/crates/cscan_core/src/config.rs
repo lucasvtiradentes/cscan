@@ -7,7 +7,7 @@ use std::hash::{Hash, Hasher};
 use std::path::Path;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LinoConfig {
+pub struct CscanConfig {
     #[serde(default)]
     pub rules: HashMap<String, RuleConfig>,
     #[serde(default = "default_include")]
@@ -76,7 +76,7 @@ fn default_exclude() -> Vec<String> {
     ]
 }
 
-impl LinoConfig {
+impl CscanConfig {
     pub fn load_from_file(path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
         let content = std::fs::read_to_string(path)?;
         let config: Self = serde_json::from_str(&content)?;
@@ -127,7 +127,7 @@ impl LinoConfig {
     }
 
     pub fn load_from_workspace(workspace: &Path) -> Result<Self, Box<dyn std::error::Error>> {
-        let config_path = workspace.join(".lino/rules.json");
+        let config_path = workspace.join(".cscan/rules.json");
         if config_path.exists() {
             Self::load_from_file(&config_path)
         } else {
@@ -182,7 +182,7 @@ impl LinoConfig {
     }
 }
 
-impl Default for LinoConfig {
+impl Default for CscanConfig {
     fn default() -> Self {
         let mut rules = HashMap::new();
 
@@ -234,7 +234,7 @@ mod tests {
 
     #[test]
     fn test_default_config() {
-        let config = LinoConfig::default();
+        let config = CscanConfig::default();
         assert!(config.rules.contains_key("no-any-type"));
         assert_eq!(config.include.len(), 1);
         assert!(config.exclude.len() > 0);
@@ -242,7 +242,7 @@ mod tests {
 
     #[test]
     fn test_glob_matching() {
-        let config = LinoConfig::default();
+        let config = CscanConfig::default();
         let compiled = config.compile_rule("no-any-type").unwrap();
 
         assert!(config.matches_file(Path::new("src/test.ts"), &compiled));

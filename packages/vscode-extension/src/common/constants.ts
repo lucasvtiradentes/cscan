@@ -2,7 +2,7 @@ export const EXTENSION_PUBLISHER = 'lucasvtiradentes';
 export const EXTENSION_NAME = 'lino-vscode';
 export const EXTENSION_ID_PROD = `${EXTENSION_PUBLISHER}.${EXTENSION_NAME}`;
 export const EXTENSION_ID_DEV = `${EXTENSION_PUBLISHER}.${EXTENSION_NAME}-dev`;
-export const EXTENSION_DISPLAY_NAME = 'Lino';
+export const EXTENSION_DISPLAY_NAME = 'Cscan';
 
 export const CONTEXT_PREFIX = 'lino';
 export const VIEW_CONTAINER_ID = 'lino';

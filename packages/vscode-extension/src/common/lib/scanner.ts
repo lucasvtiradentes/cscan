@@ -59,7 +59,7 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
   if (!binaryPath) {
     vscode.window
       .showErrorMessage(
-        'Lino: Rust binary not found. Please build the Rust core:\n\n' +
+        'Cscan: Rust binary not found. Please build the Rust core:\n\n' +
           'cd packages/lino-core && cargo build --release\n\n' +
           `Check logs at ${LOG_FILE_PATH} for details.`,
         'Open Logs',
@@ -90,7 +90,7 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
   } catch (error) {
     logger.error(`Rust backend failed: ${error}`);
     vscode.window
-      .showErrorMessage(`Lino: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`, 'Open Logs')
+      .showErrorMessage(`Cscan: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`, 'Open Logs')
       .then((selection) => {
         if (selection === 'Open Logs') {
           vscode.workspace.openTextDocument(LOG_FILE_PATH).then((doc) => {

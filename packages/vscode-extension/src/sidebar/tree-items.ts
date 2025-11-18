@@ -13,7 +13,7 @@ export class RuleGroupItem extends vscode.TreeItem {
 
     this.description = `${results.length} ${results.length === 1 ? 'issue' : 'issues'}`;
     this.iconPath = new vscode.ThemeIcon('list-filter');
-    this.contextValue = 'LinoNodeRuleGroup';
+    this.contextValue = 'CscanNodeRuleGroup';
   }
 }
 
@@ -24,7 +24,7 @@ export class FolderResultItem extends vscode.TreeItem {
     const count = getFolderIssueCount(node);
     this.description = `${count} ${count === 1 ? 'issue' : 'issues'}`;
     this.iconPath = new vscode.ThemeIcon('folder');
-    this.contextValue = 'LinoNodeFolder';
+    this.contextValue = 'CscanNodeFolder';
   }
 }
 
@@ -40,7 +40,7 @@ export class FileResultItem extends vscode.TreeItem {
 
     this.description = `${results.length} ${results.length === 1 ? 'issue' : 'issues'}`;
     this.iconPath = new vscode.ThemeIcon('file');
-    this.contextValue = 'LinoNodeFile';
+    this.contextValue = 'CscanNodeFile';
     this.resourceUri = vscode.Uri.file(filePath);
   }
 }
@@ -59,6 +59,6 @@ export class LineResultItem extends vscode.TreeItem {
     };
 
     this.iconPath = new vscode.ThemeIcon(result.type === 'colonAny' ? 'symbol-variable' : 'symbol-keyword');
-    this.contextValue = 'LinoNodeIssue';
+    this.contextValue = 'CscanNodeIssue';
   }
 }

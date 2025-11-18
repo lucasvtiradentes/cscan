@@ -65,19 +65,19 @@ jobs:
       - name: Cache cargo build
         uses: actions/cache@v4
         with:
-          path: packages/lino-core/target
+          path: packages/cscan-core/target
           key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: ./.github/actions/setup-and-install
 
       - name: Run tests
-        run: pnpm turbo run test --filter=lino-core
+        run: pnpm turbo run test --filter=cscan-core
 
       - name: Run clippy
-        run: pnpm turbo run clippy --filter=lino-core
+        run: pnpm turbo run clippy --filter=cscan-core
 
       - name: Check formatting
-        run: pnpm turbo run format:check --filter=lino-core
+        run: pnpm turbo run format:check --filter=cscan-core
 
   build-rust:
     if: inputs.run_build
@@ -91,13 +91,13 @@ jobs:
       - name: Cache cargo build
         uses: actions/cache@v4
         with:
-          path: packages/lino-core/target
+          path: packages/cscan-core/target
           key: ${{ runner.os }}-cargo-build-release-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: ./.github/actions/setup-and-install
 
       - name: Build release
-        run: pnpm turbo run build:rust --filter=lino-core
+        run: pnpm turbo run build:rust --filter=cscan-core
 
   build:
     if: inputs.run_build

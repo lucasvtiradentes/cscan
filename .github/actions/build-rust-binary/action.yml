@@ -1,5 +1,5 @@
 name: 'Build Rust Binary'
-description: 'Builds lino-server binary for a specific target platform'
+description: 'Builds cscan-server binary for a specific target platform'
 
 inputs:
   target:
@@ -36,23 +36,23 @@ runs:
 
     - name: Build binary
       shell: bash
-      working-directory: packages/lino-core
+      working-directory: packages/cscan-core
       run: cargo build --release --target ${{ inputs.target }}
 
     - name: Prepare binary
       shell: bash
       run: |
-        cd packages/lino-core/target/${{ inputs.target }}/release
+        cd packages/cscan-core/target/${{ inputs.target }}/release
         if [[ "${{ inputs.os }}" == "windows-latest" ]]; then
-          cp lino-server.exe lino-server-${{ inputs.target }}.exe
-          echo "BINARY_NAME=lino-server-${{ inputs.target }}.exe" >> $GITHUB_ENV
+          cp cscan-server.exe cscan-server-${{ inputs.target }}.exe
+          echo "BINARY_NAME=cscan-server-${{ inputs.target }}.exe" >> $GITHUB_ENV
         else
-          cp lino-server lino-server-${{ inputs.target }}
-          echo "BINARY_NAME=lino-server-${{ inputs.target }}" >> $GITHUB_ENV
+          cp cscan-server cscan-server-${{ inputs.target }}
+          echo "BINARY_NAME=cscan-server-${{ inputs.target }}" >> $GITHUB_ENV
         fi
 
     - name: Upload binary artifact
       uses: actions/upload-artifact@v4
       with:
         name: binary-${{ inputs.target }}
-        path: packages/lino-core/target/${{ inputs.target }}/release/${{ env.BINARY_NAME }}
+        path: packages/cscan-core/target/${{ inputs.target }}/release/${{ env.BINARY_NAME }}

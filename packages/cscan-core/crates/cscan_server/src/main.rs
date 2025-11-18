@@ -1,7 +1,7 @@
 use base64::Engine;
+use cscan_core::{CscanConfig, FileCache, FileWatcher, Scanner};
 use flate2::write::GzEncoder;
 use flate2::Compression;
-use lino_core::{FileCache, FileWatcher, LinoConfig, Scanner};
 use serde::{Deserialize, Serialize};
 use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
@@ -31,7 +31,7 @@ struct Notification {
 #[derive(Debug, Deserialize)]
 struct ScanParams {
     root: PathBuf,
-    config: Option<LinoConfig>,
+    config: Option<CscanConfig>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -50,7 +50,7 @@ struct ScanContentParams {
     root: PathBuf,
     file: PathBuf,
     content: String,
-    config: Option<LinoConfig>,
+    config: Option<CscanConfig>,
 }
 
 struct ServerState {
@@ -93,7 +93,7 @@ fn main() {
         .with(tracing_subscriber::filter::LevelFilter::WARN)
         .init();
 
-    info!("Lino server started");
+    info!("CScan server started");
 
     let mut state = ServerState::new();
     let stdin = io::stdin();
@@ -178,7 +178,7 @@ fn main() {
             while let Some(event) = watcher.try_recv() {
                 info!("File event: {:?}", event);
 
-                use lino_core::watcher::FileEvent;
+                use cscan_core::watcher::FileEvent;
                 match event {
                     FileEvent::Modified(path) | FileEvent::Created(path) => {
                         if let Some(scanner) = &state.scanner {
@@ -223,14 +223,14 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                 info!("Using config from request params (global storage)");
                 cfg
             } else {
-                match LinoConfig::load_from_workspace(&params.root) {
+                match CscanConfig::load_from_workspace(&params.root) {
                     Ok(c) => {
-                        info!("Loaded configuration from workspace (.lino/rules.json)");
+                        info!("Loaded configuration from workspace (.cscan/rules.json)");
                         c
                     }
                     Err(e) => {
                         info!("Using default configuration: {}", e);
-                        LinoConfig::default()
+                        CscanConfig::default()
                     }
                 }
             };
@@ -306,7 +306,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
 
             info!("Scanning single file: {:?}", params.file);
 
-            let config = LinoConfig::load_from_workspace(&params.root).unwrap_or_default();
+            let config = CscanConfig::load_from_workspace(&params.root).unwrap_or_default();
 
             let scanner = match Scanner::with_cache(config, state.cache.clone()) {
                 Ok(s) => s,
@@ -339,7 +339,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
             }
         }
         "getRulesMetadata" => {
-            use lino_core::get_all_rule_metadata;
+            use cscan_core::get_all_rule_metadata;
 
             let metadata = get_all_rule_metadata();
             Response {
@@ -366,14 +366,14 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                 info!("Using config from request params (global storage)");
                 cfg
             } else {
-                match LinoConfig::load_from_workspace(&params.root) {
+                match CscanConfig::load_from_workspace(&params.root) {
                     Ok(c) => {
-                        info!("Loaded configuration from workspace (.lino/rules.json)");
+                        info!("Loaded configuration from workspace (.cscan/rules.json)");
                         c
                     }
                     Err(e) => {
                         info!("Using default configuration: {}", e);
-                        LinoConfig::default()
+                        CscanConfig::default()
                     }
                 }
             };

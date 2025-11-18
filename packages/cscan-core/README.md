@@ -1,7 +1,7 @@
 <a name="TOC"></a>
 
 <div align="center">
-<h4>lino-core</h4>
+<h4>cscan-core</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>
@@ -10,38 +10,38 @@
 
 </div>
 
-<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/divider.png" /></a>
+<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/divider.png" /></a>
 
 ## 🎺 Overview
 
-High-performance Rust core for TypeScript/TSX linting. Provides AST-based analysis via SWC, parallel file processing with Rayon, and JSON-RPC server for VSCode integration.
+High-performance Rust core for TypeScript/TSX code scanning. Provides AST-based analysis via SWC, parallel file processing with Rayon, and JSON-RPC server for VSCode integration.
 
 <a name="TOC"></a>
 
-## 📦 Crate Structure<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 📦 Crate Structure<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 This is a Cargo workspace with three crates:
 
-### lino_core (Library)
+### cscan_core (Library)
 
 Core library providing scanner, parser, rules, cache, and config systems.
 
-**Location:** `crates/lino_core/`
+**Location:** `crates/cscan_core/`
 
 **Key Modules:**
 ```rust
-lino_core/
+cscan_core/
 ├── lib.rs              // Public API exports
 ├── types.rs            // Issue, Severity, ScanResult
 ├── scanner.rs          // Parallel file scanner
 ├── parser.rs           // SWC TypeScript/TSX parser
 ├── registry.rs         // Rule registry with inventory
 ├── cache.rs            // FileCache with DashMap + disk
-├── config.rs           // LinoConfig, RuleConfig
+├── config.rs           // cscanConfig, RuleConfig
 ├── watcher.rs          // File system watcher
 ├── utils.rs            // Line/column utilities
 ├── ast_utils.rs        // AST helper functions
-├── disable_comments.rs // lino-disable directives
+├── disable_comments.rs // cscan-disable directives
 └── rules/
     ├── mod.rs                      // Rule trait + inventory
     ├── metadata.rs                 // RuleMetadata + categories
@@ -51,21 +51,21 @@ lino_core/
     └── ... (20 more rules)
 ```
 
-### lino_server (Binary)
+### cscan_server (Binary)
 
 JSON-RPC server for VSCode extension communication.
 
-**Binary name:** `lino-server`
-**Location:** `crates/lino_server/`
+**Binary name:** `cscan-server`
+**Location:** `crates/cscan_server/`
 
-### lino_cli (Binary - Stub)
+### cscan_cli (Binary - Stub)
 
 Planned standalone CLI tool (currently stub).
 
-**Binary name:** `lino`
-**Location:** `crates/lino_cli/`
+**Binary name:** `cscan`
+**Location:** `crates/cscan_cli/`
 
-## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Scanner System
 
@@ -73,7 +73,7 @@ Planned standalone CLI tool (currently stub).
 ```rust
 pub struct Scanner {
     registry: RuleRegistry,
-    config: LinoConfig,
+    config: cscanConfig,
     cache: Arc<FileCache>,
 }
 
@@ -164,7 +164,7 @@ pub struct RuleRegistry {
 }
 
 impl RuleRegistry {
-    pub fn with_config(config: &LinoConfig) -> Result<Self> {
+    pub fn with_config(config: &cscanConfig) -> Result<Self> {
         let mut rules = HashMap::new();
 
         // Collect all registered rules
@@ -219,7 +219,7 @@ struct CacheEntry {
 impl FileCache {
     pub fn with_config_hash(config_hash: u64) -> Self {
         let cache_dir = PathBuf::from(env::var("HOME").unwrap())
-            .join(".cache/lino");
+            .join(".cache/cscan");
 
         let mut cache = Self {
             entries: DashMap::new(),
@@ -227,7 +227,7 @@ impl FileCache {
             cache_dir: Some(cache_dir.clone()),
         };
 
-        // Load from disk: ~/.cache/lino/cache_{config_hash}.json
+        // Load from disk: ~/.cache/cscan/cache_{config_hash}.json
         cache.load_from_disk(&cache_dir, config_hash);
         cache
     }
@@ -260,7 +260,7 @@ impl FileCache {
 **Configuration Structure:**
 ```rust
 #[derive(Serialize, Deserialize)]
-pub struct LinoConfig {
+pub struct cscanConfig {
     pub rules: HashMap<String, RuleConfig>,
     pub include: Vec<String>,  // Default: ["**/*.{ts,tsx}"]
     pub exclude: Vec<String>,  // Default: ["node_modules/**", "dist/**", ...]
@@ -295,7 +295,7 @@ pub struct CompiledRuleConfig {
 
 **Config Hash (Cache Key):**
 ```rust
-impl LinoConfig {
+impl cscanConfig {
     pub fn compute_hash(&self) -> u64 {
         let mut hasher = DefaultHasher::new();
 
@@ -316,7 +316,7 @@ impl LinoConfig {
 
 **Validation:**
 ```rust
-impl LinoConfig {
+impl cscanConfig {
     pub fn validate(&self) -> Result<()> {
         // Check regex patterns
         for (name, rule_config) in &self.rules {
@@ -352,16 +352,16 @@ impl LinoConfig {
 Supports inline rule disabling:
 
 ```typescript
-// lino-disable-file
+// cscan-disable-file
 // Disables entire file
 
-// lino-disable rule1, rule2
+// cscan-disable rule1, rule2
 const x: any = 5;  // This line is ignored
 
-// lino-disable-line rule1
+// cscan-disable-line rule1
 const y: any = 5;  // This line is ignored
 
-// lino-disable-next-line rule1
+// cscan-disable-next-line rule1
 const z: any = 5;  // Next line is ignored
 ```
 
@@ -387,7 +387,7 @@ impl DisableDirectives {
 }
 ```
 
-## 📋 Rules<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 📋 Rules<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Complete Rule Inventory (23 Rules)
 
@@ -535,7 +535,7 @@ impl Rule for PreferConstRule {
 }
 ```
 
-## 🔌 JSON-RPC API<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 🔌 JSON-RPC API<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Protocol
 
@@ -721,7 +721,7 @@ After creating a watcher with `watch` method, the server sends notifications for
 }
 ```
 
-## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Build Commands
 
@@ -735,18 +735,18 @@ cargo watch -x build            # Auto-rebuild on change
 ### Running the Server
 
 ```bash
-cargo run --bin lino-server
+cargo run --bin cscan-server
 ```
 
 Then send JSON-RPC requests via stdin:
 
 ```bash
-echo '{"id":1,"method":"scan","params":{"root":"."}}' | cargo run --bin lino-server
+echo '{"id":1,"method":"scan","params":{"root":"."}}' | cargo run --bin cscan-server
 ```
 
 ### Adding a New Rule
 
-1. Create `crates/lino_core/src/rules/my_rule.rs`:
+1. Create `crates/cscan_core/src/rules/my_rule.rs`:
 
 ```rust
 use crate::rules::{Rule, RuleMetadata, RuleMetadataRegistration, RuleRegistration};
@@ -794,7 +794,7 @@ impl Visit for MyVisitor {
 }
 ```
 
-2. Add to `crates/lino_core/src/rules/mod.rs`:
+2. Add to `crates/cscan_core/src/rules/mod.rs`:
 
 ```rust
 mod my_rule;
@@ -845,6 +845,6 @@ codegen-units = 1       # Single codegen unit for better optimization
 strip = true            # Strip debug symbols
 ```
 
-## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](../../LICENSE) file for details.

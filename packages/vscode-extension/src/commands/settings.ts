@@ -24,13 +24,13 @@ export function createOpenSettingsMenuCommand(
         detail: 'Choose between Codebase or Branch scan mode',
       },
       {
-        label: '$(edit) Open Project Lino Configs',
-        detail: 'Edit .lino/rules.json or global extension config',
+        label: '$(edit) Open Project Cscan Configs',
+        detail: 'Edit .cscan/rules.json or global extension config',
       },
     ];
 
     const selected = await vscode.window.showQuickPick(mainMenuItems, {
-      placeHolder: 'Lino Settings',
+      placeHolder: 'Cscan Settings',
       ignoreFocusOut: false,
     });
 
@@ -46,14 +46,14 @@ export function createOpenSettingsMenuCommand(
       return;
     }
 
-    if (selected.label.includes('Open Project Lino Configs')) {
-      await openProjectLinoConfigs(context);
+    if (selected.label.includes('Open Project Cscan Configs')) {
+      await openProjectCscanConfigs(context);
       return;
     }
   });
 }
 
-async function openProjectLinoConfigs(context: vscode.ExtensionContext) {
+async function openProjectCscanConfigs(context: vscode.ExtensionContext) {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
 
   if (!workspaceFolder) {
@@ -81,7 +81,7 @@ async function openProjectLinoConfigs(context: vscode.ExtensionContext) {
     logger.debug('Global config not found');
   }
 
-  vscode.window.showErrorMessage('No Lino configuration found. Create one via "Manage Rules" first.');
+  vscode.window.showErrorMessage('No Cscan configuration found. Create one via "Manage Rules" first.');
 }
 
 async function showScanSettingsMenu(
@@ -114,7 +114,7 @@ async function showScanSettingsMenu(
   if (selected.label.includes('Codebase')) {
     searchProvider.setResults([]);
     currentScanModeRef.current = 'workspace';
-    context.workspaceState.update('lino.scanMode', 'workspace');
+    context.workspaceState.update('cscan.scanMode', 'workspace');
     vscode.commands.executeCommand('setContext', getContextKey('linoScanMode'), 'workspace');
     invalidateCache();
     updateStatusBar();
@@ -198,12 +198,12 @@ async function showScanSettingsMenu(
       if (!selectedBranch || !selectedBranch.detail) return;
 
       currentCompareBranchRef.current = selectedBranch.detail;
-      context.workspaceState.update('lino.compareBranch', currentCompareBranchRef.current);
+      context.workspaceState.update('cscan.compareBranch', currentCompareBranchRef.current);
     }
 
     searchProvider.setResults([]);
     currentScanModeRef.current = 'branch';
-    context.workspaceState.update('lino.scanMode', 'branch');
+    context.workspaceState.update('cscan.scanMode', 'branch');
     vscode.commands.executeCommand('setContext', getContextKey('linoScanMode'), 'branch');
     invalidateCache();
     updateStatusBar();

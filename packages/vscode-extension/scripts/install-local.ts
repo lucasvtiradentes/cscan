@@ -115,8 +115,8 @@ function applyDevTransformations(pkg: Record<string, unknown>): Record<string, u
       if (cmd.command.startsWith(`${CONTEXT_PREFIX}.`)) {
         cmd.command = cmd.command.replace(`${CONTEXT_PREFIX}.`, `${addDevSuffix(CONTEXT_PREFIX)}.`);
       }
-      if (cmd.title && cmd.title.startsWith('Lino:')) {
-        cmd.title = cmd.title.replace('Lino:', 'Lino (Dev):');
+      if (cmd.title && cmd.title.startsWith('Cscan:')) {
+        cmd.title = cmd.title.replace('Cscan:', 'Cscan (Dev):');
       }
       if (cmd.enablement) {
         cmd.enablement = cmd.enablement.replace(/(\w+)(?=\s|$|==)/g, (match) => {

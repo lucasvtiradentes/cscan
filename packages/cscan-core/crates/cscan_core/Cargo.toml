@@ -1,5 +1,5 @@
 [package]
-name = "lino_core"
+name = "cscan_core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

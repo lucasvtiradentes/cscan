@@ -52,7 +52,7 @@ export function createFindIssueCommand(
 
     const configToPass = hasLocal ? undefined : effectiveConfig;
     if (hasLocal) {
-      logger.info('Using local config from .lino/rules.json');
+      logger.info('Using local config from .cscan/rules.json');
     } else {
       logger.info('Using global config from extension storage');
     }
@@ -70,7 +70,7 @@ export function createFindIssueCommand(
           await vscode.commands.executeCommand(getCommandId('openSettingsMenu'));
         } else if (action === 'Switch to Workspace Mode') {
           currentScanModeRef.current = 'workspace';
-          context.workspaceState.update('lino.scanMode', 'workspace');
+          context.workspaceState.update('cscan.scanMode', 'workspace');
           vscode.commands.executeCommand('setContext', getContextKey('linoScanMode'), 'workspace');
           await updateStatusBar();
           await vscode.commands.executeCommand(getCommandId('findIssue'), { silent: true });
@@ -176,7 +176,7 @@ export function createFindIssueCommand(
               uriString: uri.toString(),
             };
           });
-          context.workspaceState.update('lino.cachedResults', serializedResults);
+          context.workspaceState.update('cscan.cachedResults', serializedResults);
           updateBadge();
 
           if (searchProvider.viewMode === 'tree') {

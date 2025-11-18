@@ -11,7 +11,7 @@ pub mod utils;
 pub mod watcher;
 
 pub use cache::FileCache;
-pub use config::{CompiledRuleConfig, LinoConfig, RuleConfig, RuleType};
+pub use config::{CompiledRuleConfig, CscanConfig, RuleConfig, RuleType};
 pub use parser::parse_file;
 pub use registry::RuleRegistry;
 pub use rules::{get_all_rule_metadata, RegexRule, Rule, RuleCategory, RuleMetadata};

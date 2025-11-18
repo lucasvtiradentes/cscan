@@ -30,17 +30,17 @@
         "Cargo.lock"
       ]
     },
-    "lino-core#build": {
+    "cscan-core#build": {
       "outputLogs": "new-only",
       "outputs": [
         "target/release/**"
       ]
     },
-    "lino-vscode#build": {
+    "cscan-vscode#build": {
       "outputLogs": "new-only",
-      "dependsOn": ["lino-core#build"],
+      "dependsOn": ["cscan-core#build"],
       "outputs": ["out/**", "binaries/**"],
-      "inputs": ["./src/**", "./esbuild.config.ts", "./package.json", "../lino-core/target/release/**"]
+      "inputs": ["./src/**", "./esbuild.config.ts", "./package.json", "../cscan-core/target/release/**"]
     },
     "test": {
       "outputLogs": "new-only",

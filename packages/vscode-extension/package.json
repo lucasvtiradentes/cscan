@@ -1,28 +1,28 @@
 {
-  "name": "lino-vscode",
-  "displayName": "Lino",
-  "description": "High-performance TypeScript linter with custom rules, Git integration, and instant LLM code quality feedback",
+  "name": "cscan-vscode",
+  "displayName": "cscan",
+  "description": "High-performance TypeScript code quality scanner with custom rules, Git integration, and instant LLM feedback",
   "version": "1.0.0",
   "publisher": "lucasvtiradentes",
   "license": "MIT",
   "icon": "resources/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucasvtiradentes/lino"
+    "url": "https://github.com/lucasvtiradentes/cscan"
   },
   "bugs": {
-    "url": "https://github.com/lucasvtiradentes/lino/issues"
+    "url": "https://github.com/lucasvtiradentes/cscan/issues"
   },
-  "homepage": "https://github.com/lucasvtiradentes/lino#readme",
+  "homepage": "https://github.com/lucasvtiradentes/cscan#readme",
   "engines": {
     "vscode": "^1.100.0"
   },
   "categories": ["Linters", "Programming Languages"],
   "keywords": [
-    "linter",
+    "code-quality",
+    "scanner",
     "typescript",
     "tsx",
-    "code-quality",
     "ast",
     "rust",
     "performance",
@@ -55,16 +55,16 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "lino",
-          "title": "Lino",
+          "id": "cscan",
+          "title": "cscan",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "lino": [
+      "cscan": [
         {
-          "id": "linoExplorer",
+          "id": "cscanExplorer",
           "name": "Issues",
           "icon": "resources/icon.svg"
         }
@@ -72,95 +72,95 @@
     },
     "viewsWelcome": [
       {
-        "view": "linoExplorer",
+        "view": "cscanExplorer",
         "contents": "No issues found.",
         "when": "workbenchState != empty"
       },
       {
-        "view": "linoExplorer",
+        "view": "cscanExplorer",
         "contents": "Open a folder to start scanning for issues.\n[Open Folder](command:vscode.openFolder)",
         "when": "workbenchState == empty"
       }
     ],
     "commands": [
       {
-        "command": "lino.findIssue",
+        "command": "cscan.findIssue",
         "title": "Scan Workspace",
         "icon": "$(search)"
       },
       {
-        "command": "lino.refresh",
+        "command": "cscan.refresh",
         "title": "Scan Workspace",
         "icon": "$(refresh)"
       },
       {
-        "command": "lino.hardScan",
-        "title": "Lino: Hard Scan (Clear Cache & Rescan)",
+        "command": "cscan.hardScan",
+        "title": "cscan: Hard Scan (Clear Cache & Rescan)",
         "icon": "$(debug-restart)"
       },
       {
-        "command": "lino.setGroupByDefault",
+        "command": "cscan.setGroupByDefault",
         "title": "No Grouping",
         "icon": "$(close-all)"
       },
       {
-        "command": "lino.setGroupByRule",
+        "command": "cscan.setGroupByRule",
         "title": "Group by Rule",
         "icon": "$(group-by-ref-type)"
       },
       {
-        "command": "lino.setListView",
+        "command": "cscan.setListView",
         "title": "View as List",
         "icon": "$(list-flat)",
-        "enablement": "linoViewMode == tree"
+        "enablement": "cscanViewMode == tree"
       },
       {
-        "command": "lino.setTreeView",
+        "command": "cscan.setTreeView",
         "title": "View as Tree",
         "icon": "$(list-tree)",
-        "enablement": "linoViewMode == list"
+        "enablement": "cscanViewMode == list"
       },
       {
-        "command": "lino.openFile",
+        "command": "cscan.openFile",
         "title": "Open File"
       },
       {
-        "command": "lino.copyPath",
+        "command": "cscan.copyPath",
         "title": "Copy Path",
         "icon": "$(files)"
       },
       {
-        "command": "lino.copyRelativePath",
+        "command": "cscan.copyRelativePath",
         "title": "Copy Relative Path"
       },
       {
-        "command": "lino.openSettingsMenu",
-        "title": "Lino: Open Settings"
+        "command": "cscan.openSettingsMenu",
+        "title": "cscan: Open Settings"
       },
       {
-        "command": "lino.goToNextIssue",
-        "title": "Lino: Go to Next Issue",
+        "command": "cscan.goToNextIssue",
+        "title": "cscan: Go to Next Issue",
         "icon": "$(arrow-down)"
       },
       {
-        "command": "lino.goToPreviousIssue",
-        "title": "Lino: Go to Previous Issue",
+        "command": "cscan.goToPreviousIssue",
+        "title": "cscan: Go to Previous Issue",
         "icon": "$(arrow-up)"
       },
       {
-        "command": "lino.showLogs",
-        "title": "Lino: Show Logs",
+        "command": "cscan.showLogs",
+        "title": "cscan: Show Logs",
         "icon": "$(output)"
       }
     ],
     "keybindings": [
       {
-        "command": "lino.goToNextIssue",
+        "command": "cscan.goToNextIssue",
         "key": "f8",
         "when": "editorTextFocus"
       },
       {
-        "command": "lino.goToPreviousIssue",
+        "command": "cscan.goToPreviousIssue",
         "key": "shift+f8",
         "when": "editorTextFocus"
       }
@@ -168,67 +168,67 @@
     "menus": {
       "view/title": [
         {
-          "command": "lino.refresh",
-          "when": "view == linoExplorer && !linoSearching",
+          "command": "cscan.refresh",
+          "when": "view == cscanExplorer && !cscanSearching",
           "group": "navigation@10"
         },
         {
-          "command": "lino.setGroupByDefault",
-          "when": "view == linoExplorer && linoGroupMode == rule",
+          "command": "cscan.setGroupByDefault",
+          "when": "view == cscanExplorer && cscanGroupMode == rule",
           "group": "navigation@20"
         },
         {
-          "command": "lino.setGroupByRule",
-          "when": "view == linoExplorer && linoGroupMode == default",
+          "command": "cscan.setGroupByRule",
+          "when": "view == cscanExplorer && cscanGroupMode == default",
           "group": "navigation@20"
         },
         {
-          "command": "lino.setListView",
-          "when": "view == linoExplorer && linoViewMode == tree",
+          "command": "cscan.setListView",
+          "when": "view == cscanExplorer && cscanViewMode == tree",
           "group": "navigation@30"
         },
         {
-          "command": "lino.setTreeView",
-          "when": "view == linoExplorer && linoViewMode == list",
+          "command": "cscan.setTreeView",
+          "when": "view == cscanExplorer && cscanViewMode == list",
           "group": "navigation@30"
         }
       ],
       "view/item/context": [
         {
-          "command": "lino.copyPath",
-          "when": "view == linoExplorer && viewItem == LinoNodeFile",
+          "command": "cscan.copyPath",
+          "when": "view == cscanExplorer && viewItem == LinoNodeFile",
           "group": "navigation"
         },
         {
-          "command": "lino.copyPath",
-          "when": "view == linoExplorer && viewItem == LinoNodeFile",
+          "command": "cscan.copyPath",
+          "when": "view == cscanExplorer && viewItem == LinoNodeFile",
           "group": "inline"
         },
         {
-          "command": "lino.copyRelativePath",
-          "when": "view == linoExplorer && viewItem == LinoNodeFile",
+          "command": "cscan.copyRelativePath",
+          "when": "view == cscanExplorer && viewItem == LinoNodeFile",
           "group": "9_cutcopypaste"
         }
       ],
       "commandPalette": [
         {
-          "command": "lino.openFile",
+          "command": "cscan.openFile",
           "when": "false"
         },
         {
-          "command": "lino.copyPath",
+          "command": "cscan.copyPath",
           "when": "false"
         },
         {
-          "command": "lino.copyRelativePath",
+          "command": "cscan.copyRelativePath",
           "when": "false"
         },
         {
-          "command": "lino.refresh",
+          "command": "cscan.refresh",
           "when": "false"
         },
         {
-          "command": "lino.openSettingsMenu",
+          "command": "cscan.openSettingsMenu",
           "when": "false"
         }
       ]

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import * as vscode from 'vscode';
 import { logger } from '../utils/logger';
 
-export interface LinoConfig {
+export interface CscanConfig {
   rules: Record<string, any>;
   include: string[];
   exclude: string[];
@@ -35,7 +35,7 @@ export async function hasLocalConfig(workspacePath: string): Promise<boolean> {
   }
 }
 
-export async function loadConfig(configPath: vscode.Uri): Promise<LinoConfig | null> {
+export async function loadConfig(configPath: vscode.Uri): Promise<CscanConfig | null> {
   try {
     const data = await vscode.workspace.fs.readFile(configPath);
     return JSON.parse(Buffer.from(data).toString('utf8'));
@@ -62,7 +62,7 @@ export async function getEffectiveConfigPath(
 export async function loadEffectiveConfig(
   context: vscode.ExtensionContext,
   workspacePath: string,
-): Promise<LinoConfig | null> {
+): Promise<CscanConfig | null> {
   const configPath = await getEffectiveConfigPath(context, workspacePath);
   return loadConfig(configPath);
 }
@@ -70,7 +70,7 @@ export async function loadEffectiveConfig(
 export async function saveGlobalConfig(
   context: vscode.ExtensionContext,
   workspacePath: string,
-  config: LinoConfig,
+  config: CscanConfig,
 ): Promise<void> {
   const configPath = getGlobalConfigPath(context, workspacePath);
   const configDir = vscode.Uri.joinPath(configPath, '..');
@@ -81,7 +81,7 @@ export async function saveGlobalConfig(
   logger.info(`Saved global config for workspace: ${workspacePath} at ${configPath.fsPath}`);
 }
 
-export async function saveLocalConfig(workspacePath: string, config: LinoConfig): Promise<void> {
+export async function saveLocalConfig(workspacePath: string, config: CscanConfig): Promise<void> {
   const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.lino');
   const localConfigPath = getLocalConfigPath(workspacePath);
 
@@ -91,7 +91,7 @@ export async function saveLocalConfig(workspacePath: string, config: LinoConfig)
   logger.info(`Saved local config for workspace: ${workspacePath}`);
 }
 
-export function getDefaultConfig(): LinoConfig {
+export function getDefaultConfig(): CscanConfig {
   return {
     rules: {},
     include: ['**/*.ts', '**/*.tsx'],
@@ -99,13 +99,13 @@ export function getDefaultConfig(): LinoConfig {
   };
 }
 
-const AUTO_MANAGED_MARKER = '// AUTO-MANAGED BY LINO EXTENSION - DO NOT EDIT THIS LINE';
+const AUTO_MANAGED_MARKER = '// AUTO-MANAGED BY CSCAN EXTENSION - DO NOT EDIT THIS LINE';
 
 export function isAutoManagedConfig(configContent: string): boolean {
   return configContent.includes(AUTO_MANAGED_MARKER);
 }
 
-export function addAutoManagedMarker(config: LinoConfig): string {
+export function addAutoManagedMarker(config: CscanConfig): string {
   const lines = JSON.stringify(config, null, 2).split('\n');
   lines.splice(1, 0, `  "${AUTO_MANAGED_MARKER}": true,`);
   return lines.join('\n');
@@ -137,7 +137,7 @@ export async function syncGlobalToLocal(context: vscode.ExtensionContext, worksp
   const configWithMarker = addAutoManagedMarker(globalConfig);
   await vscode.workspace.fs.writeFile(localPath, Buffer.from(configWithMarker));
 
-  logger.info(`Synced global config to local .lino/rules.json for ${workspacePath}`);
+  logger.info(`Synced global config to local .cscan/rules.json for ${workspacePath}`);
 }
 
 export async function shouldSyncToLocal(workspacePath: string): Promise<boolean> {
@@ -170,7 +170,7 @@ export async function ensureLocalConfigForScan(
     }
 
     await syncGlobalToLocal(context, workspacePath);
-    logger.info('Synced global config to local .lino/rules.json for Rust scanner');
+    logger.info('Synced global config to local .cscan/rules.json for Rust scanner');
     return true;
   }
 }

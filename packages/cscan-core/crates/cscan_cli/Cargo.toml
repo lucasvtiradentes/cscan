@@ -1,5 +1,5 @@
 [package]
-name = "lino_server"
+name = "cscan_cli"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,16 +7,13 @@ license.workspace = true
 repository.workspace = true
 
 [[bin]]
-name = "lino-server"
+name = "cscan"
 path = "src/main.rs"
 
 [dependencies]
-lino_core = { path = "../lino_core" }
+cscan_core = { path = "../cscan_core" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 anyhow = { workspace = true }
-time = { workspace = true }
-flate2 = "1.0"
-base64 = "0.21"

@@ -1,8 +1,8 @@
 <a name="TOC"></a>
 
 <div align="center">
-<img width="128" src="packages/vscode-extension/resources/icon.svg" alt="Lino logo">
-<h4>Lino</h4>
+<img width="128" src="packages/vscode-extension/resources/icon.svg" alt="cscan logo">
+<h4>cscan</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>
@@ -15,7 +15,7 @@
 
 ## 🎺 Overview
 
-High-performance TypeScript linting platform designed for instant LLM code quality validation. Branch-based scanning shows exactly which issues were introduced in your current work, while fully customizable rules let you enforce your project's specific conventions - whether you prefer types over interfaces, ban barrel files, or require absolute imports.
+High-performance TypeScript code scanning platform designed for instant LLM code quality validation. Branch-based scanning shows exactly which issues were introduced in your current work, while fully customizable rules let you enforce your project's specific conventions - whether you prefer types over interfaces, ban barrel files, or require absolute imports.
 
 <a name="TOC"></a>
 
@@ -23,15 +23,15 @@ High-performance TypeScript linting platform designed for instant LLM code quali
 
 **Instant LLM Code Quality Feedback**
 
-When working with LLMs (Claude, GPT, etc.), you need to spot code quality issues immediately - before they accumulate. Lino provides instant, per-branch visibility into how good/bad the LLM-generated code is, saving you time by knowing exactly where to ask for corrections.
+When working with LLMs (Claude, GPT, etc.), you need to spot code quality issues immediately - before they accumulate. cscan provides instant, per-branch visibility into how good/bad the LLM-generated code is, saving you time by knowing exactly where to ask for corrections.
 
 **Project-Specific Conventions**
 
-Every codebase has its own rules: some prefer `type` over `interface`, others ban barrel files, some require absolute imports. Lino lets you define these conventions in `.lino/rules.json` and enforce them automatically - whether the code is written by you, your team, or an LLM.
+Every codebase has its own rules: some prefer `type` over `interface`, others ban barrel files, some require absolute imports. cscan lets you define these conventions in `.cscan/rules.json` and enforce them automatically - whether the code is written by you, your team, or an LLM.
 
 **Performance Without Compromise**
 
-Traditional TypeScript linters sacrifice speed for extensibility or vice versa. Lino bridges this gap by leveraging Rust's speed for core analysis (SWC-based AST parsing with Rayon parallelism) while providing a TypeScript interface for VSCode integration and custom regex rules.
+Traditional TypeScript code quality scanners sacrifice speed for extensibility or vice versa. cscan bridges this gap by leveraging Rust's speed for core analysis (SWC-based AST parsing with Rayon parallelism) while providing a TypeScript interface for VSCode integration and custom regex rules.
 
 ## ⭐ Features<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>
 
@@ -41,7 +41,7 @@ Traditional TypeScript linters sacrifice speed for extensibility or vice versa. 
 - **Custom Regex Rules** - Create rules for your unique patterns (naming conventions, comment markers, etc.)
 - **AST-based Analysis** - SWC-powered TypeScript/TSX parsing for accurate detection
 - **Configurable Severity** - Error or warning levels per rule - adapt to your project's strictness
-- **Disable Directives** - Inline comments to disable rules (`lino-disable`, `lino-disable-next-line`) when needed
+- **Disable Directives** - Inline comments to disable rules (`cscan-disable`, `cscan-disable-next-line`) when needed
 
 **VSCode Integration**
 - **Tree/List Views** - Hierarchical folder structure or flat file listing
@@ -69,11 +69,11 @@ Traditional TypeScript linters sacrifice speed for extensibility or vice versa. 
 Hybrid Rust + TypeScript architecture with JSON-RPC communication:
 
 ```
-VSCode Extension (TypeScript)         lino-server (Rust)
+VSCode Extension (TypeScript)         cscan-server (Rust)
 ├─ extension.ts              ←→      ├─ JSON-RPC Interface
 │  └─ Extension activation            │  └─ Line-delimited protocol
 ├─ commands/                          │     └─ GZIP compression
-│  ├─ find-issue.ts                   ├─ Scanner (lino_core)
+│  ├─ find-issue.ts                   ├─ Scanner (cscan_core)
 │  ├─ manage-rules.ts                 │  ├─ Rayon parallel processing
 │  └─ settings.ts                     │  ├─ File discovery (ignore crate)
 ├─ sidebar/                           │  └─ Incremental updates
@@ -88,7 +88,7 @@ VSCode Extension (TypeScript)         lino-server (Rust)
 │  └─ logger.ts                       │  ├─ Memory cache (concurrent)
 └─ status-bar/                        │  └─ Disk cache (JSON)
    └─ status-bar-manager.ts           └─ Config System
-                                         ├─ .lino/rules.json
+                                         ├─ .cscan/rules.json
                                          └─ Hash-based invalidation
 ```
 
@@ -103,8 +103,8 @@ VSCode Extension (TypeScript)         lino-server (Rust)
 ### Installation
 
 ```bash
-git clone https://github.com/lucasvtiradentes/lino
-cd lino
+git clone https://github.com/lucasvtiradentes/cscan
+cd cscan
 ./scripts/setup-dev.sh
 ```
 
@@ -119,21 +119,21 @@ Then press `F5` in VSCode to launch Extension Development Host.
 ### Standalone Rust Development
 
 ```bash
-cd packages/lino-core
+cd packages/cscan-core
 cargo watch -x build
 ```
 
 ## 📦 Package Structure<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>
 
-### lino-core (Rust)
+### cscan-core (Rust)
 
 Rust workspace with three crates:
 
-- **`lino_core`** - Core library (Scanner, Parser, Rules, Cache, Config)
-- **`lino_server`** - JSON-RPC server binary (main entry point for VSCode)
-- **`lino_cli`** - CLI binary (planned, currently stub)
+- **`cscan_core`** - Core library (Scanner, Parser, Rules, Cache, Config)
+- **`cscan_server`** - JSON-RPC server binary (main entry point for VSCode)
+- **`cscan_cli`** - CLI binary (planned, currently stub)
 
-[Detailed Documentation →](packages/lino-core/README.md)
+[Detailed Documentation →](packages/cscan-core/README.md)
 
 ### vscode-extension (TypeScript)
 
@@ -157,7 +157,7 @@ pnpm run build                  # Build extension (bundles Rust binary)
 
 **Terminal 1 - Rust auto-rebuild:**
 ```bash
-cd packages/lino-core
+cd packages/cscan-core
 cargo watch -x build
 ```
 
@@ -184,7 +184,7 @@ Targets:
 
 ### Configuration File
 
-Create `.lino/rules.json` to enforce your project's conventions:
+Create `.cscan/rules.json` to enforce your project's conventions:
 
 ```json
 {

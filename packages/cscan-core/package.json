@@ -1,8 +1,8 @@
 {
-  "name": "lino-core",
+  "name": "cscan-core",
   "version": "1.0.0",
   "private": true,
-  "description": "Rust core library for Lino linter",
+  "description": "Rust core library for cscan code quality scanner",
   "scripts": {
     "build": "cargo build --release",
     "build:rust": "cargo build --release",

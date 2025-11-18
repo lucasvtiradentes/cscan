@@ -10,7 +10,7 @@ export class StatusBarManager {
     private currentCompareBranchRef: { current: string },
   ) {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-    this.statusBarItem.command = 'lino.openSettingsMenu';
+    this.statusBarItem.command = 'cscan.openSettingsMenu';
   }
 
   async update(): Promise<void> {
@@ -30,7 +30,7 @@ export class StatusBarManager {
     const branchText = this.currentScanModeRef.current === 'branch' ? ` (${this.currentCompareBranchRef.current})` : '';
     const configWarning = hasConfig ? '' : ' [No rules configured]';
 
-    this.statusBarItem.text = `${icon} Lino: ${modeText}${branchText}${configWarning}`;
+    this.statusBarItem.text = `${icon} Cscan: ${modeText}${branchText}${configWarning}`;
     this.statusBarItem.tooltip = hasConfig
       ? 'Click to change scan settings'
       : 'No rules configured. Click to set up rules.';

@@ -8,7 +8,7 @@ if [ -f "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"
 fi
 
-cd packages/lino-core
+cd packages/cscan-core
 
 TARGETS=(
   "x86_64-unknown-linux-gnu"
@@ -38,4 +38,4 @@ for TARGET in "${TARGETS[@]}"; do
 done
 
 echo "✅ Binary builds completed!"
-echo "📦 Binaries are in: packages/lino-core/target/{target}/release/"
+echo "📦 Binaries are in: packages/cscan-core/target/{target}/release/"

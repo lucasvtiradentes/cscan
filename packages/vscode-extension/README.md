@@ -1,8 +1,8 @@
 <a name="TOC"></a>
 
 <div align="center">
-<img width="128" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/packages/vscode-extension/resources/icon.png" alt="Lino Extension logo">
-<h4>Lino - VS Code Extension</h4>
+<img width="128" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/packages/vscode-extension/resources/icon.png" alt="cscan Extension logo">
+<h4>cscan - VS Code Extension</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>
@@ -11,15 +11,15 @@
 
 </div>
 
-<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/divider.png" /></a>
+<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/divider.png" /></a>
 
 ## 🎺 Overview
 
-VSCode extension for Lino linter with real-time TypeScript/TSX code quality feedback. Features tree/list views, Git integration for incremental scanning, and comprehensive rule management.
+VSCode extension for cscan code quality scanner with real-time TypeScript/TSX code quality feedback. Features tree/list views, Git integration for incremental scanning, and comprehensive rule management.
 
 <a name="TOC"></a>
 
-## ⭐ Features<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## ⭐ Features<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 **View Modes**
 - **Tree View** - Hierarchical folder structure with expandable nodes
@@ -53,24 +53,24 @@ VSCode extension for Lino linter with real-time TypeScript/TSX code quality feed
 - **Parallel Processing** - Multi-core file analysis
 - **GZIP Compression** - 80%+ response size reduction
 
-## 💡 Usage<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 💡 Usage<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Getting Started
 
 1. Open a TypeScript/TSX workspace in VSCode
-2. Click the Lino icon in activity bar
+2. Click the cscan icon in activity bar
 3. Configure rules via settings menu
 4. View issues in sidebar tree
 
 ### Commands
 
 **Command Palette (Ctrl/Cmd + Shift + P):**
-- `Lino: Scan Workspace` - Run full scan
-- `Lino: Hard Scan` - Clear cache and rescan
-- `Lino: Open Settings` - Configure scan mode and rules
-- `Lino: Go to Next Issue` (F8) - Navigate to next issue
-- `Lino: Go to Previous Issue` (Shift+F8) - Navigate to previous issue
-- `Lino: Show Logs` - Open extension log file
+- `cscan: Scan Workspace` - Run full scan
+- `cscan: Hard Scan` - Clear cache and rescan
+- `cscan: Open Settings` - Configure scan mode and rules
+- `cscan: Go to Next Issue` (F8) - Navigate to next issue
+- `cscan: Go to Previous Issue` (Shift+F8) - Navigate to previous issue
+- `cscan: Show Logs` - Open extension log file
 
 **Sidebar Toolbar:**
 - **Refresh** - Re-scan workspace
@@ -79,7 +79,7 @@ VSCode extension for Lino linter with real-time TypeScript/TSX code quality feed
 
 ### Settings Menu
 
-Access via status bar click or `Lino: Open Settings` command:
+Access via status bar click or `cscan: Open Settings` command:
 
 **1. Manage Rules**
 - Multi-select interface with categorized rules
@@ -93,8 +93,8 @@ Access via status bar click or `Lino: Open Settings` command:
   - Choose current branch
   - Select from local/remote branches
 
-**3. Open Project Lino Configs**
-- Open local `.lino/rules.json`
+**3. Open Project cscan Configs**
+- Open local `.cscan/rules.json`
 - Open global config file
 - Create config from template
 
@@ -142,7 +142,7 @@ no-any-type (2 issues)
 
 **Workspace Mode:**
 - Scans all `.ts`/`.tsx` files in workspace
-- Respects `.lino/rules.json` include/exclude patterns
+- Respects `.cscan/rules.json` include/exclude patterns
 - Ideal for full codebase analysis
 
 **Branch Mode:**
@@ -165,7 +165,7 @@ git diff main -- src/index.ts      # Get line ranges
 
 ### Configuration File
 
-Create `.lino/rules.json` in workspace root:
+Create `.cscan/rules.json` in workspace root:
 
 ```json
 {
@@ -199,28 +199,28 @@ Create `.lino/rules.json` in workspace root:
 ```
 
 **Config Locations:**
-- **Local:** `.lino/rules.json` in workspace root (takes precedence)
-- **Global:** `~/.vscode/extensions/.lino-config-{workspace-hash}.json`
+- **Local:** `.cscan/rules.json` in workspace root (takes precedence)
+- **Global:** `~/.vscode/extensions/.cscan-config-{workspace-hash}.json`
 
 ### Disable Directives
 
 Inline comments to disable rules:
 
 ```typescript
-// lino-disable-file
+// cscan-disable-file
 // Disables all rules for entire file
 
-// lino-disable rule1, rule2
+// cscan-disable rule1, rule2
 const x: any = 5;  // This line is ignored
 
-// lino-disable-line rule1
+// cscan-disable-line rule1
 const y: any = 5;  // This line is ignored
 
-// lino-disable-next-line rule1
+// cscan-disable-next-line rule1
 const z: any = 5;  // Next line is ignored
 ```
 
-## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Source Structure
 
@@ -264,16 +264,16 @@ export function activate(context: vscode.ExtensionContext) {
   if (activationKey === currentWorkspace) return;
 
   // 2. Restore workspace state
-  const viewMode = context.workspaceState.get('lino.viewMode', 'list');
-  const groupMode = context.workspaceState.get('lino.groupMode', 'default');
-  const scanMode = context.workspaceState.get('lino.scanMode', 'workspace');
-  const cachedResults = context.workspaceState.get('lino.cachedResults', []);
+  const viewMode = context.workspaceState.get('cscan.viewMode', 'list');
+  const groupMode = context.workspaceState.get('cscan.groupMode', 'default');
+  const scanMode = context.workspaceState.get('cscan.scanMode', 'workspace');
+  const cachedResults = context.workspaceState.get('cscan.cachedResults', []);
 
   // 3. Initialize providers
   const searchProvider = new SearchResultProvider();
   searchProvider.setResults(deserializedResults);
 
-  const treeView = vscode.window.createTreeView('linoExplorer', {
+  const treeView = vscode.window.createTreeView('cscanExplorer', {
     treeDataProvider: searchProvider,
   });
 
@@ -288,7 +288,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // 6. Initial scan after 2s
   setTimeout(() => {
-    vscode.commands.executeCommand('lino.findIssue');
+    vscode.commands.executeCommand('cscan.findIssue');
   }, 2000);
 }
 ```
@@ -313,7 +313,7 @@ export class RustClient {
   async start(): Promise<void> {
     this.process = spawn(binaryPath, [], {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { RUST_LOG: 'lino_core=warn,lino_server=info' }
+      env: { RUST_LOG: 'cscan_core=warn,cscan_server=info' }
     });
 
     // Handle stdout (JSON-RPC responses)
@@ -425,7 +425,7 @@ export async function getModifiedLineRanges(
 }
 ```
 
-## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Build Commands
 
@@ -443,17 +443,17 @@ pnpm run dev                     # Watch mode for development
 pnpm run build
 ```
 
-This bundles the extension and copies it to `~/.vscode/extensions/lino-vscode/`.
+This bundles the extension and copies it to `~/.vscode/extensions/cscan-vscode/`.
 
 **Extension locations:**
-- Development: `~/.vscode/extensions/lino-vscode/`
+- Development: `~/.vscode/extensions/cscan-vscode/`
 - Production: Install from `.vsix` package
 
 ### Development Workflow
 
 **Terminal 1 - Rust auto-rebuild:**
 ```bash
-cd ../../packages/lino-core
+cd ../../packages/cscan-core
 cargo watch -x build
 ```
 
@@ -466,7 +466,7 @@ pnpm run dev
 1. Open `packages/vscode-extension` in VSCode
 2. Press `F5` to launch Extension Development Host
 3. Open a TypeScript workspace in new window
-4. Click Lino icon in activity bar
+4. Click cscan icon in activity bar
 
 ### Package Scripts
 
@@ -515,17 +515,17 @@ The `setup-rust-binary.ts` script:
 Extension sets VSCode context keys for conditional menu visibility:
 
 ```typescript
-vscode.commands.executeCommand('setContext', 'linoViewMode', 'list' | 'tree');
-vscode.commands.executeCommand('setContext', 'linoGroupMode', 'default' | 'rule');
-vscode.commands.executeCommand('setContext', 'linoScanMode', 'workspace' | 'branch');
-vscode.commands.executeCommand('setContext', 'linoSearching', true | false);
+vscode.commands.executeCommand('setContext', 'cscanViewMode', 'list' | 'tree');
+vscode.commands.executeCommand('setContext', 'cscanGroupMode', 'default' | 'rule');
+vscode.commands.executeCommand('setContext', 'cscanScanMode', 'workspace' | 'branch');
+vscode.commands.executeCommand('setContext', 'cscanSearching', true | false);
 ```
 
 **Usage in package.json:**
 ```json
 {
-  "command": "lino.setTreeView",
-  "when": "view == linoExplorer && linoViewMode == list",
+  "command": "cscan.setTreeView",
+  "when": "view == cscanExplorer && cscanViewMode == list",
   "group": "navigation@30"
 }
 ```
@@ -534,14 +534,14 @@ vscode.commands.executeCommand('setContext', 'linoSearching', true | false);
 
 Tree items have `contextValue` for context menu filtering:
 
-- `LinoNodeFolder` - Folder items
-- `LinoNodeFile` - File items (copy path available)
-- `LinoNodeIssue` - Issue items
-- `LinoNodeRuleGroup` - Rule group items
+- `cscanNodeFolder` - Folder items
+- `cscanNodeFile` - File items (copy path available)
+- `cscanNodeIssue` - Issue items
+- `cscanNodeRuleGroup` - Rule group items
 
 ### Logging
 
-Extension logs to `$TMPDIR/linologs.txt`:
+Extension logs to `$TMPDIR/cscanlogs.txt`:
 
 ```typescript
 import { logger } from './common/utils/logger';
@@ -554,6 +554,6 @@ logger.error(`Failed to scan: ${error}`);
 **Log levels:** INFO, DEBUG, WARN, ERROR
 **Format:** `[2025-01-17T10:30:45.123-03:00] [INFO] Extension activated`
 
-## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/.github/image/up_arrow.png" width="22"></a>
+## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](../../LICENSE) file for details.

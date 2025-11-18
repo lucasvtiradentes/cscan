@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { getCommandId } from '../common/constants';
 import {
-  LinoConfig,
+  CscanConfig,
   getDefaultConfig,
   loadEffectiveConfig,
   saveGlobalConfig,
@@ -44,7 +44,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
     const binaryPath = getRustBinaryPath();
     if (!binaryPath) {
-      vscode.window.showErrorMessage('Lino: Rust binary not found. Please build the Rust core first.');
+      vscode.window.showErrorMessage('Cscan: Rust binary not found. Please build the Rust core first.');
       return;
     }
 
@@ -148,7 +148,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       logger.info(`User selected ${enabledRules.size} rules: ${Array.from(enabledRules).join(', ')}`);
 
-      const config: LinoConfig = existingConfig;
+      const config: CscanConfig = existingConfig;
 
       if (!config.rules) {
         config.rules = {};
@@ -178,7 +178,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       if (isUserManaged) {
         await saveLocalConfig(workspacePath, config);
-        logger.info('Updated user-managed local .lino/rules.json');
+        logger.info('Updated user-managed local .cscan/rules.json');
       } else {
         const locationChoice = await vscode.window.showQuickPick(
           [
@@ -191,7 +191,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
             {
               label: '$(file) Project Folder',
               description: 'Local to this project only',
-              detail: 'Creates .lino/rules.json in project (can be committed to git)',
+              detail: 'Creates .cscan/rules.json in project (can be committed to git)',
               value: 'local',
             },
           ],
@@ -214,8 +214,8 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
           vscode.window.showInformationMessage('Rules saved to extension storage');
         } else {
           await saveLocalConfig(workspacePath, config);
-          logger.info('Saved to local .lino/rules.json (user-managed)');
-          vscode.window.showInformationMessage('Rules saved to .lino/rules.json');
+          logger.info('Saved to local .cscan/rules.json (user-managed)');
+          vscode.window.showInformationMessage('Rules saved to .cscan/rules.json');
         }
       }
 
