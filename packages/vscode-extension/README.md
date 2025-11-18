@@ -1,7 +1,7 @@
 <a name="TOC"></a>
 
 <div align="center">
-<img width="128" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/packages/vscode-extension/resources/icon.svg" alt="Lino Extension logo">
+<img width="128" src="https://raw.githubusercontent.com/lucasvtiradentes/lino/main/packages/vscode-extension/resources/icon.png" alt="Lino Extension logo">
 <h4>Lino - VS Code Extension</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
