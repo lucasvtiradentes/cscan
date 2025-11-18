@@ -16,5 +16,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["cscanner-core"]
+  "ignore": ["core"]
 }

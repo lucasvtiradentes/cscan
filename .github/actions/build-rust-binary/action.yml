@@ -36,13 +36,13 @@ runs:
 
     - name: Build binary
       shell: bash
-      working-directory: packages/cscan-core
+      working-directory: packages/core
       run: cargo build --release --target ${{ inputs.target }}
 
     - name: Prepare binary
       shell: bash
       run: |
-        cd packages/cscan-core/target/${{ inputs.target }}/release
+        cd packages/core/target/${{ inputs.target }}/release
         if [[ "${{ inputs.os }}" == "windows-latest" ]]; then
           cp cscan-server.exe cscan-server-${{ inputs.target }}.exe
           echo "BINARY_NAME=cscan-server-${{ inputs.target }}.exe" >> $GITHUB_ENV
@@ -55,4 +55,4 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: binary-${{ inputs.target }}
-        path: packages/cscan-core/target/${{ inputs.target }}/release/${{ env.BINARY_NAME }}
+        path: packages/core/target/${{ inputs.target }}/release/${{ env.BINARY_NAME }}

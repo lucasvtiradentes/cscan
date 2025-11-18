@@ -1,5 +1,5 @@
 {
-  "name": "cscanner-core",
+  "name": "core",
   "version": "1.0.0",
   "private": true,
   "description": "Rust core library for cscanner code quality scanner",

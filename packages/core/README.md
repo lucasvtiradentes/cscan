@@ -1,7 +1,7 @@
 <a name="TOC"></a>
 
 <div align="center">
-<h4>cscan-core</h4>
+<h4>core</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>

@@ -8,7 +8,7 @@ if [ -f "$HOME/.cargo/env" ]; then
     source "$HOME/.cargo/env"
 fi
 
-cd packages/cscan-core
+cd packages/core
 
 TARGETS=(
   "x86_64-unknown-linux-gnu"
@@ -38,7 +38,7 @@ for TARGET in "${TARGETS[@]}"; do
 done
 
 echo "✅ Binary builds completed!"
-echo "📦 Binaries are in: packages/cscan-core/target/{target}/release/"
+echo "📦 Binaries are in: packages/core/target/{target}/release/"
 
 echo ""
 echo "📦 Copying binaries to root binaries folder..."
@@ -47,8 +47,8 @@ mkdir -p binaries
 
 for TARGET in "${TARGETS[@]}"; do
   if [[ "$TARGET" == *"windows"* ]]; then
-    SERVER_PATH="packages/cscan-core/target/$TARGET/release/cscan-server.exe"
-    CLI_PATH="packages/cscan-core/target/$TARGET/release/cscan.exe"
+    SERVER_PATH="packages/core/target/$TARGET/release/cscan-server.exe"
+    CLI_PATH="packages/core/target/$TARGET/release/cscan.exe"
 
     if [ -f "$SERVER_PATH" ]; then
       cp "$SERVER_PATH" "binaries/cscan-server-$TARGET.exe"
@@ -60,8 +60,8 @@ for TARGET in "${TARGETS[@]}"; do
       echo "✅ Copied cscan-$TARGET.exe"
     fi
   else
-    SERVER_PATH="packages/cscan-core/target/$TARGET/release/cscan-server"
-    CLI_PATH="packages/cscan-core/target/$TARGET/release/cscan"
+    SERVER_PATH="packages/core/target/$TARGET/release/cscan-server"
+    CLI_PATH="packages/core/target/$TARGET/release/cscan"
 
     if [ -f "$SERVER_PATH" ]; then
       cp "$SERVER_PATH" "binaries/cscan-server-$TARGET"

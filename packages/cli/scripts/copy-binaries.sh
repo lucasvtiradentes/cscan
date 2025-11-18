@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLI_DIR="$(dirname "$SCRIPT_DIR")"
-CSCAN_CORE_DIR="$CLI_DIR/../cscan-core"
+CSCAN_CORE_DIR="$CLI_DIR/../core"
 
 echo "📦 Copying Rust binary for current platform..."
 

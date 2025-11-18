@@ -7,7 +7,7 @@ Standalone command-line interface for cscan, the high-performance TypeScript/TSX
 ### From Source
 
 ```bash
-cd packages/cscan-core
+cd packages/core
 cargo build --release --bin cscan
 cp target/release/cscan /usr/local/bin/
 ```
@@ -254,7 +254,7 @@ RUST_LOG=debug cscan check
 Build from source:
 
 ```bash
-cd packages/cscan-core
+cd packages/core
 cargo build --bin cscan
 cargo run --bin cscan -- check
 ```
