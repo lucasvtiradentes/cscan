@@ -1,6 +1,6 @@
 {
   "name": "cscanner",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "High-performance TypeScript/TSX code quality scanner - CLI",
   "license": "MIT",
   "type": "module",
@@ -12,7 +12,11 @@
   "bin": {
     "cscanner": "./dist/src/cscanner.js"
   },
-  "files": ["dist", "npm", "postinstall.cjs"],
+  "files": [
+    "dist",
+    "npm",
+    "postinstall.cjs"
+  ],
   "optionalDependencies": {
     "cscanner-linux-x64": "workspace:*",
     "cscanner-linux-arm64": "workspace:*",
