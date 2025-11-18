@@ -87,13 +87,15 @@ impl CscanConfig {
     pub fn validate(&self) -> Result<(), Box<dyn std::error::Error>> {
         let mut errors = Vec::new();
 
+        let builtin_regex_rules = ["no-console-log", "no-todo-comments"];
+
         for (name, rule_config) in &self.rules {
             if rule_config.rule_type == RuleType::Regex {
                 if let Some(pattern) = &rule_config.pattern {
                     if let Err(e) = regex::Regex::new(pattern) {
                         errors.push(format!("Rule '{}' has invalid regex pattern: {}", name, e));
                     }
-                } else {
+                } else if !builtin_regex_rules.contains(&name.as_str()) {
                     errors.push(format!(
                         "Rule '{}' is type 'regex' but has no 'pattern' field",
                         name

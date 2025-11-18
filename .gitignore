@@ -9,6 +9,11 @@ target/
 **/binaries/
 artifacts/
 .vscode/
+dist/
+
+# CLI binaries (generated during build)
+packages/cli/npm/*/cscan
+packages/cli/npm/*/cscan.exe
 
 # FILES ========================================================================
 

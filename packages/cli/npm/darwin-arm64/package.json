@@ -1,0 +1,16 @@
+{
+  "name": "@cscan/darwin-arm64",
+  "version": "1.0.2",
+  "description": "cscan binary for macOS ARM64 (Apple Silicon)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasvtiradentes/cscan.git",
+    "directory": "packages/cli/npm/darwin-arm64"
+  },
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "files": [
+    "cscan"
+  ]
+}

@@ -24,6 +24,25 @@ importers:
         specifier: ^2.6.1
         version: 2.6.1
 
+  packages/cli:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.19.0
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
+
+  packages/cli/npm/darwin-arm64: {}
+
+  packages/cli/npm/darwin-x64: {}
+
+  packages/cli/npm/linux-arm64: {}
+
+  packages/cli/npm/linux-x64: {}
+
+  packages/cli/npm/win32-x64: {}
+
   packages/cscan-core: {}
 
   packages/vscode-extension:

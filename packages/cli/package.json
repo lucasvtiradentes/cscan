@@ -1,0 +1,36 @@
+{
+  "name": "cscan",
+  "version": "1.0.2",
+  "description": "High-performance TypeScript/TSX code quality scanner - CLI",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasvtiradentes/cscan.git",
+    "directory": "packages/cli"
+  },
+  "bin": {
+    "cscan": "./dist/src/cscan.js"
+  },
+  "files": ["dist", "npm"],
+  "optionalDependencies": {
+    "@cscan/linux-x64": "1.0.2",
+    "@cscan/linux-arm64": "1.0.2",
+    "@cscan/darwin-x64": "1.0.2",
+    "@cscan/darwin-arm64": "1.0.2",
+    "@cscan/win32-x64": "1.0.2"
+  },
+  "scripts": {
+    "postinstall": "node ./dist/scripts/postinstall.js",
+    "build": "tsc && ./scripts/copy-binaries.sh",
+    "start": "node ./dist/src/cscan.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check src scripts/*.ts",
+    "format": "biome format --write src scripts/*.ts",
+    "prepublishOnly": "pnpm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  }
+}

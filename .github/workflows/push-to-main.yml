@@ -62,6 +62,7 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,10 +80,53 @@ jobs:
         if: needs.push_to_main_ci.outputs.should_release == 'true'
         run: |
           mkdir -p packages/vscode-extension/out/binaries
-          find artifacts -type f -name 'cscan-server-*' -exec mv {} packages/vscode-extension/out/binaries/ \;
+          find artifacts -type f -name 'cscan-server-*' -exec cp {} packages/vscode-extension/out/binaries/ \;
           chmod +x packages/vscode-extension/out/binaries/cscan-server-* 2>/dev/null || true
           echo "📦 Binaries ready for extension:"
           ls -lah packages/vscode-extension/out/binaries/
+
+      - name: Organize binaries for CLI
+        if: needs.push_to_main_ci.outputs.should_release == 'true'
+        run: |
+          echo "📦 Organizing binaries for CLI packages..."
+
+          # Map Rust targets to npm platform names
+          declare -A PLATFORM_MAP=(
+            ["x86_64-unknown-linux-gnu"]="linux-x64"
+            ["aarch64-unknown-linux-gnu"]="linux-arm64"
+            ["x86_64-apple-darwin"]="darwin-x64"
+            ["aarch64-apple-darwin"]="darwin-arm64"
+            ["x86_64-pc-windows-msvc"]="win32-x64"
+          )
+
+          for rust_target in "${!PLATFORM_MAP[@]}"; do
+            npm_platform="${PLATFORM_MAP[$rust_target]}"
+            dest_dir="packages/cli/npm/$npm_platform"
+
+            # Find cscan binary (not cscan-server)
+            if [[ "$rust_target" == *"windows"* ]]; then
+              binary_pattern="cscan-${rust_target}.exe"
+              dest_name="cscan.exe"
+            else
+              binary_pattern="cscan-${rust_target}"
+              dest_name="cscan"
+            fi
+
+            binary_file=$(find artifacts -type f -name "$binary_pattern" 2>/dev/null | head -1)
+
+            if [ -n "$binary_file" ]; then
+              mkdir -p "$dest_dir"
+              cp "$binary_file" "$dest_dir/$dest_name"
+              chmod +x "$dest_dir/$dest_name" 2>/dev/null || true
+              echo "✅ Copied $npm_platform binary"
+            else
+              echo "⚠️  Binary not found: $binary_pattern"
+            fi
+          done
+
+          echo ""
+          echo "📦 CLI binaries ready:"
+          find packages/cli/npm -type f \( -name "cscan" -o -name "cscan.exe" \) -exec ls -lh {} \;
 
       - name: Create Release Pull Request or Publish
         id: changesets
@@ -91,4 +135,5 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           AZURE_VSCODE_PAT: ${{ secrets.AZURE_VSCODE_PAT }}

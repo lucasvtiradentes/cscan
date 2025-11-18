@@ -1,0 +1,16 @@
+{
+  "name": "@cscan/linux-arm64",
+  "version": "1.0.2",
+  "description": "cscan binary for Linux ARM64",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasvtiradentes/cscan.git",
+    "directory": "packages/cli/npm/linux-arm64"
+  },
+  "os": ["linux"],
+  "cpu": ["arm64"],
+  "files": [
+    "cscan"
+  ]
+}

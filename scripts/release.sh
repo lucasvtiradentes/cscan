@@ -4,6 +4,15 @@ set -e
 echo "🚀 Starting release process..."
 echo "============================================"
 
+# Step 1: Publish npm packages via changesets
+echo ""
+echo "📦 Publishing npm packages..."
+pnpm changeset publish
+
+echo ""
+echo "✅ npm packages published!"
+
+# Step 2: Handle VSCode extension
 VSCODE_PKG="packages/vscode-extension/package.json"
 echo ""
 echo "🔍 Checking VS Code extension state..."

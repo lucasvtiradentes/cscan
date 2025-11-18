@@ -16,6 +16,7 @@
       "**/.git/**",
       "**/.turbo/**",
       "**/binaries/**",
+      "**/npm/**",
       "**/pnpm-lock.yaml"
     ]
   },

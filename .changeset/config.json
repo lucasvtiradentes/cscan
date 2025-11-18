@@ -2,10 +2,20 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [],
+  "fixed": [
+    [
+      "cscan-vscode",
+      "cscan",
+      "@cscan/linux-x64",
+      "@cscan/linux-arm64",
+      "@cscan/darwin-x64",
+      "@cscan/darwin-arm64",
+      "@cscan/win32-x64"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": ["cscan-core"]
 }

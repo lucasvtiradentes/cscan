@@ -47,16 +47,30 @@ mkdir -p binaries
 
 for TARGET in "${TARGETS[@]}"; do
   if [[ "$TARGET" == *"windows"* ]]; then
-    BINARY_PATH="packages/cscan-core/target/$TARGET/release/cscan-server.exe"
-    if [ -f "$BINARY_PATH" ]; then
-      cp "$BINARY_PATH" "binaries/cscan-server-$TARGET.exe"
+    SERVER_PATH="packages/cscan-core/target/$TARGET/release/cscan-server.exe"
+    CLI_PATH="packages/cscan-core/target/$TARGET/release/cscan.exe"
+
+    if [ -f "$SERVER_PATH" ]; then
+      cp "$SERVER_PATH" "binaries/cscan-server-$TARGET.exe"
       echo "✅ Copied cscan-server-$TARGET.exe"
     fi
+
+    if [ -f "$CLI_PATH" ]; then
+      cp "$CLI_PATH" "binaries/cscan-$TARGET.exe"
+      echo "✅ Copied cscan-$TARGET.exe"
+    fi
   else
-    BINARY_PATH="packages/cscan-core/target/$TARGET/release/cscan-server"
-    if [ -f "$BINARY_PATH" ]; then
-      cp "$BINARY_PATH" "binaries/cscan-server-$TARGET"
+    SERVER_PATH="packages/cscan-core/target/$TARGET/release/cscan-server"
+    CLI_PATH="packages/cscan-core/target/$TARGET/release/cscan"
+
+    if [ -f "$SERVER_PATH" ]; then
+      cp "$SERVER_PATH" "binaries/cscan-server-$TARGET"
       echo "✅ Copied cscan-server-$TARGET"
+    fi
+
+    if [ -f "$CLI_PATH" ]; then
+      cp "$CLI_PATH" "binaries/cscan-$TARGET"
+      echo "✅ Copied cscan-$TARGET"
     fi
   fi
 done
