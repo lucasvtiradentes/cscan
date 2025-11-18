@@ -14,7 +14,7 @@
 
 ## 🎺 Overview
 
-High-performance Rust core for TypeScript/TSX code scanning. Provides AST-based analysis via SWC, parallel file processing with Rayon, and JSON-RPC server for VSCode integration.
+High-performance Rust engine for validating code patterns, detecting anti-patterns, and enforcing architectural conventions in TypeScript/TSX. Powered by SWC AST analysis, Rayon parallelism, and JSON-RPC for VSCode integration.
 
 <a name="TOC"></a>
 
@@ -387,36 +387,36 @@ impl DisableDirectives {
 }
 ```
 
-## 📋 Rules<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 📋 Rules: Pattern Validation & Anti-Pattern Detection<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Complete Rule Inventory (23 Rules)
 
-**Type Safety (3 rules)**
-- `no-any-type` - Detects `: any` and `as any` (AST)
-- `no-implicit-any` - Untyped function params with smart inference (AST)
-- `prefer-type-over-interface` - Prefer type aliases over interfaces (AST)
+**Type Safety & Anti-Patterns (3 rules)**
+- `no-any-type` - Anti-pattern: Detects `: any` and `as any` type escape hatches (AST)
+- `no-implicit-any` - Anti-pattern: Untyped function params with smart inference (AST)
+- `prefer-type-over-interface` - Convention: Enforce type aliases over interfaces (AST)
 
-**Variables (3 rules)**
-- `no-var` - Use let/const instead of var (AST)
-- `prefer-const` - Never reassigned let variables (AST)
-- `no-unused-vars` - Declared but unused variables (AST)
+**Variable Conventions (3 rules)**
+- `no-var` - Convention: Use let/const instead of var (AST)
+- `prefer-const` - Pattern: Detect let variables never reassigned (AST)
+- `no-unused-vars` - Anti-pattern: Declared but unused variables (AST)
 
-**Code Quality (7 rules)**
-- `no-console-log` - console.log() statements (Regex)
-- `no-magic-numbers` - Numeric literals except 0, 1, -1 (AST)
-- `no-empty-function` - Empty function bodies (AST)
-- `no-empty-class` - Empty classes (AST)
-- `no-todo-comments` - TODO/FIXME/HACK/XXX/NOTE/BUG markers (Regex)
-- `no-nested-ternary` - Nested ternary operators (AST)
-- `max-function-length` - Max 50 statements per function (AST)
+**Code Quality & Anti-Patterns (7 rules)**
+- `no-console-log` - Anti-pattern: Debug console.log() statements (Regex)
+- `no-magic-numbers` - Anti-pattern: Hardcoded numeric literals except 0, 1, -1 (AST)
+- `no-empty-function` - Anti-pattern: Empty function bodies (AST)
+- `no-empty-class` - Anti-pattern: Empty class declarations (AST)
+- `no-todo-comments` - Pattern: Detect TODO/FIXME/HACK/XXX/NOTE/BUG markers (Regex)
+- `no-nested-ternary` - Anti-pattern: Nested ternary operators reduce readability (AST)
+- `max-function-length` - Convention: Max 50 statements per function (AST)
 
-**Imports (6 rules)**
-- `no-relative-imports` - Enforce absolute imports (AST)
-- `no-absolute-imports` - Enforce relative imports (AST)
-- `no-alias-imports` - Disallow @ prefix imports (AST)
-- `no-duplicate-imports` - Same module imported twice (AST)
-- `no-dynamic-import` - Disallow import() calls (AST)
-- `no-nested-require` - Require top-level require() only (AST)
+**Import Conventions (6 rules)**
+- `no-relative-imports` - Convention: Enforce absolute imports (e.g., @/utils) (AST)
+- `no-absolute-imports` - Convention: Enforce relative imports (AST)
+- `no-alias-imports` - Convention: Disallow @ prefix imports (AST)
+- `no-duplicate-imports` - Anti-pattern: Same module imported multiple times (AST)
+- `no-dynamic-import` - Anti-pattern: Disallow dynamic import() calls (AST)
+- `no-nested-require` - Convention: Require top-level require() only (AST)
 
 **Bug Prevention (3 rules)**
 - `consistent-return` - Return value consistency (AST)

@@ -1,11 +1,11 @@
 export const EXTENSION_PUBLISHER = 'lucasvtiradentes';
-export const EXTENSION_NAME = 'lino-vscode';
+export const EXTENSION_NAME = 'cscan-vscode';
 export const EXTENSION_ID_PROD = `${EXTENSION_PUBLISHER}.${EXTENSION_NAME}`;
 export const EXTENSION_ID_DEV = `${EXTENSION_PUBLISHER}.${EXTENSION_NAME}-dev`;
 export const EXTENSION_DISPLAY_NAME = 'Cscan';
 
-export const CONTEXT_PREFIX = 'lino';
-export const VIEW_CONTAINER_ID = 'lino';
+export const CONTEXT_PREFIX = 'cscan';
+export const VIEW_CONTAINER_ID = 'cscan';
 export const VIEW_ID = 'linoExplorer';
 
 export const DEV_SUFFIX = 'Dev';
@@ -25,7 +25,7 @@ export function getViewId(): string {
   return IS_DEV ? `${VIEW_ID}${DEV_SUFFIX}` : VIEW_ID;
 }
 
-export const BINARY_BASE_NAME = 'lino-server';
+export const BINARY_BASE_NAME = 'cscan--server';
 
 export function getBinaryName(): string {
   return process.platform === 'win32' ? `${BINARY_BASE_NAME}.exe` : BINARY_BASE_NAME;

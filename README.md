@@ -15,33 +15,40 @@
 
 ## 🎺 Overview
 
-High-performance TypeScript code scanning platform designed for instant LLM code quality validation. Branch-based scanning shows exactly which issues were introduced in your current work, while fully customizable rules let you enforce your project's specific conventions - whether you prefer types over interfaces, ban barrel files, or require absolute imports.
-
-<a name="TOC"></a>
+High-performance code quality scanner for enforcing project-specific patterns, detecting anti-patterns, and validating architectural conventions in TypeScript codebases. Built for instant feedback on LLM-generated code with branch-based scanning that shows exactly what changed in your current work.
 
 ## ❓ Motivation<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>
 
-**Instant LLM Code Quality Feedback**
+**Validate Code Patterns & Conventions**
 
-When working with LLMs (Claude, GPT, etc.), you need to spot code quality issues immediately - before they accumulate. cscan provides instant, per-branch visibility into how good/bad the LLM-generated code is, saving you time by knowing exactly where to ask for corrections.
+Every project has architectural rules beyond basic linting: "always use types not interfaces", "no barrel file exports", "absolute imports only", "no nested ternaries", etc. cscan lets you codify these project-specific patterns and anti-patterns as enforceable rules - catching violations before they reach production.
 
-**Project-Specific Conventions**
+**Instant LLM Code Quality Validation**
 
-Every codebase has its own rules: some prefer `type` over `interface`, others ban barrel files, some require absolute imports. cscan lets you define these conventions in `.cscan/rules.json` and enforce them automatically - whether the code is written by you, your team, or an LLM.
+When working with LLMs (Claude, GPT, etc.), you need immediate visibility into code quality issues. cscan's branch-based scanning shows exactly which patterns/anti-patterns were introduced in LLM-generated code, letting you give precise correction feedback before accepting changes.
+
+**Beyond Traditional Linting**
+
+Unlike ESLint/TSLint focused on syntax and best practices, cscan is a **code quality scanner** designed for:
+- Enforcing architectural patterns (import styles, code organization)
+- Detecting project-specific anti-patterns (forbidden constructs, naming violations)
+- Validating coding conventions (type vs interface preferences, file structure rules)
+- Custom regex-based pattern matching for unique project requirements
 
 **Performance Without Compromise**
 
-Traditional TypeScript code quality scanners sacrifice speed for extensibility or vice versa. cscan bridges this gap by leveraging Rust's speed for core analysis (SWC-based AST parsing with Rayon parallelism) while providing a TypeScript interface for VSCode integration and custom regex rules.
+Rust-powered core with SWC AST parsing + Rayon parallelism provides instant feedback, while TypeScript VSCode extension delivers seamless integration with tree views, Git diff analysis, and customizable rule management.
 
 ## ⭐ Features<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>
 
-**Core Linting**
-- **23 Built-in Rules** - Comprehensive coverage across type safety, code quality, variables, imports, and bug prevention
-- **Project-Specific Rules** - Define your conventions: `prefer-type-over-interface`, `no-barrel-files`, `no-relative-imports`, etc.
-- **Custom Regex Rules** - Create rules for your unique patterns (naming conventions, comment markers, etc.)
-- **AST-based Analysis** - SWC-powered TypeScript/TSX parsing for accurate detection
-- **Configurable Severity** - Error or warning levels per rule - adapt to your project's strictness
-- **Disable Directives** - Inline comments to disable rules (`cscan-disable`, `cscan-disable-next-line`) when needed
+**Pattern Validation & Code Quality**
+- **23 Built-in Rules** - Enforce patterns across type safety, code conventions, imports, and architectural decisions
+- **Custom Pattern Detection** - Define project-specific patterns: `prefer-type-over-interface`, `no-relative-imports`, `no-nested-ternary`
+- **Anti-Pattern Detection** - Catch forbidden constructs: `no-any-type`, `no-magic-numbers`, `no-empty-function`
+- **Custom Regex Rules** - Match unique patterns: naming conventions, comment markers, file organization rules
+- **AST-based Analysis** - Structural code analysis via SWC for TypeScript/TSX
+- **Configurable Severity** - Mark violations as errors or warnings based on project strictness
+- **Disable Directives** - Inline comments to suppress rules when intentional (`cscan-disable`, `cscan-disable-next-line`)
 
 **VSCode Integration**
 - **Tree/List Views** - Hierarchical folder structure or flat file listing
@@ -219,13 +226,20 @@ Create `.cscan/rules.json` to enforce your project's conventions:
 }
 ```
 
-**Example: Catching LLM Issues**
+**Example: Pattern Validation in Action**
 ```typescript
-// LLM often generates:
-const data: any = fetchData();        // ❌ Caught by no-any-type
-export interface Config { ... }      // ⚠️  Caught by prefer-type-over-interface
-import { utils } from "../utils";    // ❌ Caught by no-relative-imports
-// TODO: implement error handling    // ⚠️  Caught by custom-todo-pattern
+// Anti-patterns detected:
+const data: any = fetchData();        // ❌ Anti-pattern: no-any-type
+const x = y ? a ? b : c : d;         // ❌ Anti-pattern: no-nested-ternary
+function process() {}                 // ❌ Anti-pattern: no-empty-function
+
+// Convention violations:
+export interface Config { ... }      // ⚠️  Convention: prefer-type-over-interface
+import { utils } from "../utils";    // ❌ Convention: no-relative-imports (use @/utils)
+
+// Pattern matching:
+// TODO: implement error handling    // ⚠️  Pattern: custom-todo-pattern (clean before commit)
+const MAX_SIZE = 100;                 // ✓ Allowed: UPPER_CASE naming pattern
 ```
 
 ## 📜 License<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>

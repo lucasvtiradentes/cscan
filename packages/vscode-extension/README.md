@@ -15,7 +15,7 @@
 
 ## 🎺 Overview
 
-VSCode extension for cscan code quality scanner with real-time TypeScript/TSX code quality feedback. Features tree/list views, Git integration for incremental scanning, and comprehensive rule management.
+VSCode extension for validating code patterns, detecting anti-patterns, and enforcing project conventions in TypeScript/TSX. Provides real-time feedback with tree/list views, Git-based incremental scanning, and customizable rule management for architectural validation.
 
 <a name="TOC"></a>
 
@@ -40,10 +40,11 @@ VSCode extension for cscan code quality scanner with real-time TypeScript/TSX co
 - **Context Menus** - Copy file paths (absolute/relative)
 - **Status Bar** - Shows current scan mode and target branch
 
-**Rule Management**
+**Pattern & Convention Management**
 - **Interactive UI** - Multi-select categorized rule picker
-- **23 Built-in Rules** - Across 6 categories (Type Safety, Variables, Imports, etc.)
-- **Custom Regex Rules** - Define project-specific patterns
+- **23 Built-in Rules** - Pattern validators and anti-pattern detectors across 6 categories
+- **Custom Regex Patterns** - Define project-specific validation patterns
+- **Convention Enforcement** - Import styles, naming patterns, architectural rules
 - **Global vs Local Config** - Workspace-specific or global defaults
 - **Live Validation** - Config errors shown immediately
 
