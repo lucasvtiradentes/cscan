@@ -1,5 +1,11 @@
 # cscanner-vscode
 
+## 1.0.3
+
+### Patch Changes
+
+- ba828c9: release cli
+
 ## 1.0.2
 
 ### Patch Changes

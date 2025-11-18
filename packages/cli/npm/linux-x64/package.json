@@ -1,6 +1,6 @@
 {
   "name": "cscanner-linux-x64",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "cscanner binary for Linux x64",
   "license": "MIT",
   "repository": {
@@ -8,8 +8,12 @@
     "url": "https://github.com/lucasvtiradentes/cscanner.git",
     "directory": "packages/cli/npm/linux-x64"
   },
-  "os": ["linux"],
-  "cpu": ["x64"],
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
   "files": [
     "cscanner"
   ]
