@@ -14,11 +14,11 @@
   },
   "files": ["dist", "npm"],
   "optionalDependencies": {
-    "@cscan/linux-x64": "1.0.2",
-    "@cscan/linux-arm64": "1.0.2",
-    "@cscan/darwin-x64": "1.0.2",
-    "@cscan/darwin-arm64": "1.0.2",
-    "@cscan/win32-x64": "1.0.2"
+    "@cscan/linux-x64": "workspace:*",
+    "@cscan/linux-arm64": "workspace:*",
+    "@cscan/darwin-x64": "workspace:*",
+    "@cscan/darwin-arm64": "workspace:*",
+    "@cscan/win32-x64": "workspace:*"
   },
   "scripts": {
     "postinstall": "node ./dist/scripts/postinstall.js",

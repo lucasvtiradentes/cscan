@@ -32,6 +32,22 @@ importers:
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
+    optionalDependencies:
+      '@cscan/darwin-arm64':
+        specifier: workspace:*
+        version: link:npm/darwin-arm64
+      '@cscan/darwin-x64':
+        specifier: workspace:*
+        version: link:npm/darwin-x64
+      '@cscan/linux-arm64':
+        specifier: workspace:*
+        version: link:npm/linux-arm64
+      '@cscan/linux-x64':
+        specifier: workspace:*
+        version: link:npm/linux-x64
+      '@cscan/win32-x64':
+        specifier: workspace:*
+        version: link:npm/win32-x64
 
   packages/cli/npm/darwin-arm64: {}
 
