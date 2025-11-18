@@ -1,4 +1,4 @@
 {
   "*.{ts,tsx,js,jsx,json}": ["biome format --write"],
-  "packages/cscan-core/**/*.rs": ["sh -c 'cd packages/cscan-core && cargo fmt'"]
+  "packages/core/**/*.rs": ["sh -c 'cd packages/core && cargo fmt'"]
 }

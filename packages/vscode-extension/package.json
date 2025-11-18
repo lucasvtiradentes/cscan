@@ -8,12 +8,12 @@
   "icon": "resources/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucasvtiradentes/cscan"
+    "url": "https://github.com/lucasvtiradentes/cscanner"
   },
   "bugs": {
-    "url": "https://github.com/lucasvtiradentes/cscan/issues"
+    "url": "https://github.com/lucasvtiradentes/cscanner/issues"
   },
-  "homepage": "https://github.com/lucasvtiradentes/cscan#readme",
+  "homepage": "https://github.com/lucasvtiradentes/cscanner#readme",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -55,14 +55,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "cscan",
-          "title": "cscan",
+          "id": "cscanner",
+          "title": "cscanner",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "cscan": [
+      "cscanner": [
         {
           "id": "cscanExplorer",
           "name": "Issues",
@@ -84,83 +84,83 @@
     ],
     "commands": [
       {
-        "command": "cscan.findIssue",
+        "command": "cscanner.findIssue",
         "title": "Scan Workspace",
         "icon": "$(search)"
       },
       {
-        "command": "cscan.refresh",
+        "command": "cscanner.refresh",
         "title": "Scan Workspace",
         "icon": "$(refresh)"
       },
       {
-        "command": "cscan.hardScan",
-        "title": "cscan: Hard Scan (Clear Cache & Rescan)",
+        "command": "cscanner.hardScan",
+        "title": "cscanner: Hard Scan (Clear Cache & Rescan)",
         "icon": "$(debug-restart)"
       },
       {
-        "command": "cscan.setGroupByDefault",
+        "command": "cscanner.setGroupByDefault",
         "title": "No Grouping",
         "icon": "$(close-all)"
       },
       {
-        "command": "cscan.setGroupByRule",
+        "command": "cscanner.setGroupByRule",
         "title": "Group by Rule",
         "icon": "$(group-by-ref-type)"
       },
       {
-        "command": "cscan.setListView",
+        "command": "cscanner.setListView",
         "title": "View as List",
         "icon": "$(list-flat)",
         "enablement": "cscanViewMode == tree"
       },
       {
-        "command": "cscan.setTreeView",
+        "command": "cscanner.setTreeView",
         "title": "View as Tree",
         "icon": "$(list-tree)",
         "enablement": "cscanViewMode == list"
       },
       {
-        "command": "cscan.openFile",
+        "command": "cscanner.openFile",
         "title": "Open File"
       },
       {
-        "command": "cscan.copyPath",
+        "command": "cscanner.copyPath",
         "title": "Copy Path",
         "icon": "$(files)"
       },
       {
-        "command": "cscan.copyRelativePath",
+        "command": "cscanner.copyRelativePath",
         "title": "Copy Relative Path"
       },
       {
-        "command": "cscan.openSettingsMenu",
-        "title": "cscan: Open Settings"
+        "command": "cscanner.openSettingsMenu",
+        "title": "cscanner: Open Settings"
       },
       {
-        "command": "cscan.goToNextIssue",
-        "title": "cscan: Go to Next Issue",
+        "command": "cscanner.goToNextIssue",
+        "title": "cscanner: Go to Next Issue",
         "icon": "$(arrow-down)"
       },
       {
-        "command": "cscan.goToPreviousIssue",
-        "title": "cscan: Go to Previous Issue",
+        "command": "cscanner.goToPreviousIssue",
+        "title": "cscanner: Go to Previous Issue",
         "icon": "$(arrow-up)"
       },
       {
-        "command": "cscan.showLogs",
-        "title": "cscan: Show Logs",
+        "command": "cscanner.showLogs",
+        "title": "cscanner: Show Logs",
         "icon": "$(output)"
       }
     ],
     "keybindings": [
       {
-        "command": "cscan.goToNextIssue",
+        "command": "cscanner.goToNextIssue",
         "key": "f8",
         "when": "editorTextFocus"
       },
       {
-        "command": "cscan.goToPreviousIssue",
+        "command": "cscanner.goToPreviousIssue",
         "key": "shift+f8",
         "when": "editorTextFocus"
       }
@@ -168,67 +168,67 @@
     "menus": {
       "view/title": [
         {
-          "command": "cscan.refresh",
+          "command": "cscanner.refresh",
           "when": "view == cscanExplorer && !cscanSearching",
           "group": "navigation@10"
         },
         {
-          "command": "cscan.setGroupByDefault",
+          "command": "cscanner.setGroupByDefault",
           "when": "view == cscanExplorer && cscanGroupMode == rule",
           "group": "navigation@20"
         },
         {
-          "command": "cscan.setGroupByRule",
+          "command": "cscanner.setGroupByRule",
           "when": "view == cscanExplorer && cscanGroupMode == default",
           "group": "navigation@20"
         },
         {
-          "command": "cscan.setListView",
+          "command": "cscanner.setListView",
           "when": "view == cscanExplorer && cscanViewMode == tree",
           "group": "navigation@30"
         },
         {
-          "command": "cscan.setTreeView",
+          "command": "cscanner.setTreeView",
           "when": "view == cscanExplorer && cscanViewMode == list",
           "group": "navigation@30"
         }
       ],
       "view/item/context": [
         {
-          "command": "cscan.copyPath",
+          "command": "cscanner.copyPath",
           "when": "view == cscanExplorer && viewItem == cscanNodeFile",
           "group": "navigation"
         },
         {
-          "command": "cscan.copyPath",
+          "command": "cscanner.copyPath",
           "when": "view == cscanExplorer && viewItem == cscanNodeFile",
           "group": "inline"
         },
         {
-          "command": "cscan.copyRelativePath",
+          "command": "cscanner.copyRelativePath",
           "when": "view == cscanExplorer && viewItem == cscanNodeFile",
           "group": "9_cutcopypaste"
         }
       ],
       "commandPalette": [
         {
-          "command": "cscan.openFile",
+          "command": "cscanner.openFile",
           "when": "false"
         },
         {
-          "command": "cscan.copyPath",
+          "command": "cscanner.copyPath",
           "when": "false"
         },
         {
-          "command": "cscan.copyRelativePath",
+          "command": "cscanner.copyRelativePath",
           "when": "false"
         },
         {
-          "command": "cscan.refresh",
+          "command": "cscanner.refresh",
           "when": "false"
         },
         {
-          "command": "cscan.openSettingsMenu",
+          "command": "cscanner.openSettingsMenu",
           "when": "false"
         }
       ]

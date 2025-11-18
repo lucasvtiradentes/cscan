@@ -178,7 +178,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       if (isUserManaged) {
         await saveLocalConfig(workspacePath, config);
-        logger.info('Updated user-managed local .cscan/rules.json');
+        logger.info('Updated user-managed local .cscanner/rules.json');
       } else {
         const locationChoice = await vscode.window.showQuickPick(
           [
@@ -191,7 +191,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
             {
               label: '$(file) Project Folder',
               description: 'Local to this project only',
-              detail: 'Creates .cscan/rules.json in project (can be committed to git)',
+              detail: 'Creates .cscanner/rules.json in project (can be committed to git)',
               value: 'local',
             },
           ],
@@ -214,8 +214,8 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
           vscode.window.showInformationMessage('Rules saved to extension storage');
         } else {
           await saveLocalConfig(workspacePath, config);
-          logger.info('Saved to local .cscan/rules.json (user-managed)');
-          vscode.window.showInformationMessage('Rules saved to .cscan/rules.json');
+          logger.info('Saved to local .cscanner/rules.json (user-managed)');
+          vscode.window.showInformationMessage('Rules saved to .cscanner/rules.json');
         }
       }
 

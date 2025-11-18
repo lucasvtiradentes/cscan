@@ -25,7 +25,7 @@ export function createOpenSettingsMenuCommand(
       },
       {
         label: '$(edit) Open Project Cscan Configs',
-        detail: 'Edit .cscan/rules.json or global extension config',
+        detail: 'Edit .cscanner/rules.json or global extension config',
       },
     ];
 
@@ -114,7 +114,7 @@ async function showScanSettingsMenu(
   if (selected.label.includes('Codebase')) {
     searchProvider.setResults([]);
     currentScanModeRef.current = 'workspace';
-    context.workspaceState.update('cscan.scanMode', 'workspace');
+    context.workspaceState.update('cscanner.scanMode', 'workspace');
     vscode.commands.executeCommand('setContext', getContextKey('cscanScanMode'), 'workspace');
     invalidateCache();
     updateStatusBar();
@@ -198,12 +198,12 @@ async function showScanSettingsMenu(
       if (!selectedBranch || !selectedBranch.detail) return;
 
       currentCompareBranchRef.current = selectedBranch.detail;
-      context.workspaceState.update('cscan.compareBranch', currentCompareBranchRef.current);
+      context.workspaceState.update('cscanner.compareBranch', currentCompareBranchRef.current);
     }
 
     searchProvider.setResults([]);
     currentScanModeRef.current = 'branch';
-    context.workspaceState.update('cscan.scanMode', 'branch');
+    context.workspaceState.update('cscanner.scanMode', 'branch');
     vscode.commands.executeCommand('setContext', getContextKey('cscanScanMode'), 'branch');
     invalidateCache();
     updateStatusBar();

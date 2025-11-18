@@ -129,7 +129,7 @@ impl CscanConfig {
     }
 
     pub fn load_from_workspace(workspace: &Path) -> Result<Self, Box<dyn std::error::Error>> {
-        let config_path = workspace.join(".cscan/rules.json");
+        let config_path = workspace.join(".cscanner/rules.json");
         if config_path.exists() {
             Self::load_from_file(&config_path)
         } else {

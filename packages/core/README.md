@@ -10,7 +10,7 @@
 
 </div>
 
-<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/divider.png" /></a>
+<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/divider.png" /></a>
 
 ## 🎺 Overview
 
@@ -18,19 +18,19 @@ High-performance Rust engine for validating code patterns, detecting anti-patter
 
 <a name="TOC"></a>
 
-## 📦 Crate Structure<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 📦 Crate Structure<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 This is a Cargo workspace with three crates:
 
-### cscan_core (Library)
+### core (Library)
 
 Core library providing scanner, parser, rules, cache, and config systems.
 
-**Location:** `crates/cscan_core/`
+**Location:** `crates/core/`
 
 **Key Modules:**
 ```rust
-cscan_core/
+core/
 ├── lib.rs              // Public API exports
 ├── types.rs            // Issue, Severity, ScanResult
 ├── scanner.rs          // Parallel file scanner
@@ -41,7 +41,7 @@ cscan_core/
 ├── watcher.rs          // File system watcher
 ├── utils.rs            // Line/column utilities
 ├── ast_utils.rs        // AST helper functions
-├── disable_comments.rs // cscan-disable directives
+├── disable_comments.rs // cscanner-disable directives
 └── rules/
     ├── mod.rs                      // Rule trait + inventory
     ├── metadata.rs                 // RuleMetadata + categories
@@ -51,21 +51,21 @@ cscan_core/
     └── ... (20 more rules)
 ```
 
-### cscan_server (Binary)
+### cscanner_server (Binary)
 
 JSON-RPC server for VSCode extension communication.
 
-**Binary name:** `cscan-server`
-**Location:** `crates/cscan_server/`
+**Binary name:** `cscanner-server`
+**Location:** `crates/cscanner_server/`
 
-### cscan_cli (Binary - Stub)
+### cscanner_cli (Binary - Stub)
 
 Planned standalone CLI tool (currently stub).
 
-**Binary name:** `cscan`
-**Location:** `crates/cscan_cli/`
+**Binary name:** `cscanner`
+**Location:** `crates/cscanner_cli/`
 
-## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Scanner System
 
@@ -219,7 +219,7 @@ struct CacheEntry {
 impl FileCache {
     pub fn with_config_hash(config_hash: u64) -> Self {
         let cache_dir = PathBuf::from(env::var("HOME").unwrap())
-            .join(".cache/cscan");
+            .join(".cache/cscanner");
 
         let mut cache = Self {
             entries: DashMap::new(),
@@ -227,7 +227,7 @@ impl FileCache {
             cache_dir: Some(cache_dir.clone()),
         };
 
-        // Load from disk: ~/.cache/cscan/cache_{config_hash}.json
+        // Load from disk: ~/.cache/cscanner/cache_{config_hash}.json
         cache.load_from_disk(&cache_dir, config_hash);
         cache
     }
@@ -352,16 +352,16 @@ impl cscanConfig {
 Supports inline rule disabling:
 
 ```typescript
-// cscan-disable-file
+// cscanner-disable-file
 // Disables entire file
 
-// cscan-disable rule1, rule2
+// cscanner-disable rule1, rule2
 const x: any = 5;  // This line is ignored
 
-// cscan-disable-line rule1
+// cscanner-disable-line rule1
 const y: any = 5;  // This line is ignored
 
-// cscan-disable-next-line rule1
+// cscanner-disable-next-line rule1
 const z: any = 5;  // Next line is ignored
 ```
 
@@ -387,7 +387,7 @@ impl DisableDirectives {
 }
 ```
 
-## 📋 Rules: Pattern Validation & Anti-Pattern Detection<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 📋 Rules: Pattern Validation & Anti-Pattern Detection<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Complete Rule Inventory (23 Rules)
 
@@ -535,7 +535,7 @@ impl Rule for PreferConstRule {
 }
 ```
 
-## 🔌 JSON-RPC API<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 🔌 JSON-RPC API<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Protocol
 
@@ -721,7 +721,7 @@ After creating a watcher with `watch` method, the server sends notifications for
 }
 ```
 
-## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Build Commands
 
@@ -735,18 +735,18 @@ cargo watch -x build            # Auto-rebuild on change
 ### Running the Server
 
 ```bash
-cargo run --bin cscan-server
+cargo run --bin cscanner-server
 ```
 
 Then send JSON-RPC requests via stdin:
 
 ```bash
-echo '{"id":1,"method":"scan","params":{"root":"."}}' | cargo run --bin cscan-server
+echo '{"id":1,"method":"scan","params":{"root":"."}}' | cargo run --bin cscanner-server
 ```
 
 ### Adding a New Rule
 
-1. Create `crates/cscan_core/src/rules/my_rule.rs`:
+1. Create `crates/core/src/rules/my_rule.rs`:
 
 ```rust
 use crate::rules::{Rule, RuleMetadata, RuleMetadataRegistration, RuleRegistration};
@@ -794,7 +794,7 @@ impl Visit for MyVisitor {
 }
 ```
 
-2. Add to `crates/cscan_core/src/rules/mod.rs`:
+2. Add to `crates/core/src/rules/mod.rs`:
 
 ```rust
 mod my_rule;
@@ -845,6 +845,6 @@ codegen-units = 1       # Single codegen unit for better optimization
 strip = true            # Strip debug symbols
 ```
 
-## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscan/main/.github/image/up_arrow.png" width="22"></a>
+## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](../../LICENSE) file for details.

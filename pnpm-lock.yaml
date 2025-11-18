@@ -36,19 +36,19 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
     optionalDependencies:
-      '@cscan/darwin-arm64':
+      cscanner-darwin-arm64:
         specifier: workspace:*
         version: link:npm/darwin-arm64
-      '@cscan/darwin-x64':
+      cscanner-darwin-x64:
         specifier: workspace:*
         version: link:npm/darwin-x64
-      '@cscan/linux-arm64':
+      cscanner-linux-arm64:
         specifier: workspace:*
         version: link:npm/linux-arm64
-      '@cscan/linux-x64':
+      cscanner-linux-x64:
         specifier: workspace:*
         version: link:npm/linux-x64
-      '@cscan/win32-x64':
+      cscanner-win32-x64:
         specifier: workspace:*
         version: link:npm/win32-x64
 
@@ -62,7 +62,7 @@ importers:
 
   packages/cli/npm/win32-x64: {}
 
-  packages/cscan-core: {}
+  packages/core: {}
 
   packages/vscode-extension:
     devDependencies:

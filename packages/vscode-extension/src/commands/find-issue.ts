@@ -52,7 +52,7 @@ export function createFindIssueCommand(
 
     const configToPass = hasLocal ? undefined : effectiveConfig;
     if (hasLocal) {
-      logger.info('Using local config from .cscan/rules.json');
+      logger.info('Using local config from .cscanner/rules.json');
     } else {
       logger.info('Using global config from extension storage');
     }
@@ -70,7 +70,7 @@ export function createFindIssueCommand(
           await vscode.commands.executeCommand(getCommandId('openSettingsMenu'));
         } else if (action === 'Switch to Workspace Mode') {
           currentScanModeRef.current = 'workspace';
-          context.workspaceState.update('cscan.scanMode', 'workspace');
+          context.workspaceState.update('cscanner.scanMode', 'workspace');
           vscode.commands.executeCommand('setContext', getContextKey('cscanScanMode'), 'workspace');
           await updateStatusBar();
           await vscode.commands.executeCommand(getCommandId('findIssue'), { silent: true });
@@ -176,7 +176,7 @@ export function createFindIssueCommand(
               uriString: uri.toString(),
             };
           });
-          context.workspaceState.update('cscan.cachedResults', serializedResults);
+          context.workspaceState.update('cscanner.cachedResults', serializedResults);
           updateBadge();
 
           if (searchProvider.viewMode === 'tree') {

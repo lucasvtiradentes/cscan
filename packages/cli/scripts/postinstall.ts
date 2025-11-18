@@ -33,7 +33,7 @@ const platformKey = getPlatformKey();
 
 if (!platformKey) {
   console.warn(
-    `\nWarning: cscan does not have a prebuilt binary for ${process.platform}-${process.arch}\n` +
+    `\nWarning: cscanner does not have a prebuilt binary for ${process.platform}-${process.arch}\n` +
       `Supported platforms:\n` +
       `  - Linux (x64, arm64)\n` +
       `  - macOS (x64, arm64)\n` +
@@ -48,12 +48,12 @@ const isWorkspace = process.env.PNPM_SCRIPT_SRC_DIR !== undefined;
 try {
   require.resolve(packageName);
   if (!isWorkspace) {
-    console.log(`✅ cscan binary installed successfully (${platformKey})`);
+    console.log(`✅ cscanner binary installed successfully (${platformKey})`);
   }
 } catch (e) {
   if (!isWorkspace) {
     console.warn(
-      `\nWarning: Failed to install cscan binary for ${platformKey}\n` +
+      `\nWarning: Failed to install cscanner binary for ${platformKey}\n` +
         `Expected package: ${packageName}\n` +
         `This might happen if optional dependencies were not installed.\n`,
     );

@@ -12,11 +12,11 @@ const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
 const PLATFORM_MAP: Record<string, string> = {
-  'linux-x64': '@cscan/linux-x64',
-  'linux-arm64': '@cscan/linux-arm64',
-  'darwin-x64': '@cscan/darwin-x64',
-  'darwin-arm64': '@cscan/darwin-arm64',
-  'win32-x64': '@cscan/win32-x64',
+  'linux-x64': '@cscanner/linux-x64',
+  'linux-arm64': '@cscanner/linux-arm64',
+  'darwin-x64': '@cscanner/darwin-x64',
+  'darwin-arm64': '@cscanner/darwin-arm64',
+  'win32-x64': '@cscanner/win32-x64',
 };
 
 function getPlatformKey(): string {
@@ -39,7 +39,7 @@ function getPlatformKey(): string {
 
   throw new Error(
     `Unsupported platform: ${platform}-${arch}\n` +
-      `cscan is only available for:\n` +
+      `cscanner is only available for:\n` +
       `  - Linux (x64, arm64)\n` +
       `  - macOS (x64, arm64)\n` +
       `  - Windows (x64)`,
@@ -56,20 +56,20 @@ function getBinaryPath(): string {
     '..',
     'npm',
     platformKey,
-    'cscan' + (process.platform === 'win32' ? '.exe' : ''),
+    'cscanner' + (process.platform === 'win32' ? '.exe' : ''),
   );
   if (existsSync(localPath)) {
     return localPath;
   }
 
   try {
-    const binaryPath = require.resolve(`${packageName}/cscan` + (process.platform === 'win32' ? '.exe' : ''));
+    const binaryPath = require.resolve(`${packageName}/cscanner` + (process.platform === 'win32' ? '.exe' : ''));
     return binaryPath;
   } catch (e) {
     const error = e as Error;
     throw new Error(
-      `Failed to find cscan binary for ${platformKey}\n` +
-        `Please try reinstalling: npm install cscan\n` +
+      `Failed to find cscanner binary for ${platformKey}\n` +
+        `Please try reinstalling: npm install cscanner\n` +
         `Error: ${error.message}`,
     );
   }

@@ -1,5 +1,5 @@
 [package]
-name = "cscan_cli"
+name = "cscanner_cli"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,11 +7,11 @@ license.workspace = true
 repository.workspace = true
 
 [[bin]]
-name = "cscan"
+name = "cscanner"
 path = "src/main.rs"
 
 [dependencies]
-cscan_core = { path = "../cscan_core" }
+core = { path = "../core" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tracing = { workspace = true }

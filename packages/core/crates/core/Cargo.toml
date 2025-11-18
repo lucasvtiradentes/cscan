@@ -1,5 +1,5 @@
 [package]
-name = "cscan_core"
+name = "core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

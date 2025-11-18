@@ -1,16 +1,16 @@
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use colored::*;
-use cscan_core::cache::FileCache;
-use cscan_core::config::CscanConfig;
-use cscan_core::scanner::Scanner;
-use cscan_core::types::Severity;
+use core::cache::FileCache;
+use core::config::CscanConfig;
+use core::scanner::Scanner;
+use core::types::Severity;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 #[derive(Parser)]
-#[command(name = "cscan")]
+#[command(name = "cscanner")]
 #[command(version, about = "High-performance TypeScript/TSX code quality scanner", long_about = None)]
 struct Cli {
     #[command(subcommand)]
@@ -61,12 +61,12 @@ fn cmd_check(path: &Path, no_cache: bool) -> Result<()> {
     let config = match load_config(&root)? {
         Some(cfg) => cfg,
         None => {
-            eprintln!("{}", "Error: No cscan configuration found!".red().bold());
+            eprintln!("{}", "Error: No cscanner configuration found!".red().bold());
             eprintln!();
             eprintln!("Searched for config in:");
             eprintln!(
                 "  • {}",
-                format!("{}/.cscan/rules.json", root.display()).yellow()
+                format!("{}/.cscanner/rules.json", root.display()).yellow()
             );
 
             if let Some(global_path) = get_vscode_global_config_path(&root) {
@@ -76,7 +76,7 @@ fn cmd_check(path: &Path, no_cache: bool) -> Result<()> {
             eprintln!();
             eprintln!(
                 "Run {} to create a default configuration.",
-                "cscan init".cyan()
+                "cscanner init".cyan()
             );
             std::process::exit(1);
         }
@@ -171,17 +171,17 @@ fn cmd_rules(path: &Path) -> Result<()> {
     let (config, config_path) = match load_config_with_path(&root)? {
         Some((cfg, path)) => (cfg, path),
         None => {
-            eprintln!("{}", "Error: No cscan configuration found!".red().bold());
+            eprintln!("{}", "Error: No cscanner configuration found!".red().bold());
             eprintln!();
             eprintln!(
                 "Run {} to create a default configuration.",
-                "cscan init".cyan()
+                "cscanner init".cyan()
             );
             std::process::exit(1);
         }
     };
 
-    println!("{}", "cscan Rules Configuration".cyan().bold());
+    println!("{}", "cscanner Rules Configuration".cyan().bold());
     println!("Config: {}\n", config_path.dimmed());
 
     let mut enabled_rules: Vec<_> = config.rules.iter().filter(|(_, cfg)| cfg.enabled).collect();
@@ -201,8 +201,8 @@ fn cmd_rules(path: &Path) -> Result<()> {
         };
 
         let rule_type = match rule_config.rule_type {
-            cscan_core::config::RuleType::Ast => "AST".cyan(),
-            cscan_core::config::RuleType::Regex => "REGEX".magenta(),
+            core::config::RuleType::Ast => "AST".cyan(),
+            core::config::RuleType::Regex => "REGEX".magenta(),
         };
 
         print!("  {} ", "•".cyan());
@@ -229,7 +229,7 @@ fn cmd_rules(path: &Path) -> Result<()> {
 
 fn cmd_init(path: &Path) -> Result<()> {
     let root = fs::canonicalize(path).context("Failed to resolve path")?;
-    let config_dir = root.join(".cscan");
+    let config_dir = root.join(".cscanner");
     let config_path = config_dir.join("rules.json");
 
     if config_path.exists() {
@@ -239,7 +239,7 @@ fn cmd_init(path: &Path) -> Result<()> {
     }
 
     let default_config = CscanConfig::default();
-    fs::create_dir_all(&config_dir).context("Failed to create .cscan directory")?;
+    fs::create_dir_all(&config_dir).context("Failed to create .cscanner directory")?;
 
     let config_json = serde_json::to_string_pretty(&default_config)?;
     fs::write(&config_path, config_json).context("Failed to write config file")?;
@@ -257,7 +257,7 @@ fn load_config(root: &Path) -> Result<Option<CscanConfig>> {
 }
 
 fn load_config_with_path(root: &Path) -> Result<Option<(CscanConfig, String)>> {
-    let local_path = root.join(".cscan").join("rules.json");
+    let local_path = root.join(".cscanner").join("rules.json");
     if local_path.exists() {
         let config =
             CscanConfig::load_from_file(&local_path).map_err(|e| anyhow::anyhow!("{}", e))?;
@@ -284,7 +284,7 @@ fn get_vscode_global_config_path(root: &Path) -> Option<PathBuf> {
             .join("Code")
             .join("User")
             .join("globalStorage")
-            .join("lucasvtiradentes.cscan-vscode-dev")
+            .join("lucasvtiradentes.cscanner-vscode-dev")
             .join("configs")
             .join(workspace_hash)
             .join("rules.json"),

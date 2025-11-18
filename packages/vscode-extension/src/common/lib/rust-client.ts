@@ -43,7 +43,7 @@ export class RustClient {
         ...process.env,
         NO_COLOR: '1',
         RUST_LOG_STYLE: 'never',
-        RUST_LOG: 'cscan_core=warn,cscan_server=info',
+        RUST_LOG: 'core=warn,cscanner_server=info',
       },
     });
 

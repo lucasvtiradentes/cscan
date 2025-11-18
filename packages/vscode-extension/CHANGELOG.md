@@ -1,4 +1,4 @@
-# cscan-vscode
+# cscanner-vscode
 
 ## 1.0.2
 

@@ -1,16 +1,16 @@
 {
   "name": "cscanner-darwin-x64",
   "version": "1.0.2",
-  "description": "cscan binary for macOS x64",
+  "description": "cscanner binary for macOS x64",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucasvtiradentes/cscan.git",
+    "url": "https://github.com/lucasvtiradentes/cscanner.git",
     "directory": "packages/cli/npm/darwin-x64"
   },
   "os": ["darwin"],
   "cpu": ["x64"],
   "files": [
-    "cscan"
+    "cscanner"
   ]
 }

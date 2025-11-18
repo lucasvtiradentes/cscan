@@ -12,15 +12,14 @@ artifacts/
 dist/
 
 # CLI binaries (generated during build)
-packages/cli/npm/*/cscan
-packages/cli/npm/*/cscan.exe
+packages/cli/npm/*/cscanner
+packages/cli/npm/*/cscanner.exe
 
 # FILES ========================================================================
 
 CLAUDE.md
 *.vsix
 pnpm-lock.yaml
-Cargo.lock
 
 # Turborepo
 .turbo

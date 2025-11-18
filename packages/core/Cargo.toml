@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-  "crates/cscan_core",
-  "crates/cscan_cli",
-  "crates/cscan_server",
+  "crates/core",
+  "crates/cscanner_cli",
+  "crates/cscanner_server",
 ]
 
 [workspace.package]
@@ -11,7 +11,7 @@ version = "1.0.0"
 edition = "2021"
 authors = ["Lucas Vieira <lucasvtiradentes@gmail.com>"]
 license = "MIT"
-repository = "https://github.com/lucasvtiradentes/cscan"
+repository = "https://github.com/lucasvtiradentes/cscanner"
 
 [workspace.dependencies]
 swc_ecma_parser = "27"

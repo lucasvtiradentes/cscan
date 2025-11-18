@@ -1,5 +1,5 @@
 use base64::Engine;
-use cscan_core::{CscanConfig, FileCache, FileWatcher, Scanner};
+use core::{CscanConfig, FileCache, FileWatcher, Scanner};
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use serde::{Deserialize, Serialize};
@@ -178,7 +178,7 @@ fn main() {
             while let Some(event) = watcher.try_recv() {
                 info!("File event: {:?}", event);
 
-                use cscan_core::watcher::FileEvent;
+                use core::watcher::FileEvent;
                 match event {
                     FileEvent::Modified(path) | FileEvent::Created(path) => {
                         if let Some(scanner) = &state.scanner {
@@ -225,7 +225,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
             } else {
                 match CscanConfig::load_from_workspace(&params.root) {
                     Ok(c) => {
-                        info!("Loaded configuration from workspace (.cscan/rules.json)");
+                        info!("Loaded configuration from workspace (.cscanner/rules.json)");
                         c
                     }
                     Err(e) => {
@@ -339,7 +339,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
             }
         }
         "getRulesMetadata" => {
-            use cscan_core::get_all_rule_metadata;
+            use core::get_all_rule_metadata;
 
             let metadata = get_all_rule_metadata();
             Response {
@@ -368,7 +368,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
             } else {
                 match CscanConfig::load_from_workspace(&params.root) {
                     Ok(c) => {
-                        info!("Loaded configuration from workspace (.cscan/rules.json)");
+                        info!("Loaded configuration from workspace (.cscanner/rules.json)");
                         c
                     }
                     Err(e) => {

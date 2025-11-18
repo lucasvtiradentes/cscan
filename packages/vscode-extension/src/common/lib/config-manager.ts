@@ -22,7 +22,7 @@ export function getGlobalConfigPath(context: vscode.ExtensionContext, workspaceP
 }
 
 export function getLocalConfigPath(workspacePath: string): vscode.Uri {
-  return vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscan', 'rules.json');
+  return vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner', 'rules.json');
 }
 
 export async function hasLocalConfig(workspacePath: string): Promise<boolean> {
@@ -82,7 +82,7 @@ export async function saveGlobalConfig(
 }
 
 export async function saveLocalConfig(workspacePath: string, config: CscanConfig): Promise<void> {
-  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscan');
+  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner');
   const localConfigPath = getLocalConfigPath(workspacePath);
 
   await vscode.workspace.fs.createDirectory(localConfigDir);
@@ -99,7 +99,7 @@ export function getDefaultConfig(): CscanConfig {
   };
 }
 
-const AUTO_MANAGED_MARKER = '// AUTO-MANAGED BY CSCAN EXTENSION - DO NOT EDIT THIS LINE';
+const AUTO_MANAGED_MARKER = '// AUTO-MANAGED BY CSCANNER EXTENSION - DO NOT EDIT THIS LINE';
 
 export function isAutoManagedConfig(configContent: string): boolean {
   return configContent.includes(AUTO_MANAGED_MARKER);
@@ -131,13 +131,13 @@ export async function syncGlobalToLocal(context: vscode.ExtensionContext, worksp
     return;
   }
 
-  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscan');
+  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner');
   await vscode.workspace.fs.createDirectory(localConfigDir);
 
   const configWithMarker = addAutoManagedMarker(globalConfig);
   await vscode.workspace.fs.writeFile(localPath, Buffer.from(configWithMarker));
 
-  logger.info(`Synced global config to local .cscan/rules.json for ${workspacePath}`);
+  logger.info(`Synced global config to local .cscanner/rules.json for ${workspacePath}`);
 }
 
 export async function shouldSyncToLocal(workspacePath: string): Promise<boolean> {
@@ -170,7 +170,7 @@ export async function ensureLocalConfigForScan(
     }
 
     await syncGlobalToLocal(context, workspacePath);
-    logger.info('Synced global config to local .cscan/rules.json for Rust scanner');
+    logger.info('Synced global config to local .cscanner/rules.json for Rust scanner');
     return true;
   }
 }

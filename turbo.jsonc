@@ -31,10 +31,10 @@
     "build:rust": {
       "outputLogs": "new-only",
       "outputs": [
-        "target/release/cscan",
-        "target/release/cscan.exe",
-        "target/release/cscan-server",
-        "target/release/cscan-server.exe"
+        "target/release/cscanner",
+        "target/release/cscanner.exe",
+        "target/release/cscanner-server",
+        "target/release/cscanner-server.exe"
       ],
       "inputs": [
         "src/**",
@@ -48,6 +48,12 @@
       "outputs": [
         "target/release/**"
       ]
+    },
+    "cscanner#build": {
+      "outputLogs": "new-only",
+      "dependsOn": ["core#build"],
+      "outputs": ["dist/**", "binaries/**"],
+      "inputs": ["./src/**", "./scripts/**", "./tsconfig.json", "./package.json", "../core/target/release/**"]
     },
     "cscanner-vscode#build": {
       "outputLogs": "new-only",

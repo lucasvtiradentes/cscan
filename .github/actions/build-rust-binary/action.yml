@@ -1,5 +1,5 @@
 name: 'Build Rust Binary'
-description: 'Builds cscan-server binary for a specific target platform'
+description: 'Builds cscanner-server binary for a specific target platform'
 
 inputs:
   target:
@@ -44,11 +44,11 @@ runs:
       run: |
         cd packages/core/target/${{ inputs.target }}/release
         if [[ "${{ inputs.os }}" == "windows-latest" ]]; then
-          cp cscan-server.exe cscan-server-${{ inputs.target }}.exe
-          echo "BINARY_NAME=cscan-server-${{ inputs.target }}.exe" >> $GITHUB_ENV
+          cp cscanner-server.exe cscanner-server-${{ inputs.target }}.exe
+          echo "BINARY_NAME=cscanner-server-${{ inputs.target }}.exe" >> $GITHUB_ENV
         else
-          cp cscan-server cscan-server-${{ inputs.target }}
-          echo "BINARY_NAME=cscan-server-${{ inputs.target }}" >> $GITHUB_ENV
+          cp cscanner-server cscanner-server-${{ inputs.target }}
+          echo "BINARY_NAME=cscanner-server-${{ inputs.target }}" >> $GITHUB_ENV
         fi
 
     - name: Upload binary artifact

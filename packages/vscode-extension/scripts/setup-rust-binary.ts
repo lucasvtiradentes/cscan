@@ -31,7 +31,7 @@ function downloadBinary(target: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
     const version = packageJson.version;
-    const url = `https://github.com/lucasvtiradentes/cscan/releases/download/v${version}/${BINARY_BASE_NAME}-${target}${process.platform === 'win32' ? '.exe' : ''}`;
+    const url = `https://github.com/lucasvtiradentes/cscanner/releases/download/v${version}/${BINARY_BASE_NAME}-${target}${process.platform === 'win32' ? '.exe' : ''}`;
 
     console.log(`Attempting to download Rust binary from: ${url}`);
 
@@ -70,7 +70,7 @@ function downloadBinary(target: string): Promise<boolean> {
 }
 
 function checkLocalBinary(): boolean {
-  const localBinaryPath = path.join(__dirname, '..', '..', 'cscan-core', 'target', 'debug', getBinaryName());
+  const localBinaryPath = path.join(__dirname, '..', '..', 'core', 'target', 'debug', getBinaryName());
 
   if (fs.existsSync(localBinaryPath)) {
     console.log('Found local development Rust binary. Using local build.');
@@ -86,7 +86,7 @@ async function main(): Promise<void> {
   ensureBinaryDir();
 
   if (checkLocalBinary()) {
-    console.log('Cscan: Development mode - using local Rust binary from packages/cscan-core/target/debug/');
+    console.log('Cscan: Development mode - using local Rust binary from packages/core/target/debug/');
     return;
   }
 

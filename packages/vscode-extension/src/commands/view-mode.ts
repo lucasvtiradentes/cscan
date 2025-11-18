@@ -5,7 +5,7 @@ import { SearchResultProvider } from '../sidebar/search-provider';
 export function createSetListViewCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand(getCommandId('setListView'), () => {
     searchProvider.viewMode = 'list';
-    context.workspaceState.update('cscan.viewMode', 'list');
+    context.workspaceState.update('cscanner.viewMode', 'list');
     vscode.commands.executeCommand('setContext', getContextKey('cscanViewMode'), 'list');
   });
 }
@@ -13,7 +13,7 @@ export function createSetListViewCommand(searchProvider: SearchResultProvider, c
 export function createSetTreeViewCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand(getCommandId('setTreeView'), () => {
     searchProvider.viewMode = 'tree';
-    context.workspaceState.update('cscan.viewMode', 'tree');
+    context.workspaceState.update('cscanner.viewMode', 'tree');
     vscode.commands.executeCommand('setContext', getContextKey('cscanViewMode'), 'tree');
   });
 }
@@ -21,7 +21,7 @@ export function createSetTreeViewCommand(searchProvider: SearchResultProvider, c
 export function createSetGroupByDefaultCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand(getCommandId('setGroupByDefault'), () => {
     searchProvider.groupMode = 'default';
-    context.workspaceState.update('cscan.groupMode', 'default');
+    context.workspaceState.update('cscanner.groupMode', 'default');
     vscode.commands.executeCommand('setContext', getContextKey('cscanGroupMode'), 'default');
   });
 }
@@ -29,7 +29,7 @@ export function createSetGroupByDefaultCommand(searchProvider: SearchResultProvi
 export function createSetGroupByRuleCommand(searchProvider: SearchResultProvider, context: vscode.ExtensionContext) {
   return vscode.commands.registerCommand(getCommandId('setGroupByRule'), () => {
     searchProvider.groupMode = 'rule';
-    context.workspaceState.update('cscan.groupMode', 'rule');
+    context.workspaceState.update('cscanner.groupMode', 'rule');
     vscode.commands.executeCommand('setContext', getContextKey('cscanGroupMode'), 'rule');
   });
 }

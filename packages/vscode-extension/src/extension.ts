@@ -25,15 +25,15 @@ export function activate(context: vscode.ExtensionContext) {
   logger.info('Cscan extension activated');
 
   const searchProvider = new SearchResultProvider();
-  const viewModeKey = context.workspaceState.get<'list' | 'tree'>('cscan.viewMode', 'list');
-  const groupModeKey = context.workspaceState.get<'default' | 'rule'>('cscan.groupMode', 'default');
-  const scanModeKey = context.workspaceState.get<'workspace' | 'branch'>('cscan.scanMode', 'workspace');
-  const compareBranch = context.workspaceState.get<string>('cscan.compareBranch', 'main');
+  const viewModeKey = context.workspaceState.get<'list' | 'tree'>('cscanner.viewMode', 'list');
+  const groupModeKey = context.workspaceState.get<'default' | 'rule'>('cscanner.groupMode', 'default');
+  const scanModeKey = context.workspaceState.get<'workspace' | 'branch'>('cscanner.scanMode', 'workspace');
+  const compareBranch = context.workspaceState.get<string>('cscanner.compareBranch', 'main');
 
   searchProvider.viewMode = viewModeKey;
   searchProvider.groupMode = groupModeKey;
 
-  const cachedResults = context.workspaceState.get<any[]>('cscan.cachedResults', []);
+  const cachedResults = context.workspaceState.get<any[]>('cscanner.cachedResults', []);
   const deserializedResults = cachedResults.map((r) => ({
     ...r,
     uri: vscode.Uri.parse(r.uriString),
@@ -139,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
           uriString: uri.toString(),
         };
       });
-      context.workspaceState.update('cscan.cachedResults', serializedResults);
+      context.workspaceState.update('cscanner.cachedResults', serializedResults);
       updateBadge();
     } catch (error) {
       logger.error(`Failed to update single file: ${error}`);
@@ -174,7 +174,7 @@ export function activate(context: vscode.ExtensionContext) {
           uriString: uri.toString(),
         };
       });
-      context.workspaceState.update('cscan.cachedResults', serializedResults);
+      context.workspaceState.update('cscanner.cachedResults', serializedResults);
       updateBadge();
     }
   });
@@ -183,7 +183,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   setTimeout(() => {
     logger.info('Running initial scan after 2s delay...');
-    vscode.commands.executeCommand('cscan.findIssue', { silent: true });
+    vscode.commands.executeCommand('cscanner.findIssue', { silent: true });
   }, 2000);
 }
 

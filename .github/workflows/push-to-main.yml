@@ -84,8 +84,8 @@ jobs:
         if: needs.push_to_main_ci.outputs.should_release == 'true'
         run: |
           mkdir -p packages/vscode-extension/out/binaries
-          find artifacts -type f -name 'cscan-server-*' -exec cp {} packages/vscode-extension/out/binaries/ \;
-          chmod +x packages/vscode-extension/out/binaries/cscan-server-* 2>/dev/null || true
+          find artifacts -type f -name 'cscanner-server-*' -exec cp {} packages/vscode-extension/out/binaries/ \;
+          chmod +x packages/vscode-extension/out/binaries/cscanner-server-* 2>/dev/null || true
           echo "📦 Binaries ready for extension:"
           ls -lah packages/vscode-extension/out/binaries/
 
@@ -107,13 +107,13 @@ jobs:
             npm_platform="${PLATFORM_MAP[$rust_target]}"
             dest_dir="packages/cli/npm/$npm_platform"
 
-            # Find cscan binary (not cscan-server)
+            # Find cscanner binary (not cscanner-server)
             if [[ "$rust_target" == *"windows"* ]]; then
-              binary_pattern="cscan-${rust_target}.exe"
-              dest_name="cscan.exe"
+              binary_pattern="cscanner-${rust_target}.exe"
+              dest_name="cscanner.exe"
             else
-              binary_pattern="cscan-${rust_target}"
-              dest_name="cscan"
+              binary_pattern="cscanner-${rust_target}"
+              dest_name="cscanner"
             fi
 
             binary_file=$(find artifacts -type f -name "$binary_pattern" 2>/dev/null | head -1)
@@ -130,7 +130,7 @@ jobs:
 
           echo ""
           echo "📦 CLI binaries ready:"
-          find packages/cli/npm -type f \( -name "cscan" -o -name "cscan.exe" \) -exec ls -lh {} \;
+          find packages/cli/npm -type f \( -name "cscanner" -o -name "cscanner.exe" \) -exec ls -lh {} \;
 
       - name: Create Release Pull Request or Publish
         id: changesets

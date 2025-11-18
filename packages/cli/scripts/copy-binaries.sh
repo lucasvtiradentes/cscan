@@ -4,7 +4,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLI_DIR="$(dirname "$SCRIPT_DIR")"
-CSCAN_CORE_DIR="$CLI_DIR/../core"
+CSCANNER_CORE_DIR="$CLI_DIR/../core"
 
 echo "📦 Copying Rust binary for current platform..."
 
@@ -33,13 +33,13 @@ if [ -z "$NPM_PLATFORM" ]; then
   exit 0
 fi
 
-SOURCE_PATH="$CSCAN_CORE_DIR/target/release/cscan"
+SOURCE_PATH="$CSCANNER_CORE_DIR/target/release/cscanner"
 if [[ "$NPM_PLATFORM" == win32* ]]; then
   SOURCE_PATH="$SOURCE_PATH.exe"
 fi
 
 DEST_DIR="$CLI_DIR/npm/$NPM_PLATFORM"
-DEST_PATH="$DEST_DIR/cscan"
+DEST_PATH="$DEST_DIR/cscanner"
 if [[ "$NPM_PLATFORM" == win32* ]]; then
   DEST_PATH="$DEST_PATH.exe"
 fi
