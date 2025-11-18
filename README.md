@@ -228,20 +228,6 @@ import { utils } from "../utils";    // ❌ Caught by no-relative-imports
 // TODO: implement error handling    // ⚠️  Caught by custom-todo-pattern
 ```
 
-## 🎯 Performance Status<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>
-
-| Codebase | Phase 0 (TS) | Phase 1 (Rust) | Target (Phase 2) |
-|----------|--------------|----------------|------------------|
-| 100 files | ~2-3s | ~800ms | <500ms |
-| 500 files | ~10s | ~3s | <200ms |
-| 2000 files | ~60s | ~15s | <1s |
-
-**Achieved in Phase 1:**
-- ✅ Rayon parallel processing (5-10x speedup)
-- ✅ File + config hash caching
-- ✅ GZIP compression for large results (80%+ reduction)
-- ⏳ Further optimization needed for Phase 2 targets
-
 ## 📜 License<a href="#TOC"><img align="right" src="./.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](LICENSE) file for details.
