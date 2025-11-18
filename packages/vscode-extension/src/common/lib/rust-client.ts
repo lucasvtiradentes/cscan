@@ -1,8 +1,8 @@
-import { spawn, ChildProcess } from 'child_process';
-import * as vscode from 'vscode';
+import { ChildProcess, spawn } from 'child_process';
 import * as zlib from 'zlib';
+import * as vscode from 'vscode';
+import { FileResult, IssueResult, RuleMetadata, ScanResult } from '../types';
 import { logger } from '../utils/logger';
-import { IssueResult, RuleMetadata, ScanResult, FileResult } from '../types';
 
 interface RpcRequest {
   id: number;

@@ -1,7 +1,12 @@
-.vscode
-.vscode-test
-src
+.vscode/**
+.vscode-test/**
+src/**
 tsconfig.json
-node_modules
+node_modules/**
 .gitignore
 *.vsix
+scripts/**
+**/*.map
+**/*.ts
+!out/**/*.js
+.DS_Store

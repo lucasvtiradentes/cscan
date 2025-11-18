@@ -1,9 +1,9 @@
-import * as vscode from 'vscode';
-import { RustClient } from './rust-client';
-import { LOG_FILE_PATH, logger } from '../utils/logger';
-import { IssueResult } from '../types';
-import { join } from 'node:path';
 import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import * as vscode from 'vscode';
+import { IssueResult } from '../types';
+import { LOG_FILE_PATH, logger } from '../utils/logger';
+import { RustClient } from './rust-client';
 
 let rustClient: RustClient | null = null;
 

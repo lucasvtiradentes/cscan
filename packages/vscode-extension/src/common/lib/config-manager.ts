@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
 import { createHash } from 'node:crypto';
+import * as vscode from 'vscode';
 import { logger } from '../utils/logger';
 
 export interface LinoConfig {

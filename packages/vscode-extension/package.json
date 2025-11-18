@@ -1,28 +1,47 @@
 {
   "name": "lino-vscode",
   "displayName": "Lino",
-  "description": "Code linting and quality checker for TypeScript projects",
+  "description": "High-performance TypeScript linter with custom rules, Git integration, and instant LLM code quality feedback",
   "version": "1.0.0",
   "publisher": "lucasvtiradentes",
+  "license": "MIT",
   "icon": "resources/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/lucasvtiradentes/lino"
   },
+  "bugs": {
+    "url": "https://github.com/lucasvtiradentes/lino/issues"
+  },
+  "homepage": "https://github.com/lucasvtiradentes/lino#readme",
   "engines": {
     "vscode": "^1.100.0"
   },
-  "categories": ["Linters"],
+  "categories": ["Linters", "Programming Languages"],
+  "keywords": [
+    "linter",
+    "typescript",
+    "tsx",
+    "code-quality",
+    "ast",
+    "rust",
+    "performance",
+    "git-integration",
+    "llm",
+    "custom-rules"
+  ],
   "main": "./out/extension.js",
   "scripts": {
-    "compile": "tsc -p ./",
-    "bundle": "npm run script:setup-rust-binary && npm run bundle:ci",
-    "bundle:ci": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify",
-    "build": "pnpm run bundle",
-    "postbuild": "npm run script:install-locally",
-    "postinstall": "npm run script:setup-rust-binary",
-    "script:setup-rust-binary": "tsx extension-scripts/setup-rust-binary.ts",
-    "script:install-locally": "tsx extension-scripts/install-local.ts"
+    "build": "tsx esbuild.config.ts",
+    "postbuild": "tsx scripts/copy-binaries.ts && tsx scripts/install-local.ts",
+    "dev": "tsx esbuild.config.ts --watch",
+    "postinstall": "tsx scripts/setup-rust-binary.ts",
+    "lint": "biome check src",
+    "format": "biome format --write src",
+    "typecheck": "tsc --noEmit",
+    "vscode:prepublish": "pnpm run build",
+    "vscode:package": "vsce package --no-dependencies",
+    "vscode:publish": "vsce publish --no-dependencies"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

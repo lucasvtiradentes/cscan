@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { IssueResult, ViewMode, FolderNode } from '../common/types';
+import { FolderNode, IssueResult, ViewMode } from '../common/types';
 import { getFolderIssueCount } from './tree-builder';
 
 export class RuleGroupItem extends vscode.TreeItem {

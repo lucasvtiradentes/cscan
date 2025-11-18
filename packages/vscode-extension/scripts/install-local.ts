@@ -2,6 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
+if (process.env.CI || process.env.GITHUB_ACTIONS) {
+  console.log('Skipping local installation in CI environment');
+  process.exit(0);
+}
+
 interface PackageJson {
   publisher: string;
   name: string;

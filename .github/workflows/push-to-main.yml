@@ -1,0 +1,81 @@
+name: 'Main Branch & Release'
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+permissions:
+  pull-requests: write
+  contents: write
+  id-token: write
+
+concurrency:
+  group: main-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  push_to_main_ci:
+    name: 'Main CI'
+    uses: ./.github/workflows/callable-ci.yml
+    with:
+      run_lint: true
+      run_build: true
+    secrets:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+  build_rust_binaries:
+    name: 'Build Rust Binaries'
+    needs: [push_to_main_ci]
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          - os: macos-latest
+            target: x86_64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/build-rust-binary
+        with:
+          target: ${{ matrix.target }}
+          os: ${{ matrix.os }}
+
+  release:
+    name: 'Release'
+    needs: [push_to_main_ci, build_rust_binaries]
+    runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: ./.github/actions/setup-and-install
+      - uses: ./.github/actions/prepare-binaries-for-extension
+
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AZURE_VSCODE_PAT: ${{ secrets.AZURE_VSCODE_PAT }}

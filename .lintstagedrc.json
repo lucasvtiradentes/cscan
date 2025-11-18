@@ -1,0 +1,4 @@
+{
+  "*.{ts,tsx,js,jsx,json}": ["biome format --write"],
+  "packages/lino-core/**/*.rs": ["sh -c 'cd packages/lino-core && cargo fmt'"]
+}

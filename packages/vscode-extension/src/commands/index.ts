@@ -1,18 +1,18 @@
 import * as vscode from 'vscode';
 import { SearchResultProvider } from '../sidebar/search-provider';
 import { createFindIssueCommand } from './find-issue';
+import { createGoToNextIssueCommand, createGoToPreviousIssueCommand, resetIssueIndex } from './issue-navigation';
 import { createManageRulesCommand } from './manage-rules';
+import { createCopyPathCommand, createCopyRelativePathCommand, createOpenFileCommand } from './navigation';
+import { createHardScanCommand, createRefreshCommand } from './scan';
 import { createOpenSettingsMenuCommand } from './settings';
+import { createShowLogsCommand } from './show-logs';
 import {
-  createSetListViewCommand,
-  createSetTreeViewCommand,
   createSetGroupByDefaultCommand,
   createSetGroupByRuleCommand,
+  createSetListViewCommand,
+  createSetTreeViewCommand,
 } from './view-mode';
-import { createOpenFileCommand, createCopyPathCommand, createCopyRelativePathCommand } from './navigation';
-import { createRefreshCommand, createHardScanCommand } from './scan';
-import { createGoToNextIssueCommand, createGoToPreviousIssueCommand, resetIssueIndex } from './issue-navigation';
-import { createShowLogsCommand } from './show-logs';
 
 export interface CommandContext {
   searchProvider: SearchResultProvider;

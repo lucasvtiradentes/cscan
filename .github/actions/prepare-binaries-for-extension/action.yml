@@ -1,0 +1,19 @@
+name: 'Prepare Binaries for Extension'
+description: 'Downloads all Rust binaries and organizes them into extension binaries folder'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Download all binaries
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Organize binaries into extension
+      shell: bash
+      run: |
+        mkdir -p packages/vscode-extension/binaries
+        find artifacts -type f -name 'lino-server-*' -exec cp {} packages/vscode-extension/binaries/ \;
+        chmod +x packages/vscode-extension/binaries/lino-server-* 2>/dev/null || true
+        echo "📦 Binaries organized:"
+        ls -lah packages/vscode-extension/binaries/

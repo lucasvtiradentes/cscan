@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import { logger } from './logger';
-import { ModifiedLineRange } from '../types';
 import { execSync } from 'node:child_process';
+import * as vscode from 'vscode';
+import { ModifiedLineRange } from '../types';
+import { logger } from './logger';
 
 type GitExtension = {
   getAPI(version: 1): GitAPI;

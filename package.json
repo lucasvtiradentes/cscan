@@ -3,25 +3,24 @@
   "private": true,
   "version": "1.0.0",
   "description": "High-performance TypeScript linting platform with custom rule support",
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.22.0",
   "scripts": {
     "prepare": "husky",
     "build": "turbo run build",
     "build:rust": "turbo run build:rust",
     "build:extension": "turbo run build --filter=lino-vscode",
     "build:rust:all": "./packages/lino-core/scripts/build-binaries.sh",
+    "lint": "turbo run lint",
     "format": "turbo run format",
-    "format:ts": "turbo run format:ts",
-    "format:rust": "turbo run format:rust"
+    "typecheck": "turbo run typecheck",
+    "changeset": "changeset",
+    "release": "./scripts/release.sh"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.29.7",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
     "turbo": "^2.6.1"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,json}": ["biome format --write"],
-    "packages/lino-core/**/*.rs": ["sh -c 'cd packages/lino-core && cargo fmt'"]
   }
 }

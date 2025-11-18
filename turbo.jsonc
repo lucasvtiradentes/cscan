@@ -84,6 +84,17 @@
     "format:check": {
       "outputLogs": "new-only",
       "cache": false
+    },
+    "lint": {
+      "outputLogs": "new-only",
+      "cache": false,
+      "inputs": [
+        "./src/**",
+        "./crates/**",
+        "./Cargo.toml",
+        "./biome.json",
+        "./.eslintrc*"
+      ]
     }
   }
 }

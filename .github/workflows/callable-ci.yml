@@ -1,13 +1,48 @@
-name: Build Rust (Reusable)
+name: 'Callable CI'
 
 on:
   workflow_call:
+    inputs:
+      run_lint:
+        description: 'Run lint checks'
+        type: boolean
+        required: true
+      run_build:
+        description: 'Run build'
+        type: boolean
+        required: true
+    secrets:
+      TURBO_TOKEN:
+        description: Turbo token for cache
+        required: false
+      TURBO_TEAM:
+        description: Turbo team for cache
+        required: false
 
 env:
   CARGO_TERM_COLOR: always
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 jobs:
-  test:
+  lint:
+    if: inputs.run_lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-and-install
+
+      - name: Run lint
+        run: pnpm run lint
+
+      - name: Run format
+        run: pnpm run format
+
+      - name: Check if any changes were made
+        run: git diff --exit-code
+
+  test-rust:
+    if: inputs.run_lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,19 +68,7 @@ jobs:
           path: packages/lino-core/target
           key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
+      - uses: ./.github/actions/setup-and-install
 
       - name: Run tests
         run: pnpm turbo run test --filter=lino-core
@@ -56,7 +79,8 @@ jobs:
       - name: Check formatting
         run: pnpm turbo run format:check --filter=lino-core
 
-  build:
+  build-rust:
+    if: inputs.run_build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,19 +94,20 @@ jobs:
           path: packages/lino-core/target
           key: ${{ runner.os }}-cargo-build-release-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
+      - uses: ./.github/actions/setup-and-install
 
       - name: Build release
         run: pnpm turbo run build:rust --filter=lino-core
+
+  build:
+    if: inputs.run_build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-and-install
+
+      - name: Run typecheck
+        run: pnpm run typecheck
+
+      - name: Build package
+        run: pnpm run build

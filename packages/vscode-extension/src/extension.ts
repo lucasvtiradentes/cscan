@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
-import { SearchResultProvider } from './sidebar/search-provider';
-import { dispose as disposeScanner, scanContent } from './common/lib/scanner';
-import { logger } from './common/utils/logger';
-import { getChangedFiles, invalidateCache, getModifiedLineRanges } from './common/utils/git-helper';
-import { getNewIssues } from './common/utils/issue-comparator';
 import { registerAllCommands } from './commands';
 import { loadEffectiveConfig } from './common/lib/config-manager';
+import { dispose as disposeScanner, scanContent } from './common/lib/scanner';
+import { getChangedFiles, getModifiedLineRanges, invalidateCache } from './common/utils/git-helper';
+import { getNewIssues } from './common/utils/issue-comparator';
+import { logger } from './common/utils/logger';
+import { SearchResultProvider } from './sidebar/search-provider';
 import { StatusBarManager } from './status-bar/status-bar-manager';
 
 let activationKey: string | undefined;

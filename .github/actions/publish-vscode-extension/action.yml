@@ -1,0 +1,25 @@
+name: 'Publish VS Code Extension'
+description: 'Builds and publishes VS Code extension to the Marketplace'
+
+inputs:
+  azure-pat:
+    description: 'Azure DevOps Personal Access Token for VS Code Marketplace'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install vsce
+      shell: bash
+      run: npm install -g @vscode/vsce
+
+    - name: Build VS Code Extension
+      shell: bash
+      run: pnpm --filter=lino-vscode build
+
+    - name: Publish to VS Code Marketplace
+      shell: bash
+      working-directory: packages/vscode-extension
+      run: vsce publish --no-dependencies --pat ${{ inputs.azure-pat }}
+      env:
+        VSCE_PAT: ${{ inputs.azure-pat }}
