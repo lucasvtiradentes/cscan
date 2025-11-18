@@ -1,6 +1,6 @@
 {
   "name": "cscan",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "High-performance TypeScript/TSX code quality scanner - CLI",
   "license": "MIT",
   "type": "module",
@@ -12,7 +12,10 @@
   "bin": {
     "cscan": "./dist/src/cscan.js"
   },
-  "files": ["dist", "npm"],
+  "files": [
+    "dist",
+    "npm"
+  ],
   "optionalDependencies": {
     "@cscan/linux-x64": "workspace:*",
     "@cscan/linux-arm64": "workspace:*",

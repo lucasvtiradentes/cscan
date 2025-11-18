@@ -1,5 +1,11 @@
 # cscan-vscode
 
+## 1.0.3
+
+### Patch Changes
+
+- 5a8dbef: release cli package
+
 ## 1.0.2
 
 ### Patch Changes
