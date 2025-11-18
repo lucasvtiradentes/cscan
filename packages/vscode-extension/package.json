@@ -2,7 +2,7 @@
   "name": "cscan-vscode",
   "displayName": "cscan",
   "description": "High-performance TypeScript code quality scanner with custom rules, Git integration, and instant LLM feedback",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "lucasvtiradentes",
   "license": "MIT",
   "icon": "resources/icon.png",
@@ -17,7 +17,10 @@
   "engines": {
     "vscode": "^1.100.0"
   },
-  "categories": ["Linters", "Programming Languages"],
+  "categories": [
+    "Linters",
+    "Programming Languages"
+  ],
   "keywords": [
     "code-quality",
     "scanner",
@@ -50,7 +53,9 @@
     "tsx": "^4.20.6",
     "typescript": "^5.7.0"
   },
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
