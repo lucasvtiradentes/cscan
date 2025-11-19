@@ -9,12 +9,13 @@
       "@cscanner/cli-linux-arm64",
       "@cscanner/cli-darwin-x64",
       "@cscanner/cli-darwin-arm64",
-      "@cscanner/cli-win32-x64"
+      "@cscanner/cli-win32-x64",
+      "cscanner-vscode"
     ]
   ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["core", "cscanner-vscode"]
+  "ignore": ["core"]
 }
