@@ -12,11 +12,11 @@ const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
 const PLATFORM_MAP: Record<string, string> = {
-  'linux-x64': 'cscanner-bin-linux-x64',
-  'linux-arm64': 'cscanner-bin-linux-arm64',
-  'darwin-x64': 'cscanner-bin-darwin-x64',
-  'darwin-arm64': 'cscanner-bin-darwin-arm64',
-  'win32-x64': 'cscanner-bin-win32-x64',
+  'linux-x64': '@cscanner/cli-linux-x64',
+  'linux-arm64': '@cscanner/cli-linux-arm64',
+  'darwin-x64': '@cscanner/cli-darwin-x64',
+  'darwin-arm64': '@cscanner/cli-darwin-arm64',
+  'win32-x64': '@cscanner/cli-win32-x64',
 };
 
 function getPlatformKey(): string {
@@ -55,7 +55,7 @@ function getBinaryPath(): string {
     '..',
     '..',
     'npm',
-    platformKey,
+    `cli-${platformKey}`,
     'cscanner' + (process.platform === 'win32' ? '.exe' : ''),
   );
   if (existsSync(localPath)) {
