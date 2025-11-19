@@ -1,5 +1,11 @@
 # cscanner
 
+## 2.0.1
+
+### Patch Changes
+
+- 9767f66: fix cicd error
+
 ## 2.0.0
 
 ### Major Changes

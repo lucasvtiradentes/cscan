@@ -1,6 +1,6 @@
 {
   "name": "cscanner",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "High-performance TypeScript/TSX code quality scanner - CLI",
   "license": "MIT",
   "type": "module",
