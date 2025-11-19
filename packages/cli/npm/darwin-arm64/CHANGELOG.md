@@ -1,5 +1,11 @@
 # cscanner-darwin-arm64
 
+## 2.0.0
+
+### Major Changes
+
+- fff42e5: fix cicd
+
 ## 1.0.4
 
 ### Patch Changes
