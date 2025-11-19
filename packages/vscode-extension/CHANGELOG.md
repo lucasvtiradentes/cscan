@@ -1,5 +1,11 @@
 # cscanner-vscode
 
+## 2.0.9
+
+### Patch Changes
+
+- d29bce6: publish extension
+
 ## 1.0.3
 
 ### Patch Changes
