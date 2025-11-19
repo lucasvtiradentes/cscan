@@ -1,5 +1,11 @@
 # cscanner-bin-linux-x64
 
+## 2.0.6
+
+### Patch Changes
+
+- fix: remove repository.directory to avoid npm git ls-remote error
+
 ## 2.0.5
 
 ### Patch Changes
