@@ -1,5 +1,11 @@
 # cscanner
 
+## 2.0.7
+
+### Patch Changes
+
+- b04993c: fix errors
+
 ## 2.0.6
 
 ### Patch Changes
