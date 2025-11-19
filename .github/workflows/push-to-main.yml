@@ -124,9 +124,9 @@ jobs:
               cp "$binary_file" "$dest_dir/$dest_name"
               chmod +x "$dest_dir/$dest_name" 2>/dev/null || true
               echo "✅ Copied $npm_platform binary"
-              ((found_count++))
+              found_count=$((found_count + 1))
             else
-              ((missing_count++))
+              missing_count=$((missing_count + 1))
             fi
           done
 

@@ -50,20 +50,11 @@ jobs:
           echo "🔍 Changed files:"
           git diff --name-only HEAD^ HEAD || echo "  (none - initial commit)"
 
-          VERSION_CHANGED="false"
           if [ -n "$PREVIOUS_VERSION" ] && [ "$PREVIOUS_VERSION" != "$CURRENT_VERSION" ]; then
             echo "✅ Version bumped: $PREVIOUS_VERSION → $CURRENT_VERSION"
-            VERSION_CHANGED="true"
-          fi
-
-          CHANGESET_EXISTS=$(git diff --name-only HEAD^ HEAD | grep -q "^\.changeset/.*\.md$" && echo "true" || echo "false")
-          echo "🔍 Changeset file added: $CHANGESET_EXISTS"
-
-          if [ "$VERSION_CHANGED" = "true" ] || [ "$CHANGESET_EXISTS" = "true" ]; then
-            echo "✅ Building binaries (version changed or changeset detected)"
             echo "should_build=true" >> $GITHUB_OUTPUT
           else
-            echo "⏭️  No version bump or changeset, skipping binary build"
+            echo "⏭️  No version bump, skipping binary build"
             echo "should_build=false" >> $GITHUB_OUTPUT
           fi
 
