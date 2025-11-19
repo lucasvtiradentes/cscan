@@ -1,5 +1,11 @@
 # cscanner-bin-darwin-arm64
 
+## 2.0.3
+
+### Patch Changes
+
+- ccee083: fix cicd error
+
 ## 2.0.2
 
 ### Patch Changes
