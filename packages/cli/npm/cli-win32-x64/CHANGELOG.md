@@ -1,5 +1,11 @@
 # cscanner-bin-win32-x64
 
+## 2.0.5
+
+### Patch Changes
+
+- 3b9a5f5: fix cicd error
+
 ## 2.0.4
 
 ### Patch Changes
