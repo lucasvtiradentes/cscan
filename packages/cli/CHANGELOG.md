@@ -1,5 +1,11 @@
 # cscanner
 
+## 2.0.9
+
+### Patch Changes
+
+- d29bce6: publish extension
+
 ## 2.0.8
 
 ### Patch Changes
