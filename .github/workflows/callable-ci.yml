@@ -94,8 +94,8 @@ jobs:
       - name: Check if any changes were made
         run: git diff --exit-code
 
-  test-rust:
-    if: inputs.run_lint
+  rust-check:
+    if: inputs.run_lint || inputs.run_build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -103,54 +103,35 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache cargo registry
-        uses: actions/cache@v4
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
         with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          workspaces: packages/core
+          shared-key: rust-check
 
-      - name: Cache cargo index
-        uses: actions/cache@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          version: 10.22.0
 
-      - name: Cache cargo build
-        uses: actions/cache@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: packages/core/target
-          key: ${{ runner.os }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          node-version: 20
 
-      - uses: ./.github/actions/setup-and-install
+      - name: Install turbo only
+        run: pnpm add -g turbo
 
-      - name: Run tests
-        run: pnpm turbo run test --filter=core
-
-      - name: Run clippy
-        run: pnpm turbo run clippy --filter=core
-
-      - name: Check formatting
-        run: pnpm turbo run format:check --filter=core
-
-  build-rust:
-    if: inputs.run_build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo build
-        uses: actions/cache@v4
-        with:
-          path: packages/core/target
-          key: ${{ runner.os }}-cargo-build-release-${{ hashFiles('**/Cargo.lock') }}
-
-      - uses: ./.github/actions/setup-and-install
+      - name: Run tests and lint (dev profile)
+        if: inputs.run_lint
+        run: |
+          turbo run test --filter=core
+          turbo run clippy --filter=core
+          turbo run format:check --filter=core
 
       - name: Build release
-        run: pnpm turbo run build:rust --filter=core
+        if: inputs.run_build
+        run: turbo run build --filter=core
 
   build:
     if: inputs.run_build

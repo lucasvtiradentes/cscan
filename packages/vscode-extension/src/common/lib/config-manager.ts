@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import * as vscode from 'vscode';
 import { logger } from '../utils/logger';
 
-export interface CscannerConfig {
+export interface TscannerConfig {
   rules: Record<string, any>;
   include: string[];
   exclude: string[];
@@ -22,7 +22,7 @@ export function getGlobalConfigPath(context: vscode.ExtensionContext, workspaceP
 }
 
 export function getLocalConfigPath(workspacePath: string): vscode.Uri {
-  return vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner', 'rules.json');
+  return vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.tscanner', 'rules.json');
 }
 
 export async function hasLocalConfig(workspacePath: string): Promise<boolean> {
@@ -35,7 +35,7 @@ export async function hasLocalConfig(workspacePath: string): Promise<boolean> {
   }
 }
 
-export async function loadConfig(configPath: vscode.Uri): Promise<CscannerConfig | null> {
+export async function loadConfig(configPath: vscode.Uri): Promise<TscannerConfig | null> {
   try {
     const data = await vscode.workspace.fs.readFile(configPath);
     return JSON.parse(Buffer.from(data).toString('utf8'));
@@ -62,7 +62,7 @@ export async function getEffectiveConfigPath(
 export async function loadEffectiveConfig(
   context: vscode.ExtensionContext,
   workspacePath: string,
-): Promise<CscannerConfig | null> {
+): Promise<TscannerConfig | null> {
   const configPath = await getEffectiveConfigPath(context, workspacePath);
   return loadConfig(configPath);
 }
@@ -70,7 +70,7 @@ export async function loadEffectiveConfig(
 export async function saveGlobalConfig(
   context: vscode.ExtensionContext,
   workspacePath: string,
-  config: CscannerConfig,
+  config: TscannerConfig,
 ): Promise<void> {
   const configPath = getGlobalConfigPath(context, workspacePath);
   const configDir = vscode.Uri.joinPath(configPath, '..');
@@ -81,8 +81,8 @@ export async function saveGlobalConfig(
   logger.info(`Saved global config for workspace: ${workspacePath} at ${configPath.fsPath}`);
 }
 
-export async function saveLocalConfig(workspacePath: string, config: CscannerConfig): Promise<void> {
-  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner');
+export async function saveLocalConfig(workspacePath: string, config: TscannerConfig): Promise<void> {
+  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.tscanner');
   const localConfigPath = getLocalConfigPath(workspacePath);
 
   await vscode.workspace.fs.createDirectory(localConfigDir);
@@ -91,7 +91,7 @@ export async function saveLocalConfig(workspacePath: string, config: CscannerCon
   logger.info(`Saved local config for workspace: ${workspacePath}`);
 }
 
-export function getDefaultConfig(): CscannerConfig {
+export function getDefaultConfig(): TscannerConfig {
   return {
     rules: {},
     include: ['**/*.ts', '**/*.tsx'],
@@ -99,13 +99,13 @@ export function getDefaultConfig(): CscannerConfig {
   };
 }
 
-const AUTO_MANAGED_MARKER = '// AUTO-MANAGED BY CSCANNER EXTENSION - DO NOT EDIT THIS LINE';
+const AUTO_MANAGED_MARKER = '// AUTO-MANAGED BY TSCANNER EXTENSION - DO NOT EDIT THIS LINE';
 
 export function isAutoManagedConfig(configContent: string): boolean {
   return configContent.includes(AUTO_MANAGED_MARKER);
 }
 
-export function addAutoManagedMarker(config: CscannerConfig): string {
+export function addAutoManagedMarker(config: TscannerConfig): string {
   const lines = JSON.stringify(config, null, 2).split('\n');
   lines.splice(1, 0, `  "${AUTO_MANAGED_MARKER}": true,`);
   return lines.join('\n');
@@ -131,13 +131,13 @@ export async function syncGlobalToLocal(context: vscode.ExtensionContext, worksp
     return;
   }
 
-  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner');
+  const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.tscanner');
   await vscode.workspace.fs.createDirectory(localConfigDir);
 
   const configWithMarker = addAutoManagedMarker(globalConfig);
   await vscode.workspace.fs.writeFile(localPath, Buffer.from(configWithMarker));
 
-  logger.info(`Synced global config to local .cscanner/rules.json for ${workspacePath}`);
+  logger.info(`Synced global config to local .tscanner/rules.json for ${workspacePath}`);
 }
 
 export async function shouldSyncToLocal(workspacePath: string): Promise<boolean> {
@@ -170,7 +170,7 @@ export async function ensureLocalConfigForScan(
     }
 
     await syncGlobalToLocal(context, workspacePath);
-    logger.info('Synced global config to local .cscanner/rules.json for Rust scanner');
+    logger.info('Synced global config to local .tscanner/rules.json for Rust scanner');
     return true;
   }
 }

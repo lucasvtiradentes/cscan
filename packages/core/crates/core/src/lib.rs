@@ -1,7 +1,9 @@
 pub mod ast_utils;
 pub mod cache;
 pub mod config;
+pub mod constants;
 pub mod disable_comments;
+pub mod logger;
 pub mod parser;
 pub mod registry;
 pub mod rules;
@@ -11,7 +13,9 @@ pub mod utils;
 pub mod watcher;
 
 pub use cache::FileCache;
-pub use config::{CompiledRuleConfig, CscannerConfig, RuleConfig, RuleType};
+pub use config::{CompiledRuleConfig, RuleConfig, RuleType, TscannerConfig};
+pub use constants::*;
+pub use logger::{get_logger, init_logger, log_debug, log_error, log_info, log_warn};
 pub use parser::parse_file;
 pub use registry::RuleRegistry;
 pub use rules::{get_all_rule_metadata, RegexRule, Rule, RuleCategory, RuleMetadata};

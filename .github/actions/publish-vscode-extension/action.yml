@@ -15,7 +15,7 @@ runs:
 
     - name: Build VS Code Extension
       shell: bash
-      run: pnpm --filter=cscanner-vscode build
+      run: pnpm --filter=tscanner-vscode build
 
     - name: Publish to VS Code Marketplace
       shell: bash

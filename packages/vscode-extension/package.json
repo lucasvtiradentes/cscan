@@ -1,27 +1,24 @@
 {
-  "name": "cscanner-vscode",
+  "name": "tscanner-vscode",
   "private": true,
-  "displayName": "Code Scanner (cscanner)",
+  "displayName": "tscanner",
   "description": "High-performance TypeScript code quality scanner with custom rules, Git integration, and instant LLM feedback",
-  "version": "2.0.11",
+  "version": "0.0.1",
   "publisher": "lucasvtiradentes",
   "license": "MIT",
   "icon": "resources/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucasvtiradentes/cscanner"
+    "url": "https://github.com/lucasvtiradentes/tscanner"
   },
   "bugs": {
-    "url": "https://github.com/lucasvtiradentes/cscanner/issues"
+    "url": "https://github.com/lucasvtiradentes/tscanner/issues"
   },
-  "homepage": "https://github.com/lucasvtiradentes/cscanner#readme",
+  "homepage": "https://github.com/lucasvtiradentes/tscanner#readme",
   "engines": {
     "vscode": "^1.100.0"
   },
-  "categories": [
-    "Linters",
-    "Programming Languages"
-  ],
+  "categories": ["Linters", "Programming Languages"],
   "keywords": [
     "code-quality",
     "scanner",
@@ -53,23 +50,21 @@
     "tsx": "^4.20.6",
     "typescript": "^5.7.0"
   },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
+  "activationEvents": ["onStartupFinished"],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "cscanner",
-          "title": "cscanner",
+          "id": "tscanner",
+          "title": "tscanner",
           "icon": "resources/icon.svg"
         }
       ]
     },
     "views": {
-      "cscanner": [
+      "tscanner": [
         {
-          "id": "cscannerExplorer",
+          "id": "tscannerExplorer",
           "name": "Issues",
           "icon": "resources/icon.svg"
         }
@@ -77,95 +72,95 @@
     },
     "viewsWelcome": [
       {
-        "view": "cscannerExplorer",
+        "view": "tscannerExplorer",
         "contents": "No issues found.",
         "when": "workbenchState != empty"
       },
       {
-        "view": "cscannerExplorer",
+        "view": "tscannerExplorer",
         "contents": "Open a folder to start scanning for issues.\n[Open Folder](command:vscode.openFolder)",
         "when": "workbenchState == empty"
       }
     ],
     "commands": [
       {
-        "command": "cscanner.findIssue",
+        "command": "tscanner.findIssue",
         "title": "Scan Workspace",
         "icon": "$(search)"
       },
       {
-        "command": "cscanner.refresh",
+        "command": "tscanner.refresh",
         "title": "Scan Workspace",
         "icon": "$(refresh)"
       },
       {
-        "command": "cscanner.hardScan",
-        "title": "cscanner: Hard Scan (Clear Cache & Rescan)",
+        "command": "tscanner.hardScan",
+        "title": "tscanner: Hard Scan (Clear Cache & Rescan)",
         "icon": "$(debug-restart)"
       },
       {
-        "command": "cscanner.setGroupByDefault",
+        "command": "tscanner.setGroupByDefault",
         "title": "No Grouping",
         "icon": "$(close-all)"
       },
       {
-        "command": "cscanner.setGroupByRule",
+        "command": "tscanner.setGroupByRule",
         "title": "Group by Rule",
         "icon": "$(group-by-ref-type)"
       },
       {
-        "command": "cscanner.setListView",
+        "command": "tscanner.setListView",
         "title": "View as List",
         "icon": "$(list-flat)",
-        "enablement": "cscannerViewMode == tree"
+        "enablement": "tscannerViewMode == tree"
       },
       {
-        "command": "cscanner.setTreeView",
+        "command": "tscanner.setTreeView",
         "title": "View as Tree",
         "icon": "$(list-tree)",
-        "enablement": "cscannerViewMode == list"
+        "enablement": "tscannerViewMode == list"
       },
       {
-        "command": "cscanner.openFile",
+        "command": "tscanner.openFile",
         "title": "Open File"
       },
       {
-        "command": "cscanner.copyPath",
+        "command": "tscanner.copyPath",
         "title": "Copy Path",
         "icon": "$(files)"
       },
       {
-        "command": "cscanner.copyRelativePath",
+        "command": "tscanner.copyRelativePath",
         "title": "Copy Relative Path"
       },
       {
-        "command": "cscanner.openSettingsMenu",
-        "title": "cscanner: Open Settings"
+        "command": "tscanner.openSettingsMenu",
+        "title": "tscanner: Open Settings"
       },
       {
-        "command": "cscanner.goToNextIssue",
-        "title": "cscanner: Go to Next Issue",
+        "command": "tscanner.goToNextIssue",
+        "title": "tscanner: Go to Next Issue",
         "icon": "$(arrow-down)"
       },
       {
-        "command": "cscanner.goToPreviousIssue",
-        "title": "cscanner: Go to Previous Issue",
+        "command": "tscanner.goToPreviousIssue",
+        "title": "tscanner: Go to Previous Issue",
         "icon": "$(arrow-up)"
       },
       {
-        "command": "cscanner.showLogs",
-        "title": "cscanner: Show Logs",
+        "command": "tscanner.showLogs",
+        "title": "tscanner: Show Logs",
         "icon": "$(output)"
       }
     ],
     "keybindings": [
       {
-        "command": "cscanner.goToNextIssue",
+        "command": "tscanner.goToNextIssue",
         "key": "f8",
         "when": "editorTextFocus"
       },
       {
-        "command": "cscanner.goToPreviousIssue",
+        "command": "tscanner.goToPreviousIssue",
         "key": "shift+f8",
         "when": "editorTextFocus"
       }
@@ -173,67 +168,67 @@
     "menus": {
       "view/title": [
         {
-          "command": "cscanner.refresh",
-          "when": "view == cscannerExplorer && !cscannerSearching",
+          "command": "tscanner.refresh",
+          "when": "view == tscannerExplorer && !tscannerSearching",
           "group": "navigation@10"
         },
         {
-          "command": "cscanner.setGroupByDefault",
-          "when": "view == cscannerExplorer && cscannerGroupMode == rule",
+          "command": "tscanner.setGroupByDefault",
+          "when": "view == tscannerExplorer && tscannerGroupMode == rule",
           "group": "navigation@20"
         },
         {
-          "command": "cscanner.setGroupByRule",
-          "when": "view == cscannerExplorer && cscannerGroupMode == default",
+          "command": "tscanner.setGroupByRule",
+          "when": "view == tscannerExplorer && tscannerGroupMode == default",
           "group": "navigation@20"
         },
         {
-          "command": "cscanner.setListView",
-          "when": "view == cscannerExplorer && cscannerViewMode == tree",
+          "command": "tscanner.setListView",
+          "when": "view == tscannerExplorer && tscannerViewMode == tree",
           "group": "navigation@30"
         },
         {
-          "command": "cscanner.setTreeView",
-          "when": "view == cscannerExplorer && cscannerViewMode == list",
+          "command": "tscanner.setTreeView",
+          "when": "view == tscannerExplorer && tscannerViewMode == list",
           "group": "navigation@30"
         }
       ],
       "view/item/context": [
         {
-          "command": "cscanner.copyPath",
-          "when": "view == cscannerExplorer && viewItem == cscannerNodeFile",
+          "command": "tscanner.copyPath",
+          "when": "view == tscannerExplorer && viewItem == tscannerNodeFile",
           "group": "navigation"
         },
         {
-          "command": "cscanner.copyPath",
-          "when": "view == cscannerExplorer && viewItem == cscannerNodeFile",
+          "command": "tscanner.copyPath",
+          "when": "view == tscannerExplorer && viewItem == tscannerNodeFile",
           "group": "inline"
         },
         {
-          "command": "cscanner.copyRelativePath",
-          "when": "view == cscannerExplorer && viewItem == cscannerNodeFile",
+          "command": "tscanner.copyRelativePath",
+          "when": "view == tscannerExplorer && viewItem == tscannerNodeFile",
           "group": "9_cutcopypaste"
         }
       ],
       "commandPalette": [
         {
-          "command": "cscanner.openFile",
+          "command": "tscanner.openFile",
           "when": "false"
         },
         {
-          "command": "cscanner.copyPath",
+          "command": "tscanner.copyPath",
           "when": "false"
         },
         {
-          "command": "cscanner.copyRelativePath",
+          "command": "tscanner.copyRelativePath",
           "when": "false"
         },
         {
-          "command": "cscanner.refresh",
+          "command": "tscanner.refresh",
           "when": "false"
         },
         {
-          "command": "cscanner.openSettingsMenu",
+          "command": "tscanner.openSettingsMenu",
           "when": "false"
         }
       ]

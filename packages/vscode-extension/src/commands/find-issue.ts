@@ -67,7 +67,7 @@ export function createFindIssueCommand(
 
     const configToPass = hasLocal ? undefined : effectiveConfig;
     if (hasLocal) {
-      logger.info('Using local config from .cscanner/rules.json');
+      logger.info('Using local config from .tscanner/rules.json');
     } else {
       logger.info('Using global config from extension storage');
     }

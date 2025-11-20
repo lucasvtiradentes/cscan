@@ -1,8 +1,8 @@
 <a name="TOC"></a>
 
 <div align="center">
-<img width="128" src="packages/vscode-extension/resources/icon.svg" alt="cscanner logo">
-<h4>cscanner</h4>
+<img width="128" src="packages/vscode-extension/resources/icon.svg" alt="tscanner logo">
+<h4>tscanner</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>
@@ -21,15 +21,15 @@ High-performance code quality scanner for enforcing project-specific patterns, d
 
 **Validate Code Patterns & Conventions**
 
-Every project has architectural rules beyond basic linting: "always use types not interfaces", "no barrel file exports", "absolute imports only", "no nested ternaries", etc. cscanner lets you codify these project-specific patterns and anti-patterns as enforceable rules - catching violations before they reach production.
+Every project has architectural rules beyond basic linting: "always use types not interfaces", "no barrel file exports", "absolute imports only", "no nested ternaries", etc. tscanner lets you codify these project-specific patterns and anti-patterns as enforceable rules - catching violations before they reach production.
 
 **Instant LLM Code Quality Validation**
 
-When working with LLMs (Claude, GPT, etc.), you need immediate visibility into code quality issues. cscanner's branch-based scanning shows exactly which patterns/anti-patterns were introduced in LLM-generated code, letting you give precise correction feedback before accepting changes.
+When working with LLMs (Claude, GPT, etc.), you need immediate visibility into code quality issues. tscanner's branch-based scanning shows exactly which patterns/anti-patterns were introduced in LLM-generated code, letting you give precise correction feedback before accepting changes.
 
 **Beyond Traditional Linting**
 
-Unlike ESLint/TSLint focused on syntax and best practices, cscanner is a **code quality scanner** designed for:
+Unlike ESLint/TSLint focused on syntax and best practices, tscanner is a **code quality scanner** designed for:
 - Enforcing architectural patterns (import styles, code organization)
 - Detecting project-specific anti-patterns (forbidden constructs, naming violations)
 - Validating coding conventions (type vs interface preferences, file structure rules)
@@ -48,7 +48,7 @@ Rust-powered core with SWC AST parsing + Rayon parallelism provides instant feed
 - **Custom Regex Rules** - Match unique patterns: naming conventions, comment markers, file organization rules
 - **AST-based Analysis** - Structural code analysis via SWC for TypeScript/TSX
 - **Configurable Severity** - Mark violations as errors or warnings based on project strictness
-- **Disable Directives** - Inline comments to suppress rules when intentional (`cscanner-disable`, `cscanner-disable-next-line`)
+- **Disable Directives** - Inline comments to suppress rules when intentional (`tscanner-disable`, `tscanner-disable-next-line`)
 
 **VSCode Integration**
 - **Tree/List Views** - Hierarchical folder structure or flat file listing
@@ -76,7 +76,7 @@ Rust-powered core with SWC AST parsing + Rayon parallelism provides instant feed
 Hybrid Rust + TypeScript architecture with JSON-RPC communication:
 
 ```
-VSCode Extension (TypeScript)         cscanner-server (Rust)
+VSCode Extension (TypeScript)         tscanner-server (Rust)
 ├─ extension.ts              ←→      ├─ JSON-RPC Interface
 │  └─ Extension activation            │  └─ Line-delimited protocol
 ├─ commands/                          │     └─ GZIP compression
@@ -95,7 +95,7 @@ VSCode Extension (TypeScript)         cscanner-server (Rust)
 │  └─ logger.ts                       │  ├─ Memory cache (concurrent)
 └─ status-bar/                        │  └─ Disk cache (JSON)
    └─ status-bar-manager.ts           └─ Config System
-                                         ├─ .cscanner/rules.json
+                                         ├─ .tscanner/rules.json
                                          └─ Hash-based invalidation
 ```
 
@@ -110,8 +110,8 @@ VSCode Extension (TypeScript)         cscanner-server (Rust)
 ### Installation
 
 ```bash
-git clone https://github.com/lucasvtiradentes/cscanner
-cd cscanner
+git clone https://github.com/lucasvtiradentes/tscanner
+cd tscanner
 ./scripts/setup-dev.sh
 ```
 
@@ -137,8 +137,8 @@ cargo watch -x build
 Rust workspace with three crates:
 
 - **`core`** - Core library (Scanner, Parser, Rules, Cache, Config)
-- **`cscanner_server`** - JSON-RPC server binary (main entry point for VSCode)
-- **`cscanner_cli`** - CLI binary (planned, currently stub)
+- **`server`** - JSON-RPC server binary (main entry point for VSCode)
+- **`cli`** - CLI binary (planned, currently stub)
 
 [Detailed Documentation →](packages/core/README.md)
 
@@ -155,9 +155,6 @@ VSCode extension for editor integration with real-time feedback.
 ```bash
 pnpm dev                        # Watch mode: Extension + Rust auto-rebuild
 pnpm run build                  # Build extension (bundles Rust binary)
-./scripts/build-all.sh          # Build Rust workspace + extension
-./scripts/build-binaries.sh     # Cross-compile for all platforms
-./scripts/clean-install.sh      # Clean reinstall (clears cache)
 ```
 
 ### Development Workflow
@@ -178,10 +175,6 @@ Press `F5` to launch Extension Development Host
 
 ### Cross-Platform Binaries
 
-```bash
-./scripts/build-binaries.sh
-```
-
 Targets:
 - `x86_64-unknown-linux-gnu`
 - `aarch64-unknown-linux-gnu`
@@ -191,7 +184,7 @@ Targets:
 
 ### Configuration File
 
-Create `.cscanner/rules.json` to enforce your project's conventions:
+Create `.tscanner/rules.json` to enforce your project's conventions:
 
 ```json
 {

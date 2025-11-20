@@ -1,9 +1,9 @@
 {
-  "name": "@cscanner/cli-darwin-x64",
-  "version": "2.0.11",
+  "name": "@tscanner/cli-darwin-x64",
+  "version": "0.0.1",
   "license": "MIT",
-  "repository": "https://github.com/lucasvtiradentes/cscanner.git",
-  "main": "cscanner",
+  "repository": "https://github.com/lucasvtiradentes/tscanner.git",
+  "main": "tscanner",
   "os": [
     "darwin"
   ],
@@ -11,6 +11,6 @@
     "x64"
   ],
   "files": [
-    "cscanner"
+    "tscanner"
   ]
 }

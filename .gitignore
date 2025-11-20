@@ -10,10 +10,11 @@ target/
 artifacts/
 .vscode/
 dist/
+.git/ 
 
 # CLI binaries (generated during build)
-packages/cli/npm/*/cscanner
-packages/cli/npm/*/cscanner.exe
+packages/cli/npm/*/tscanner
+packages/cli/npm/*/tscanner.exe
 
 # FILES ========================================================================
 

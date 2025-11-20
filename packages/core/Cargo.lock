@@ -227,6 +227,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1d728cc89cf3aee9ff92b05e62b19ee65a02b5702cff7d5a377e32c6ae29d8d"
 
 [[package]]
+name = "cli"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "colored",
+ "core",
+ "dirs",
+ "md5",
+ "pathdiff",
+ "serde",
+ "serde_json",
+ "tracing",
+ "tracing-subscriber",
+ "walkdir",
+]
+
+[[package]]
 name = "colorchoice"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -261,6 +279,7 @@ dependencies = [
  "swc_ecma_parser",
  "swc_ecma_visit",
  "thiserror 2.0.17",
+ "time",
  "tracing",
  "walkdir",
 ]
@@ -298,39 +317,6 @@ name = "crossbeam-utils"
 version = "0.8.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
-
-[[package]]
-name = "cscanner_cli"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "colored",
- "core",
- "dirs",
- "md5",
- "pathdiff",
- "serde",
- "serde_json",
- "tracing",
- "tracing-subscriber",
- "walkdir",
-]
-
-[[package]]
-name = "cscanner_server"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "core",
- "flate2",
- "serde",
- "serde_json",
- "time",
- "tracing",
- "tracing-subscriber",
-]
 
 [[package]]
 name = "dashmap"
@@ -1155,6 +1141,21 @@ dependencies = [
  "ryu",
  "serde",
  "serde_core",
+]
+
+[[package]]
+name = "server"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "core",
+ "flate2",
+ "serde",
+ "serde_json",
+ "time",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 {
-  "name": "cscanner",
+  "name": "tscanner",
   "private": true,
   "version": "1.0.0",
   "description": "High-performance TypeScript code quality scanner with custom rule support",
@@ -7,9 +7,6 @@
   "scripts": {
     "prepare": "husky",
     "build": "turbo run build",
-    "build:rust": "turbo run build:rust",
-    "build:extension": "turbo run build --filter=cscanner-vscode",
-    "build:rust:all": "./packages/core/scripts/build-binaries.sh",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "format": "turbo run format",
@@ -22,6 +19,7 @@
     "@changesets/cli": "^2.29.7",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
+    "tsx": "^4.20.6",
     "turbo": "^2.6.1"
   }
 }

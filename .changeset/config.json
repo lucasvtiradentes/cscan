@@ -4,13 +4,13 @@
   "commit": false,
   "fixed": [
     [
-      "cscanner",
-      "@cscanner/cli-linux-x64",
-      "@cscanner/cli-linux-arm64",
-      "@cscanner/cli-darwin-x64",
-      "@cscanner/cli-darwin-arm64",
-      "@cscanner/cli-win32-x64",
-      "cscanner-vscode"
+      "tscanner",
+      "@tscanner/cli-linux-x64",
+      "@tscanner/cli-linux-arm64",
+      "@tscanner/cli-darwin-x64",
+      "@tscanner/cli-darwin-arm64",
+      "@tscanner/cli-win32-x64",
+      "tscanner-vscode"
     ]
   ],
   "linked": [],

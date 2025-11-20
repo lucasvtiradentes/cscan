@@ -1,31 +1,28 @@
 {
-  "name": "cscanner",
-  "version": "2.0.11",
+  "name": "tscanner",
+  "version": "0.0.1",
   "description": "High-performance TypeScript/TSX code quality scanner - CLI",
   "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucasvtiradentes/cscanner.git"
+    "url": "https://github.com/lucasvtiradentes/tscanner.git"
   },
   "bin": {
-    "cscanner": "./dist/cscanner.js"
+    "tscanner": "./dist/tscanner.js"
   },
-  "files": [
-    "dist",
-    "postinstall.cjs"
-  ],
+  "files": ["dist", "postinstall.cjs"],
   "optionalDependencies": {
-    "@cscanner/cli-linux-x64": "2.0.11",
-    "@cscanner/cli-linux-arm64": "2.0.11",
-    "@cscanner/cli-darwin-x64": "2.0.11",
-    "@cscanner/cli-darwin-arm64": "2.0.11",
-    "@cscanner/cli-win32-x64": "2.0.11"
+    "@tscanner/cli-linux-x64": "0.0.1",
+    "@tscanner/cli-linux-arm64": "0.0.1",
+    "@tscanner/cli-darwin-x64": "0.0.1",
+    "@tscanner/cli-darwin-arm64": "0.0.1",
+    "@tscanner/cli-win32-x64": "0.0.1"
   },
   "scripts": {
     "postinstall": "node postinstall.cjs",
-    "build": "tsc && ./scripts/copy-binaries.sh",
-    "start": "node ./dist/cscanner.js",
+    "build": "tsc && tsx scripts/copy-binaries.ts",
+    "start": "node ./dist/tscanner.js",
     "typecheck": "tsc --noEmit",
     "lint": "biome check src",
     "lint:fix": "biome check --fix --unsafe src",

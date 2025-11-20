@@ -13,11 +13,11 @@ function copyBinaryToNativePackage(platform, arch) {
   const os = platform;
   const buildName = `cli-${platform}-${arch}`;
   const packageRoot = resolve(CLI_ROOT, "npm", buildName);
-  const packageName = `@cscanner/${buildName}`;
+  const packageName = `@tscanner/${buildName}`;
 
   const { version, license, repository } = rootManifest;
 
-  const binaryName = os === "win32" ? "cscanner.exe" : "cscanner";
+  const binaryName = os === "win32" ? "tscanner.exe" : "tscanner";
 
   const manifest = JSON.stringify(
     {
@@ -44,7 +44,7 @@ function copyBinaryToNativePackage(platform, arch) {
   fs.writeFileSync(manifestPath, manifest);
 
   const ext = os === "win32" ? ".exe" : "";
-  const binaryPath = resolve(packageRoot, `cscanner${ext}`);
+  const binaryPath = resolve(packageRoot, `tscanner${ext}`);
 
   if (fs.existsSync(binaryPath)) {
     console.info(`Binary already exists at ${binaryPath}`);
@@ -57,7 +57,7 @@ function copyBinaryToNativePackage(platform, arch) {
 function updateVersionInDependencies(dependencies, version) {
   if (dependencies) {
     for (const dependency of Object.keys(dependencies)) {
-      if (dependency.startsWith("@cscanner/")) {
+      if (dependency.startsWith("@tscanner/")) {
         dependencies[dependency] = version;
       }
     }

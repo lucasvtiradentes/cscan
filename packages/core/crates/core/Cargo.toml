@@ -24,3 +24,4 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 regex = { workspace = true }
 inventory = "0.3"
+time = { version = "0.3", features = ["formatting", "macros"] }

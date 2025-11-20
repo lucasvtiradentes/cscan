@@ -12,11 +12,11 @@ const __dirname = dirname(__filename);
 const require = createRequire(import.meta.url);
 
 const PLATFORM_MAP: Record<string, string> = {
-  'linux-x64': '@cscanner/cli-linux-x64',
-  'linux-arm64': '@cscanner/cli-linux-arm64',
-  'darwin-x64': '@cscanner/cli-darwin-x64',
-  'darwin-arm64': '@cscanner/cli-darwin-arm64',
-  'win32-x64': '@cscanner/cli-win32-x64',
+  'linux-x64': '@tscanner/cli-linux-x64',
+  'linux-arm64': '@tscanner/cli-linux-arm64',
+  'darwin-x64': '@tscanner/cli-darwin-x64',
+  'darwin-arm64': '@tscanner/cli-darwin-arm64',
+  'win32-x64': '@tscanner/cli-win32-x64',
 };
 
 function getPlatformKey(): string {
@@ -39,7 +39,7 @@ function getPlatformKey(): string {
 
   throw new Error(
     `Unsupported platform: ${platform}-${arch}\n` +
-      `cscanner is only available for:\n` +
+      `tscanner is only available for:\n` +
       `  - Linux (x64, arm64)\n` +
       `  - macOS (x64, arm64)\n` +
       `  - Windows (x64)`,
@@ -56,20 +56,20 @@ function getBinaryPath(): string {
     '..',
     'npm',
     `cli-${platformKey}`,
-    'cscanner' + (process.platform === 'win32' ? '.exe' : ''),
+    'tscanner' + (process.platform === 'win32' ? '.exe' : ''),
   );
   if (existsSync(localPath)) {
     return localPath;
   }
 
   try {
-    const binaryPath = require.resolve(`${packageName}/cscanner` + (process.platform === 'win32' ? '.exe' : ''));
+    const binaryPath = require.resolve(`${packageName}/tscanner` + (process.platform === 'win32' ? '.exe' : ''));
     return binaryPath;
   } catch (e) {
     const error = e as Error;
     throw new Error(
-      `Failed to find cscanner binary for ${platformKey}\n` +
-        `Please try reinstalling: npm install cscanner\n` +
+      `Failed to find tscanner binary for ${platformKey}\n` +
+        `Please try reinstalling: npm install tscanner\n` +
         `Error: ${error.message}`,
     );
   }

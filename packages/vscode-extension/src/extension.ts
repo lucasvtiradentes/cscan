@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   activationKey = currentKey;
-  logger.info('Cscanner extension activated');
+  logger.info('Tscanner extension activated');
 
   const searchProvider = new SearchResultProvider();
   const viewModeKey = getWorkspaceState(context, WorkspaceStateKey.ViewMode);

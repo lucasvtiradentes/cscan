@@ -73,7 +73,7 @@ impl FileCache {
 
     fn get_cache_dir() -> Option<PathBuf> {
         let home = std::env::var("HOME").ok()?;
-        let cache_dir = PathBuf::from(home).join(".cache/cscanner");
+        let cache_dir = PathBuf::from(home).join(".cache/tscanner");
         fs::create_dir_all(&cache_dir).ok()?;
         Some(cache_dir)
     }

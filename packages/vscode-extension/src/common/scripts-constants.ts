@@ -1,12 +1,12 @@
 export const EXTENSION_PUBLISHER = 'lucasvtiradentes';
-export const EXTENSION_NAME = 'cscanner-vscode';
-export const EXTENSION_DISPLAY_NAME = 'Cscanner';
+export const EXTENSION_NAME = 'tscanner-vscode';
+export const EXTENSION_DISPLAY_NAME = 'Tscanner';
 
-export const CONTEXT_PREFIX = 'cscanner';
-export const VIEW_ID = 'cscannerExplorer';
+export const CONTEXT_PREFIX = 'tscanner';
+export const VIEW_ID = 'tscannerExplorer';
 export const DEV_SUFFIX = 'Dev';
 
-export const LOG_BASENAME = 'cscannerlogs';
+export const LOG_BASENAME = 'tscannerlogs';
 
 export function addDevSuffix(str: string): string {
   return `${str}${DEV_SUFFIX}`;

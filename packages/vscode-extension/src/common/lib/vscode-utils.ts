@@ -50,10 +50,10 @@ const keyMapping: Record<WorkspaceStateKeyType, string> = Object.fromEntries(
 ) as Record<WorkspaceStateKeyType, string>;
 
 export enum ContextKey {
-  ViewMode = 'cscannerViewMode',
-  GroupMode = 'cscannerGroupMode',
-  ScanMode = 'cscannerScanMode',
-  Searching = 'cscannerSearching',
+  ViewMode = 'tscannerViewMode',
+  GroupMode = 'tscannerGroupMode',
+  ScanMode = 'tscannerScanMode',
+  Searching = 'tscannerSearching',
 }
 
 export enum Command {
@@ -75,10 +75,10 @@ export enum Command {
 }
 
 export enum TreeItemContextValue {
-  RuleGroup = 'CscannerNodeRuleGroup',
-  Folder = 'CscannerNodeFolder',
-  File = 'CscannerNodeFile',
-  Issue = 'CscannerNodeIssue',
+  RuleGroup = 'TscannerNodeRuleGroup',
+  Folder = 'TscannerNodeFolder',
+  File = 'TscannerNodeFile',
+  Issue = 'TscannerNodeIssue',
 }
 
 const contextKeyMapping: Partial<Record<WorkspaceStateKeyType, ContextKey>> = {

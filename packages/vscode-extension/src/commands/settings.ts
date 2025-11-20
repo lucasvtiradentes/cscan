@@ -35,13 +35,13 @@ export function createOpenSettingsMenuCommand(
         detail: 'Choose between Codebase or Branch scan mode',
       },
       {
-        label: '$(edit) Open Project Cscanner Configs',
-        detail: 'Edit .cscanner/rules.json or global extension config',
+        label: '$(edit) Open Project Tscanner Configs',
+        detail: 'Edit .tscanner/rules.json or global extension config',
       },
     ];
 
     const selected = await vscode.window.showQuickPick(mainMenuItems, {
-      placeHolder: 'Cscanner Settings',
+      placeHolder: 'Tscanner Settings',
       ignoreFocusOut: false,
     });
 
@@ -57,14 +57,14 @@ export function createOpenSettingsMenuCommand(
       return;
     }
 
-    if (selected.label.includes('Open Project Cscanner Configs')) {
-      await openProjectCscannerConfigs(context);
+    if (selected.label.includes('Open Project Tscanner Configs')) {
+      await openProjectTscannerConfigs(context);
       return;
     }
   });
 }
 
-async function openProjectCscannerConfigs(context: vscode.ExtensionContext) {
+async function openProjectTscannerConfigs(context: vscode.ExtensionContext) {
   const workspaceFolder = getCurrentWorkspaceFolder();
 
   if (!workspaceFolder) {
@@ -92,7 +92,7 @@ async function openProjectCscannerConfigs(context: vscode.ExtensionContext) {
     logger.debug('Global config not found');
   }
 
-  showToastMessage(ToastKind.Error, 'No Cscanner configuration found. Create one via "Manage Rules" first.');
+  showToastMessage(ToastKind.Error, 'No Tscanner configuration found. Create one via "Manage Rules" first.');
 }
 
 async function showScanSettingsMenu(
