@@ -1,6 +1,6 @@
 {
   "name": "tscanner",
-  "version": "2.0.11",
+  "version": "0.0.1",
   "description": "High-performance TypeScript/TSX code quality scanner - CLI",
   "license": "MIT",
   "type": "module",
@@ -13,11 +13,11 @@
   },
   "files": ["dist", "postinstall.cjs"],
   "optionalDependencies": {
-    "@tscanner/cli-linux-x64": "2.0.11",
-    "@tscanner/cli-linux-arm64": "2.0.11",
-    "@tscanner/cli-darwin-x64": "2.0.11",
-    "@tscanner/cli-darwin-arm64": "2.0.11",
-    "@tscanner/cli-win32-x64": "2.0.11"
+    "@tscanner/cli-linux-x64": "0.0.1",
+    "@tscanner/cli-linux-arm64": "0.0.1",
+    "@tscanner/cli-darwin-x64": "0.0.1",
+    "@tscanner/cli-darwin-arm64": "0.0.1",
+    "@tscanner/cli-win32-x64": "0.0.1"
   },
   "scripts": {
     "postinstall": "node postinstall.cjs",

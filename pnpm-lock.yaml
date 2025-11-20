@@ -1054,6 +1054,9 @@ packages:
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
+ignoredOptionalDependencies:
+  - '@tscanner/cli-*'
+
 snapshots:
 
   '@babel/runtime@7.28.4': {}

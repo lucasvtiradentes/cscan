@@ -1,9 +1,9 @@
 {
   "name": "tscanner-vscode",
   "private": true,
-  "displayName": "T Scanner (tscanner)",
+  "displayName": "tscanner",
   "description": "High-performance TypeScript code quality scanner with custom rules, Git integration, and instant LLM feedback",
-  "version": "2.0.11",
+  "version": "0.0.1",
   "publisher": "lucasvtiradentes",
   "license": "MIT",
   "icon": "resources/icon.png",
