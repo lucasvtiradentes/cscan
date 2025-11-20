@@ -17,6 +17,12 @@ runs:
       with:
         targets: ${{ inputs.target }}
 
+    - name: Setup Rust cache
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: packages/core
+        shared-key: ${{ inputs.target }}
+
     - name: Install cross-compilation tools (Linux ARM64)
       if: inputs.target == 'aarch64-unknown-linux-gnu'
       shell: bash
