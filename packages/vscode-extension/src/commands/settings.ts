@@ -1,18 +1,29 @@
 import * as vscode from 'vscode';
-import { getCommandId, getContextKey } from '../common/constants';
 import { getGlobalConfigPath, getLocalConfigPath } from '../common/lib/config-manager';
+import {
+  Command,
+  ScanMode,
+  ToastKind,
+  WorkspaceStateKey,
+  executeCommand,
+  getCurrentWorkspaceFolder,
+  openTextDocument,
+  registerCommand,
+  showToastMessage,
+  updateState,
+} from '../common/lib/vscode-utils';
 import { getAllBranches, getCurrentBranch, invalidateCache } from '../common/utils/git-helper';
 import { logger } from '../common/utils/logger';
 import { SearchResultProvider } from '../sidebar/search-provider';
 
 export function createOpenSettingsMenuCommand(
   updateStatusBar: () => Promise<void>,
-  currentScanModeRef: { current: 'workspace' | 'branch' },
+  currentScanModeRef: { current: ScanMode },
   currentCompareBranchRef: { current: string },
   context: vscode.ExtensionContext,
   searchProvider: SearchResultProvider,
 ) {
-  return vscode.commands.registerCommand(getCommandId('openSettingsMenu'), async () => {
+  return registerCommand(Command.OpenSettingsMenu, async () => {
     logger.info('openSettingsMenu command called');
     const mainMenuItems: vscode.QuickPickItem[] = [
       {
@@ -24,20 +35,20 @@ export function createOpenSettingsMenuCommand(
         detail: 'Choose between Codebase or Branch scan mode',
       },
       {
-        label: '$(edit) Open Project Cscan Configs',
+        label: '$(edit) Open Project Cscanner Configs',
         detail: 'Edit .cscanner/rules.json or global extension config',
       },
     ];
 
     const selected = await vscode.window.showQuickPick(mainMenuItems, {
-      placeHolder: 'Cscan Settings',
+      placeHolder: 'Cscanner Settings',
       ignoreFocusOut: false,
     });
 
     if (!selected) return;
 
     if (selected.label.includes('Manage Rules')) {
-      await vscode.commands.executeCommand(getCommandId('manageRules'));
+      await executeCommand(Command.ManageRules);
       return;
     }
 
@@ -46,25 +57,25 @@ export function createOpenSettingsMenuCommand(
       return;
     }
 
-    if (selected.label.includes('Open Project Cscan Configs')) {
-      await openProjectCscanConfigs(context);
+    if (selected.label.includes('Open Project Cscanner Configs')) {
+      await openProjectCscannerConfigs(context);
       return;
     }
   });
 }
 
-async function openProjectCscanConfigs(context: vscode.ExtensionContext) {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+async function openProjectCscannerConfigs(context: vscode.ExtensionContext) {
+  const workspaceFolder = getCurrentWorkspaceFolder();
 
   if (!workspaceFolder) {
-    vscode.window.showErrorMessage('No workspace folder open');
+    showToastMessage(ToastKind.Error, 'No workspace folder open');
     return;
   }
 
   const localConfigPath = getLocalConfigPath(workspaceFolder.uri.fsPath);
   try {
     await vscode.workspace.fs.stat(localConfigPath);
-    const doc = await vscode.workspace.openTextDocument(localConfigPath);
+    const doc = await openTextDocument(localConfigPath);
     await vscode.window.showTextDocument(doc);
     return;
   } catch {
@@ -74,19 +85,19 @@ async function openProjectCscanConfigs(context: vscode.ExtensionContext) {
   const globalConfigPath = getGlobalConfigPath(context, workspaceFolder.uri.fsPath);
   try {
     await vscode.workspace.fs.stat(globalConfigPath);
-    const doc = await vscode.workspace.openTextDocument(globalConfigPath);
+    const doc = await openTextDocument(globalConfigPath);
     await vscode.window.showTextDocument(doc);
     return;
   } catch {
     logger.debug('Global config not found');
   }
 
-  vscode.window.showErrorMessage('No Cscan configuration found. Create one via "Manage Rules" first.');
+  showToastMessage(ToastKind.Error, 'No Cscanner configuration found. Create one via "Manage Rules" first.');
 }
 
 async function showScanSettingsMenu(
   updateStatusBar: () => Promise<void>,
-  currentScanModeRef: { current: 'workspace' | 'branch' },
+  currentScanModeRef: { current: ScanMode },
   currentCompareBranchRef: { current: string },
   context: vscode.ExtensionContext,
   searchProvider: SearchResultProvider,
@@ -94,12 +105,12 @@ async function showScanSettingsMenu(
   const scanModeItems: vscode.QuickPickItem[] = [
     {
       label: '$(file-directory) Codebase',
-      description: currentScanModeRef.current === 'workspace' ? '✓ Active' : '',
+      description: currentScanModeRef.current === ScanMode.Workspace ? '✓ Active' : '',
       detail: 'Scan all files in workspace',
     },
     {
       label: '$(git-branch) Branch',
-      description: currentScanModeRef.current === 'branch' ? '✓ Active' : '',
+      description: currentScanModeRef.current === ScanMode.Branch ? '✓ Active' : '',
       detail: 'Scan only changed files in current branch',
     },
   ];
@@ -113,22 +124,21 @@ async function showScanSettingsMenu(
 
   if (selected.label.includes('Codebase')) {
     searchProvider.setResults([]);
-    currentScanModeRef.current = 'workspace';
-    context.workspaceState.update('cscanner.scanMode', 'workspace');
-    vscode.commands.executeCommand('setContext', getContextKey('cscanScanMode'), 'workspace');
+    currentScanModeRef.current = ScanMode.Workspace;
+    updateState(context, WorkspaceStateKey.ScanMode, ScanMode.Workspace);
     invalidateCache();
     updateStatusBar();
-    vscode.commands.executeCommand(getCommandId('findIssue'));
-  } else if (selected.label.includes('Branch')) {
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    executeCommand(Command.FindIssue);
+  } else if (selected.label.includes(ScanMode.Branch)) {
+    const workspaceFolder = getCurrentWorkspaceFolder();
     if (!workspaceFolder) {
-      vscode.window.showErrorMessage('No workspace folder open');
+      showToastMessage(ToastKind.Error, 'No workspace folder open');
       return;
     }
 
     const currentBranch = await getCurrentBranch(workspaceFolder.uri.fsPath);
     if (!currentBranch) {
-      vscode.window.showErrorMessage('Not in a git repository');
+      showToastMessage(ToastKind.Error, 'Not in a git repository');
       return;
     }
 
@@ -155,7 +165,7 @@ async function showScanSettingsMenu(
       const branches = await getAllBranches(workspaceFolder.uri.fsPath);
 
       if (branches.length === 0) {
-        vscode.window.showErrorMessage('No branches found');
+        showToastMessage(ToastKind.Error, 'No branches found');
         return;
       }
 
@@ -198,15 +208,14 @@ async function showScanSettingsMenu(
       if (!selectedBranch || !selectedBranch.detail) return;
 
       currentCompareBranchRef.current = selectedBranch.detail;
-      context.workspaceState.update('cscanner.compareBranch', currentCompareBranchRef.current);
+      updateState(context, WorkspaceStateKey.CompareBranch, currentCompareBranchRef.current);
     }
 
     searchProvider.setResults([]);
-    currentScanModeRef.current = 'branch';
-    context.workspaceState.update('cscanner.scanMode', 'branch');
-    vscode.commands.executeCommand('setContext', getContextKey('cscanScanMode'), 'branch');
+    currentScanModeRef.current = ScanMode.Branch;
+    updateState(context, WorkspaceStateKey.ScanMode, ScanMode.Branch);
     invalidateCache();
     updateStatusBar();
-    vscode.commands.executeCommand(getCommandId('findIssue'));
+    executeCommand(Command.FindIssue);
   }
 }

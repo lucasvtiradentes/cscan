@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import { getCommandId } from '../common/constants';
 import {
-  CscanConfig,
+  CscannerConfig,
   getDefaultConfig,
   loadEffectiveConfig,
   saveGlobalConfig,
@@ -11,6 +10,14 @@ import {
 } from '../common/lib/config-manager';
 import { RustClient } from '../common/lib/rust-client';
 import { getRustBinaryPath } from '../common/lib/scanner';
+import {
+  Command,
+  ToastKind,
+  executeCommand,
+  getCurrentWorkspaceFolder,
+  registerCommand,
+  showToastMessage,
+} from '../common/lib/vscode-utils';
 import { logger } from '../common/utils/logger';
 
 interface RuleQuickPickItem extends vscode.QuickPickItem {
@@ -33,10 +40,10 @@ function getCategoryIcon(category: string): string {
 }
 
 export function createManageRulesCommand(updateStatusBar: () => Promise<void>, context: vscode.ExtensionContext) {
-  return vscode.commands.registerCommand(getCommandId('manageRules'), async () => {
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  return registerCommand(Command.ManageRules, async () => {
+    const workspaceFolder = getCurrentWorkspaceFolder();
     if (!workspaceFolder) {
-      vscode.window.showErrorMessage('No workspace folder open');
+      showToastMessage(ToastKind.Error, 'No workspace folder open');
       return;
     }
 
@@ -44,7 +51,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
     const binaryPath = getRustBinaryPath();
     if (!binaryPath) {
-      vscode.window.showErrorMessage('Cscan: Rust binary not found. Please build the Rust core first.');
+      showToastMessage(ToastKind.Error, 'Cscanner: Rust binary not found. Please build the Rust core first.');
       return;
     }
 
@@ -148,7 +155,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       logger.info(`User selected ${enabledRules.size} rules: ${Array.from(enabledRules).join(', ')}`);
 
-      const config: CscanConfig = existingConfig;
+      const config: CscannerConfig = existingConfig;
 
       if (!config.rules) {
         config.rules = {};
@@ -211,11 +218,11 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
         if (saveLocation === 'global') {
           await saveGlobalConfig(context, workspacePath, config);
           logger.info('Saved to global config (extension storage)');
-          vscode.window.showInformationMessage('Rules saved to extension storage');
+          showToastMessage(ToastKind.Info, 'Rules saved to extension storage');
         } else {
           await saveLocalConfig(workspacePath, config);
           logger.info('Saved to local .cscanner/rules.json (user-managed)');
-          vscode.window.showInformationMessage('Rules saved to .cscanner/rules.json');
+          showToastMessage(ToastKind.Info, 'Rules saved to .cscanner/rules.json');
         }
       }
 
@@ -223,11 +230,11 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       await updateStatusBar();
 
-      await vscode.commands.executeCommand(getCommandId('findIssue'));
+      await executeCommand(Command.FindIssue);
     } catch (error) {
       logger.error(`Failed to manage rules: ${error}`);
       await client.stop();
-      vscode.window.showErrorMessage(`Failed to load rules: ${error}`);
+      showToastMessage(ToastKind.Error, `Failed to load rules: ${error}`);
     }
   });
 }

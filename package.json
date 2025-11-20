@@ -11,6 +11,7 @@
     "build:extension": "turbo run build --filter=cscanner-vscode",
     "build:rust:all": "./packages/core/scripts/build-binaries.sh",
     "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
     "format": "turbo run format",
     "typecheck": "turbo run typecheck",
     "changeset": "changeset",

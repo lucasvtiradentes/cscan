@@ -1,9 +1,9 @@
 import * as vscode from 'vscode';
-import { getCommandId } from '../common/constants';
+import { Command, ToastKind, openTextDocument, registerCommand, showToastMessage } from '../common/lib/vscode-utils';
 
 export function createOpenFileCommand() {
-  return vscode.commands.registerCommand(getCommandId('openFile'), (uri: vscode.Uri, line: number, column: number) => {
-    vscode.workspace.openTextDocument(uri).then((doc) => {
+  return registerCommand(Command.OpenFile, (uri: vscode.Uri, line: number, column: number) => {
+    openTextDocument(uri).then((doc) => {
       vscode.window.showTextDocument(doc).then((editor) => {
         const position = new vscode.Position(line, column);
         editor.selection = new vscode.Selection(position, position);
@@ -14,20 +14,20 @@ export function createOpenFileCommand() {
 }
 
 export function createCopyPathCommand() {
-  return vscode.commands.registerCommand(getCommandId('copyPath'), (item: any) => {
+  return registerCommand(Command.CopyPath, (item) => {
     if (item && item.resourceUri) {
       vscode.env.clipboard.writeText(item.resourceUri.fsPath);
-      vscode.window.showInformationMessage(`Copied: ${item.resourceUri.fsPath}`);
+      showToastMessage(ToastKind.Info, `Copied: ${item.resourceUri.fsPath}`);
     }
   });
 }
 
 export function createCopyRelativePathCommand() {
-  return vscode.commands.registerCommand(getCommandId('copyRelativePath'), (item: any) => {
+  return registerCommand(Command.CopyRelativePath, (item) => {
     if (item && item.resourceUri) {
       const relativePath = vscode.workspace.asRelativePath(item.resourceUri);
       vscode.env.clipboard.writeText(relativePath);
-      vscode.window.showInformationMessage(`Copied: ${relativePath}`);
+      showToastMessage(ToastKind.Info, `Copied: ${relativePath}`);
     }
   });
 }

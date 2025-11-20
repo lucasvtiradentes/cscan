@@ -3,6 +3,8 @@ import esbuild from 'esbuild';
 
 const isWatch = process.argv.includes('--watch');
 
+const isDev = !process.env.CI;
+
 const extensionBuildOptions: BuildOptions = {
   entryPoints: ['src/extension.ts'],
   bundle: true,
@@ -11,11 +13,11 @@ const extensionBuildOptions: BuildOptions = {
   format: 'cjs',
   platform: 'node',
   target: 'node18',
-  sourcemap: isWatch,
-  minify: !isWatch,
+  sourcemap: false,
+  minify: false,
   logLevel: 'info',
   define: {
-    __IS_DEV_BUILD__: 'false',
+    __IS_DEV_BUILD__: isDev ? 'true' : 'false',
   },
 };
 

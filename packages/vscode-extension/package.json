@@ -18,10 +18,7 @@
   "engines": {
     "vscode": "^1.100.0"
   },
-  "categories": [
-    "Linters",
-    "Programming Languages"
-  ],
+  "categories": ["Linters", "Programming Languages"],
   "keywords": [
     "code-quality",
     "scanner",
@@ -37,10 +34,9 @@
   "main": "./out/extension.js",
   "scripts": {
     "build": "tsx esbuild.config.ts",
-    "postbuild": "tsx scripts/copy-binaries.ts && tsx scripts/install-local.ts",
-    "dev": "tsx esbuild.config.ts --watch",
-    "postinstall": "tsx scripts/setup-rust-binary.ts",
+    "postbuild": "tsx scripts/install-local.ts",
     "lint": "biome check src",
+    "lint:fix": "biome check --fix --unsafe src",
     "format": "biome format --write src",
     "typecheck": "tsc --noEmit",
     "vscode:prepublish": "pnpm run build",
@@ -54,9 +50,7 @@
     "tsx": "^4.20.6",
     "typescript": "^5.7.0"
   },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
+  "activationEvents": ["onStartupFinished"],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -70,7 +64,7 @@
     "views": {
       "cscanner": [
         {
-          "id": "cscanExplorer",
+          "id": "cscannerExplorer",
           "name": "Issues",
           "icon": "resources/icon.svg"
         }
@@ -78,12 +72,12 @@
     },
     "viewsWelcome": [
       {
-        "view": "cscanExplorer",
+        "view": "cscannerExplorer",
         "contents": "No issues found.",
         "when": "workbenchState != empty"
       },
       {
-        "view": "cscanExplorer",
+        "view": "cscannerExplorer",
         "contents": "Open a folder to start scanning for issues.\n[Open Folder](command:vscode.openFolder)",
         "when": "workbenchState == empty"
       }
@@ -118,13 +112,13 @@
         "command": "cscanner.setListView",
         "title": "View as List",
         "icon": "$(list-flat)",
-        "enablement": "cscanViewMode == tree"
+        "enablement": "cscannerViewMode == tree"
       },
       {
         "command": "cscanner.setTreeView",
         "title": "View as Tree",
         "icon": "$(list-tree)",
-        "enablement": "cscanViewMode == list"
+        "enablement": "cscannerViewMode == list"
       },
       {
         "command": "cscanner.openFile",
@@ -175,44 +169,44 @@
       "view/title": [
         {
           "command": "cscanner.refresh",
-          "when": "view == cscanExplorer && !cscanSearching",
+          "when": "view == cscannerExplorer && !cscannerSearching",
           "group": "navigation@10"
         },
         {
           "command": "cscanner.setGroupByDefault",
-          "when": "view == cscanExplorer && cscanGroupMode == rule",
+          "when": "view == cscannerExplorer && cscannerGroupMode == rule",
           "group": "navigation@20"
         },
         {
           "command": "cscanner.setGroupByRule",
-          "when": "view == cscanExplorer && cscanGroupMode == default",
+          "when": "view == cscannerExplorer && cscannerGroupMode == default",
           "group": "navigation@20"
         },
         {
           "command": "cscanner.setListView",
-          "when": "view == cscanExplorer && cscanViewMode == tree",
+          "when": "view == cscannerExplorer && cscannerViewMode == tree",
           "group": "navigation@30"
         },
         {
           "command": "cscanner.setTreeView",
-          "when": "view == cscanExplorer && cscanViewMode == list",
+          "when": "view == cscannerExplorer && cscannerViewMode == list",
           "group": "navigation@30"
         }
       ],
       "view/item/context": [
         {
           "command": "cscanner.copyPath",
-          "when": "view == cscanExplorer && viewItem == cscanNodeFile",
+          "when": "view == cscannerExplorer && viewItem == cscannerNodeFile",
           "group": "navigation"
         },
         {
           "command": "cscanner.copyPath",
-          "when": "view == cscanExplorer && viewItem == cscanNodeFile",
+          "when": "view == cscannerExplorer && viewItem == cscannerNodeFile",
           "group": "inline"
         },
         {
           "command": "cscanner.copyRelativePath",
-          "when": "view == cscanExplorer && viewItem == cscanNodeFile",
+          "when": "view == cscannerExplorer && viewItem == cscannerNodeFile",
           "group": "9_cutcopypaste"
         }
       ],
@@ -239,5 +233,8 @@
         }
       ]
     }
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
   }
 }

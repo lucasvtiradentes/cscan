@@ -3,6 +3,7 @@ import * as zlib from 'zlib';
 import * as vscode from 'vscode';
 import { FileResult, IssueResult, RuleMetadata, ScanResult } from '../types';
 import { logger } from '../utils/logger';
+import { openTextDocument } from './vscode-utils';
 
 interface RpcRequest {
   id: number;
@@ -171,7 +172,7 @@ export class RustClient {
 
         if (!lineText && fileFilter && fileFilter.has(vscode.workspace.asRelativePath(uri))) {
           try {
-            const document = await vscode.workspace.openTextDocument(uri);
+            const document = await openTextDocument(uri);
             lineText = document.lineAt(issue.line - 1).text;
           } catch (error) {
             logger.error(`Failed to load line text for: ${fileResult.file}`);
@@ -184,7 +185,6 @@ export class RustClient {
           line: issue.line - 1,
           column: issue.column - 1,
           text: lineText.trim(),
-          type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
           rule: issue.rule,
           severity: issue.severity.toLowerCase() as 'error' | 'warning',
         });
@@ -216,7 +216,6 @@ export class RustClient {
         line: issue.line - 1,
         column: issue.column - 1,
         text: (issue.line_text || '').trim(),
-        type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
         rule: issue.rule,
         severity: issue.severity.toLowerCase() as 'error' | 'warning',
       });
@@ -249,7 +248,6 @@ export class RustClient {
         line: issue.line - 1,
         column: issue.column - 1,
         text: (issue.line_text || '').trim(),
-        type: issue.message.includes('as any') ? 'asAny' : 'colonAny',
         rule: issue.rule,
         severity: issue.severity.toLowerCase() as 'error' | 'warning',
       });

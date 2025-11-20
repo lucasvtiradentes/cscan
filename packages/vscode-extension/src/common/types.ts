@@ -5,7 +5,6 @@ export interface IssueResult {
   line: number;
   column: number;
   text: string;
-  type: 'colonAny' | 'asAny';
   rule: string;
   severity: 'error' | 'warning';
 }
@@ -46,19 +45,21 @@ export interface ModifiedLineRange {
   lineCount: number;
 }
 
+export enum NodeKind {
+  Folder = 'folder',
+  File = 'file',
+}
+
 export interface FolderNode {
-  type: 'folder';
+  type: NodeKind.Folder;
   path: string;
   name: string;
   children: Map<string, FolderNode | FileNode>;
 }
 
 export interface FileNode {
-  type: 'file';
+  type: NodeKind.File;
   path: string;
   name: string;
   results: IssueResult[];
 }
-
-export type ViewMode = 'list' | 'tree';
-export type GroupMode = 'default' | 'rule';

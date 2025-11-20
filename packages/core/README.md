@@ -37,7 +37,7 @@ core/
 ├── parser.rs           // SWC TypeScript/TSX parser
 ├── registry.rs         // Rule registry with inventory
 ├── cache.rs            // FileCache with DashMap + disk
-├── config.rs           // cscanConfig, RuleConfig
+├── config.rs           // cscannerConfig, RuleConfig
 ├── watcher.rs          // File system watcher
 ├── utils.rs            // Line/column utilities
 ├── ast_utils.rs        // AST helper functions
@@ -73,7 +73,7 @@ Planned standalone CLI tool (currently stub).
 ```rust
 pub struct Scanner {
     registry: RuleRegistry,
-    config: cscanConfig,
+    config: cscannerConfig,
     cache: Arc<FileCache>,
 }
 
@@ -164,7 +164,7 @@ pub struct RuleRegistry {
 }
 
 impl RuleRegistry {
-    pub fn with_config(config: &cscanConfig) -> Result<Self> {
+    pub fn with_config(config: &cscannerConfig) -> Result<Self> {
         let mut rules = HashMap::new();
 
         // Collect all registered rules
@@ -260,7 +260,7 @@ impl FileCache {
 **Configuration Structure:**
 ```rust
 #[derive(Serialize, Deserialize)]
-pub struct cscanConfig {
+pub struct cscannerConfig {
     pub rules: HashMap<String, RuleConfig>,
     pub include: Vec<String>,  // Default: ["**/*.{ts,tsx}"]
     pub exclude: Vec<String>,  // Default: ["node_modules/**", "dist/**", ...]
@@ -295,7 +295,7 @@ pub struct CompiledRuleConfig {
 
 **Config Hash (Cache Key):**
 ```rust
-impl cscanConfig {
+impl cscannerConfig {
     pub fn compute_hash(&self) -> u64 {
         let mut hasher = DefaultHasher::new();
 
@@ -316,7 +316,7 @@ impl cscanConfig {
 
 **Validation:**
 ```rust
-impl cscanConfig {
+impl cscannerConfig {
     pub fn validate(&self) -> Result<()> {
         // Check regex patterns
         for (name, rule_config) in &self.rules {

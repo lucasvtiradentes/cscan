@@ -2,7 +2,7 @@ use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use colored::*;
 use core::cache::FileCache;
-use core::config::CscanConfig;
+use core::config::CscannerConfig;
 use core::scanner::Scanner;
 use core::types::Severity;
 use std::fs;
@@ -238,7 +238,7 @@ fn cmd_init(path: &Path) -> Result<()> {
         std::process::exit(1);
     }
 
-    let default_config = CscanConfig::default();
+    let default_config = CscannerConfig::default();
     fs::create_dir_all(&config_dir).context("Failed to create .cscanner directory")?;
 
     let config_json = serde_json::to_string_pretty(&default_config)?;
@@ -252,22 +252,22 @@ fn cmd_init(path: &Path) -> Result<()> {
     Ok(())
 }
 
-fn load_config(root: &Path) -> Result<Option<CscanConfig>> {
+fn load_config(root: &Path) -> Result<Option<CscannerConfig>> {
     load_config_with_path(root).map(|opt| opt.map(|(cfg, _)| cfg))
 }
 
-fn load_config_with_path(root: &Path) -> Result<Option<(CscanConfig, String)>> {
+fn load_config_with_path(root: &Path) -> Result<Option<(CscannerConfig, String)>> {
     let local_path = root.join(".cscanner").join("rules.json");
     if local_path.exists() {
         let config =
-            CscanConfig::load_from_file(&local_path).map_err(|e| anyhow::anyhow!("{}", e))?;
+            CscannerConfig::load_from_file(&local_path).map_err(|e| anyhow::anyhow!("{}", e))?;
         return Ok(Some((config, local_path.display().to_string())));
     }
 
     if let Some(global_path) = get_vscode_global_config_path(root) {
         if global_path.exists() {
-            let config =
-                CscanConfig::load_from_file(&global_path).map_err(|e| anyhow::anyhow!("{}", e))?;
+            let config = CscannerConfig::load_from_file(&global_path)
+                .map_err(|e| anyhow::anyhow!("{}", e))?;
             return Ok(Some((config, global_path.display().to_string())));
         }
     }

@@ -1,25 +1,32 @@
 import * as vscode from 'vscode';
-import { getCommandId } from '../common/constants';
 import { clearCache } from '../common/lib/scanner';
+import {
+  Command,
+  ToastKind,
+  executeCommand,
+  getCurrentWorkspaceFolder,
+  registerCommand,
+  showToastMessage,
+} from '../common/lib/vscode-utils';
 import { invalidateCache } from '../common/utils/git-helper';
 import { logger } from '../common/utils/logger';
 
 export function createRefreshCommand() {
-  return vscode.commands.registerCommand(getCommandId('refresh'), async () => {
-    await vscode.commands.executeCommand(getCommandId('findIssue'));
+  return registerCommand(Command.Refresh, async () => {
+    await executeCommand(Command.FindIssue);
   });
 }
 
 export function createHardScanCommand(isSearchingRef: { current: boolean }) {
-  return vscode.commands.registerCommand(getCommandId('hardScan'), async () => {
+  return registerCommand(Command.HardScan, async () => {
     if (isSearchingRef.current) {
-      vscode.window.showWarningMessage('Search already in progress');
+      showToastMessage(ToastKind.Warning, 'Search already in progress');
       return;
     }
 
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    const workspaceFolder = getCurrentWorkspaceFolder();
     if (!workspaceFolder) {
-      vscode.window.showErrorMessage('No workspace folder open');
+      showToastMessage(ToastKind.Error, 'No workspace folder open');
       return;
     }
 
@@ -28,11 +35,11 @@ export function createHardScanCommand(isSearchingRef: { current: boolean }) {
     try {
       await clearCache();
       invalidateCache();
-      vscode.window.showInformationMessage('Cache cleared, rescanning...');
-      await vscode.commands.executeCommand(getCommandId('findIssue'));
+      showToastMessage(ToastKind.Info, 'Cache cleared, rescanning...');
+      await executeCommand(Command.FindIssue);
     } catch (error) {
       logger.error(`Hard scan failed: ${error}`);
-      vscode.window.showErrorMessage(`Hard scan failed: ${error}`);
+      showToastMessage(ToastKind.Error, `Hard scan failed: ${error}`);
     }
   });
 }

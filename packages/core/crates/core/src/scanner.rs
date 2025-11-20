@@ -1,5 +1,5 @@
 use crate::cache::FileCache;
-use crate::config::CscanConfig;
+use crate::config::CscannerConfig;
 use crate::disable_comments::DisableDirectives;
 use crate::parser::parse_file;
 use crate::registry::RuleRegistry;
@@ -14,12 +14,12 @@ use tracing::{debug, info};
 
 pub struct Scanner {
     registry: RuleRegistry,
-    config: CscanConfig,
+    config: CscannerConfig,
     cache: Arc<FileCache>,
 }
 
 impl Scanner {
-    pub fn new(config: CscanConfig) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn new(config: CscannerConfig) -> Result<Self, Box<dyn std::error::Error>> {
         let registry = RuleRegistry::with_config(&config)?;
         let config_hash = config.compute_hash();
         Ok(Self {
@@ -30,7 +30,7 @@ impl Scanner {
     }
 
     pub fn with_cache(
-        config: CscanConfig,
+        config: CscannerConfig,
         cache: Arc<FileCache>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let registry = RuleRegistry::with_config(&config)?;

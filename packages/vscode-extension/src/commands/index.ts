@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { ScanMode } from '../common/lib/vscode-utils';
 import { SearchResultProvider } from '../sidebar/search-provider';
 import { createFindIssueCommand } from './find-issue';
 import { createGoToNextIssueCommand, createGoToPreviousIssueCommand, resetIssueIndex } from './issue-navigation';
@@ -21,7 +22,7 @@ export interface CommandContext {
   updateBadge: () => void;
   updateStatusBar: () => Promise<void>;
   isSearchingRef: { current: boolean };
-  currentScanModeRef: { current: 'workspace' | 'branch' };
+  currentScanModeRef: { current: ScanMode };
   currentCompareBranchRef: { current: string };
 }
 

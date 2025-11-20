@@ -1,9 +1,19 @@
 import * as vscode from 'vscode';
 import { registerAllCommands } from './commands';
-import { getContextKey } from './common/constants';
+import { getViewId } from './common/constants';
 import { loadEffectiveConfig } from './common/lib/config-manager';
 import { dispose as disposeScanner, scanContent } from './common/lib/scanner';
-import { getViewId } from './common/utils/extension-helper';
+import {
+  Command,
+  ContextKey,
+  WorkspaceStateKey,
+  executeCommand,
+  getCurrentWorkspaceFolder,
+  getWorkspaceState,
+  openTextDocument,
+  setContextKey,
+  setWorkspaceState,
+} from './common/lib/vscode-utils';
 import { getChangedFiles, getModifiedLineRanges, invalidateCache } from './common/utils/git-helper';
 import { getNewIssues } from './common/utils/issue-comparator';
 import { logger } from './common/utils/logger';
@@ -13,7 +23,7 @@ import { StatusBarManager } from './status-bar/status-bar-manager';
 let activationKey: string | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const workspaceFolder = getCurrentWorkspaceFolder();
   const currentKey = workspaceFolder?.uri.fsPath || 'no-workspace';
 
   if (activationKey === currentKey) {
@@ -22,27 +32,27 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   activationKey = currentKey;
-  logger.info('Cscan extension activated');
+  logger.info('Cscanner extension activated');
 
   const searchProvider = new SearchResultProvider();
-  const viewModeKey = context.workspaceState.get<'list' | 'tree'>('cscanner.viewMode', 'list');
-  const groupModeKey = context.workspaceState.get<'default' | 'rule'>('cscanner.groupMode', 'default');
-  const scanModeKey = context.workspaceState.get<'workspace' | 'branch'>('cscanner.scanMode', 'workspace');
-  const compareBranch = context.workspaceState.get<string>('cscanner.compareBranch', 'main');
+  const viewModeKey = getWorkspaceState(context, WorkspaceStateKey.ViewMode);
+  const groupModeKey = getWorkspaceState(context, WorkspaceStateKey.GroupMode);
+  const scanModeKey = getWorkspaceState(context, WorkspaceStateKey.ScanMode);
+  const compareBranch = getWorkspaceState(context, WorkspaceStateKey.CompareBranch);
 
   searchProvider.viewMode = viewModeKey;
   searchProvider.groupMode = groupModeKey;
 
-  const cachedResults = context.workspaceState.get<any[]>('cscanner.cachedResults', []);
+  const cachedResults = getWorkspaceState(context, WorkspaceStateKey.CachedResults);
   const deserializedResults = cachedResults.map((r) => ({
     ...r,
     uri: vscode.Uri.parse(r.uriString),
   }));
   searchProvider.setResults(deserializedResults);
 
-  vscode.commands.executeCommand('setContext', getContextKey('cscanViewMode'), viewModeKey);
-  vscode.commands.executeCommand('setContext', getContextKey('cscanGroupMode'), groupModeKey);
-  vscode.commands.executeCommand('setContext', getContextKey('cscanScanMode'), scanModeKey);
+  setContextKey(ContextKey.ViewMode, viewModeKey);
+  setContextKey(ContextKey.GroupMode, groupModeKey);
+  setContextKey(ContextKey.ScanMode, scanModeKey);
 
   const viewId = getViewId();
   logger.info(`Registering tree view with ID: ${viewId}`);
@@ -84,7 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
   const updateSingleFile = async (uri: vscode.Uri) => {
     if (isSearchingRef.current) return;
 
-    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    const workspaceFolder = getCurrentWorkspaceFolder();
     if (!workspaceFolder) return;
 
     const relativePath = vscode.workspace.asRelativePath(uri);
@@ -102,7 +112,7 @@ export function activate(context: vscode.ExtensionContext) {
     try {
       logger.debug(`Scanning single file: ${relativePath}`);
 
-      const document = await vscode.workspace.openTextDocument(uri);
+      const document = await openTextDocument(uri);
       const content = document.getText();
       const config = await loadEffectiveConfig(context, workspaceFolder.uri.fsPath);
       let newResults = await scanContent(uri.fsPath, content, config);
@@ -139,7 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
           uriString: uri.toString(),
         };
       });
-      context.workspaceState.update('cscanner.cachedResults', serializedResults);
+      setWorkspaceState(context, WorkspaceStateKey.CachedResults, serializedResults);
       updateBadge();
     } catch (error) {
       logger.error(`Failed to update single file: ${error}`);
@@ -174,7 +184,7 @@ export function activate(context: vscode.ExtensionContext) {
           uriString: uri.toString(),
         };
       });
-      context.workspaceState.update('cscanner.cachedResults', serializedResults);
+      setWorkspaceState(context, WorkspaceStateKey.CachedResults, serializedResults);
       updateBadge();
     }
   });
@@ -183,7 +193,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   setTimeout(() => {
     logger.info('Running initial scan after 2s delay...');
-    vscode.commands.executeCommand('cscanner.findIssue', { silent: true });
+    executeCommand(Command.FindIssue, { silent: true });
   }, 2000);
 }
 

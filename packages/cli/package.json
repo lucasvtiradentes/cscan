@@ -11,10 +11,7 @@
   "bin": {
     "cscanner": "./dist/cscanner.js"
   },
-  "files": [
-    "dist",
-    "postinstall.cjs"
-  ],
+  "files": ["dist", "postinstall.cjs"],
   "optionalDependencies": {
     "@cscanner/cli-linux-x64": "2.0.10",
     "@cscanner/cli-linux-arm64": "2.0.10",
@@ -27,7 +24,8 @@
     "build": "tsc && ./scripts/copy-binaries.sh",
     "start": "node ./dist/cscanner.js",
     "typecheck": "tsc --noEmit",
-    "lint": "biome check src scripts/*.ts",
+    "lint": "biome check src",
+    "lint:fix": "biome check --fix --unsafe src",
     "format": "biome format --write src scripts/*.ts",
     "prepublishOnly": "pnpm run build"
   },

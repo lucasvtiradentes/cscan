@@ -1,4 +1,4 @@
-use crate::config::{CompiledRuleConfig, CscanConfig, RuleType};
+use crate::config::{CompiledRuleConfig, CscannerConfig, RuleType};
 use crate::rules::{RegexRule, Rule, RuleRegistration};
 use crate::types::Severity;
 use std::collections::HashMap;
@@ -24,7 +24,7 @@ impl RuleRegistry {
         }
     }
 
-    pub fn with_config(config: &CscanConfig) -> Result<Self, Box<dyn std::error::Error>> {
+    pub fn with_config(config: &CscannerConfig) -> Result<Self, Box<dyn std::error::Error>> {
         let mut registry = Self::new();
 
         for (rule_name, rule_config) in &config.rules {
@@ -86,7 +86,7 @@ impl RuleRegistry {
     pub fn get_enabled_rules(
         &self,
         file_path: &Path,
-        config: &CscanConfig,
+        config: &CscannerConfig,
     ) -> Vec<(Arc<dyn Rule>, Severity)> {
         self.rules
             .iter()
@@ -131,14 +131,14 @@ mod tests {
 
     #[test]
     fn test_registry_with_config() {
-        let config = CscanConfig::default();
+        let config = CscannerConfig::default();
         let registry = RuleRegistry::with_config(&config).unwrap();
         assert!(registry.is_enabled("no-any-type"));
     }
 
     #[test]
     fn test_get_enabled_rules() {
-        let config = CscanConfig::default();
+        let config = CscannerConfig::default();
         let registry = RuleRegistry::with_config(&config).unwrap();
         let rules = registry.get_enabled_rules(Path::new("src/test.ts"), &config);
         assert!(!rules.is_empty());
