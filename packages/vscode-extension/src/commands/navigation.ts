@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Command, openTextDocument, registerCommand, showToastMessage, ToastKind } from '../common/lib/vscode-utils';
+import { Command, ToastKind, openTextDocument, registerCommand, showToastMessage } from '../common/lib/vscode-utils';
 
 export function createOpenFileCommand() {
   return registerCommand(Command.OpenFile, (uri: vscode.Uri, line: number, column: number) => {

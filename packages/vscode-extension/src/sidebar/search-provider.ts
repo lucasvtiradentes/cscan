@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { GroupMode, IssueResult, ViewMode } from '../common/types';
 import { getCurrentWorkspaceFolder } from '../common/lib/vscode-utils';
+import { GroupMode, IssueResult, ViewMode } from '../common/types';
 import { buildFolderTree } from './tree-builder';
 import { FileResultItem, FolderResultItem, LineResultItem, RuleGroupItem } from './tree-items';
 

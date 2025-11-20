@@ -12,11 +12,11 @@ import { RustClient } from '../common/lib/rust-client';
 import { getRustBinaryPath } from '../common/lib/scanner';
 import {
   Command,
+  ToastKind,
   executeCommand,
   getCurrentWorkspaceFolder,
   registerCommand,
   showToastMessage,
-  ToastKind,
 } from '../common/lib/vscode-utils';
 import { logger } from '../common/utils/logger';
 

@@ -2,12 +2,12 @@ import * as vscode from 'vscode';
 import { getGlobalConfigPath, getLocalConfigPath } from '../common/lib/config-manager';
 import {
   Command,
+  ToastKind,
   executeCommand,
   getCurrentWorkspaceFolder,
   openTextDocument,
   registerCommand,
   showToastMessage,
-  ToastKind,
   updateState,
 } from '../common/lib/vscode-utils';
 import { getAllBranches, getCurrentBranch, invalidateCache } from '../common/utils/git-helper';

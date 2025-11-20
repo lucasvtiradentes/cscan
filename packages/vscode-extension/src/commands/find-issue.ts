@@ -4,13 +4,13 @@ import { scanWorkspace } from '../common/lib/scanner';
 import {
   Command,
   ContextKey,
+  ToastKind,
   executeCommand,
   getCurrentWorkspaceFolder,
   registerCommand,
   setContextKey,
   setWorkspaceState,
   showToastMessage,
-  ToastKind,
   updateState,
 } from '../common/lib/vscode-utils';
 import { branchExists, getChangedFiles, getModifiedLineRanges } from '../common/utils/git-helper';

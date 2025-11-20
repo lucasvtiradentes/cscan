@@ -2,11 +2,11 @@ import * as vscode from 'vscode';
 import { clearCache } from '../common/lib/scanner';
 import {
   Command,
+  ToastKind,
   executeCommand,
   getCurrentWorkspaceFolder,
   registerCommand,
   showToastMessage,
-  ToastKind,
 } from '../common/lib/vscode-utils';
 import { invalidateCache } from '../common/utils/git-helper';
 import { logger } from '../common/utils/logger';
