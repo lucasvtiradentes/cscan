@@ -9,8 +9,8 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
-import { EXTENSION_ID_DEV } from '../src/common/constants';
+import { join, resolve } from 'node:path';
+import { BINARY_BASE_NAME, EXTENSION_ID_DEV, PLATFORM_TARGET_MAP, getBinaryName } from '../src/common/constants';
 import {
   addDevLabel,
   addDevSuffix,
@@ -21,21 +21,143 @@ import {
   VIEW_ID,
 } from '../src/common/scripts-constants';
 
-if (process.env.CI || process.env.GITHUB_ACTIONS) {
-  console.log('Skipping local installation in CI environment');
-  process.exit(0);
+async function main() {
+  if (process.env.CI || process.env.GITHUB_ACTIONS) {
+    console.log('Skipping local installation in CI environment');
+    process.exit(0);
+  }
+
+  await setupTargetDirectory();
+  await copyExtensionFiles();
+  await copyBinaries();
+  await patchExtensionCode();
+  await writePackageJson();
+  await copyMetaFiles();
+  await printSuccessMessage();
 }
 
-const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
-const targetDir = join(homedir(), '.vscode', 'extensions', EXTENSION_ID_DEV);
+main();
 
-console.log('Installing extension locally...');
+async function setupTargetDirectory() {
+  console.log('Step 1/6 - Setting up target directory...');
+  const targetDir = getTargetDirectory();
 
-if (existsSync(targetDir)) {
-  rmSync(targetDir, { recursive: true });
+  if (existsSync(targetDir)) {
+    rmSync(targetDir, { recursive: true });
+  }
+
+  mkdirSync(targetDir, { recursive: true });
 }
 
-mkdirSync(targetDir, { recursive: true });
+async function copyExtensionFiles() {
+  console.log('Step 2/6 - Copying extension files...');
+  const targetDir = getTargetDirectory();
+
+  copyRecursive('out', join(targetDir, 'out'));
+  copyRecursive('resources', join(targetDir, 'resources'));
+}
+
+async function copyBinaries() {
+  console.log('Step 3/6 - Copying Rust binary...');
+  const targetDir = getTargetDirectory();
+  const extensionRoot = resolve(__dirname, '..');
+  const coreTargetDir = join(extensionRoot, '..', 'core', 'target', 'release');
+  const outBinariesDir = join(targetDir, 'out', 'binaries');
+
+  const platformInfo = getPlatformInfo();
+  if (!platformInfo) {
+    console.log('   ⚠️  Unsupported platform - skipping');
+    return;
+  }
+
+  const { platform, npmPlatform } = platformInfo;
+  const sourcePath = join(coreTargetDir, getBinaryName());
+
+  if (!existsSync(sourcePath)) {
+    console.log('   ⚠️  Binary not found - skipping (not built yet)');
+    return;
+  }
+
+  mkdirSync(outBinariesDir, { recursive: true });
+
+  const targetBinary = join(outBinariesDir, `${BINARY_BASE_NAME}-${npmPlatform}${platform === 'win32' ? '.exe' : ''}`);
+
+  copyFileSync(sourcePath, targetBinary);
+  console.log(`   ✅ Copied binary for ${npmPlatform}`);
+}
+
+async function patchExtensionCode() {
+  console.log('Step 4/6 - Patching extension code...');
+  const targetDir = getTargetDirectory();
+  const extensionJsPath = join(targetDir, 'out', 'extension.js');
+
+  const extensionJs = readFileSync(extensionJsPath, 'utf8');
+  const isDevUnminified = /var IS_DEV = false;/;
+  const logFileProd = buildLogFilename(false);
+  const logFileDev = buildLogFilename(true);
+  const logFilePattern = new RegExp(logFileProd.replace('.', '\\.'), 'g');
+  const statusBarPattern = new RegExp(`${EXTENSION_DISPLAY_NAME}:`, 'g');
+
+  let patchedExtensionJs = extensionJs;
+
+  if (isDevUnminified.test(patchedExtensionJs)) {
+    patchedExtensionJs = patchedExtensionJs.replace(isDevUnminified, 'var IS_DEV = true;');
+  } else {
+    patchedExtensionJs = patchedExtensionJs.replace(logFilePattern, logFileDev);
+    patchedExtensionJs = patchedExtensionJs.replace(statusBarPattern, `${addDevLabel(EXTENSION_DISPLAY_NAME)}:`);
+  }
+
+  writeFileSync(extensionJsPath, patchedExtensionJs);
+}
+
+async function writePackageJson() {
+  console.log('Step 5/6 - Writing package.json...');
+  const targetDir = getTargetDirectory();
+  const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+  const modifiedPackageJson = applyDevTransformations(packageJson);
+
+  writeFileSync(join(targetDir, 'package.json'), JSON.stringify(modifiedPackageJson, null, 2));
+}
+
+async function copyMetaFiles() {
+  console.log('Step 6/6 - Copying meta files...');
+  const targetDir = getTargetDirectory();
+
+  if (existsSync('LICENSE')) {
+    copyFileSync('LICENSE', join(targetDir, 'LICENSE'));
+  }
+
+  if (existsSync('README.md')) {
+    copyFileSync('README.md', join(targetDir, 'README.md'));
+  }
+}
+
+async function printSuccessMessage() {
+  const targetDir = getTargetDirectory();
+
+  console.log(`\n✅ Extension installed to: ${targetDir}`);
+  console.log(`   Extension ID: ${EXTENSION_ID_DEV}`);
+  console.log(`\n🔄 Reload VSCode to activate the extension:`);
+  console.log(`   - Press Ctrl+Shift+P`);
+  console.log(`   - Type "Reload Window" and press Enter\n`);
+}
+
+function getTargetDirectory(): string {
+  return join(homedir(), '.vscode', 'extensions', EXTENSION_ID_DEV);
+}
+
+function getPlatformInfo(): { platform: string; npmPlatform: string } | null {
+  const platform = process.platform;
+  const arch = process.arch;
+  const key = `${platform}-${arch}`;
+  const npmPlatform = PLATFORM_TARGET_MAP[key];
+
+  if (!npmPlatform) {
+    return null;
+  }
+
+  return { platform, npmPlatform };
+}
 
 function copyRecursive(src: string, dest: string): void {
   const stat = statSync(src);
@@ -165,40 +287,3 @@ function applyDevTransformations(pkg: Record<string, unknown>): Record<string, u
 
   return transformed;
 }
-
-copyRecursive('out', join(targetDir, 'out'));
-copyRecursive('resources', join(targetDir, 'resources'));
-
-const extensionJs = readFileSync(join(targetDir, 'out', 'extension.js'), 'utf8');
-const isDevUnminified = /var IS_DEV = false;/;
-const logFileProd = buildLogFilename(false);
-const logFileDev = buildLogFilename(true);
-const logFilePattern = new RegExp(logFileProd.replace('.', '\\.'), 'g');
-const statusBarPattern = new RegExp(`${EXTENSION_DISPLAY_NAME}:`, 'g');
-let patchedExtensionJs = extensionJs;
-
-if (isDevUnminified.test(patchedExtensionJs)) {
-  patchedExtensionJs = patchedExtensionJs.replace(isDevUnminified, 'var IS_DEV = true;');
-} else {
-  patchedExtensionJs = patchedExtensionJs.replace(logFilePattern, logFileDev);
-  patchedExtensionJs = patchedExtensionJs.replace(statusBarPattern, `${addDevLabel(EXTENSION_DISPLAY_NAME)}:`);
-}
-
-writeFileSync(join(targetDir, 'out', 'extension.js'), patchedExtensionJs);
-
-const modifiedPackageJson = applyDevTransformations(packageJson);
-writeFileSync(join(targetDir, 'package.json'), JSON.stringify(modifiedPackageJson, null, 2));
-
-if (existsSync('LICENSE')) {
-  copyFileSync('LICENSE', join(targetDir, 'LICENSE'));
-}
-
-if (existsSync('README.md')) {
-  copyFileSync('README.md', join(targetDir, 'README.md'));
-}
-
-console.log(`\n✅ Extension installed to: ${targetDir}`);
-console.log(`   Extension ID: ${EXTENSION_ID_DEV}`);
-console.log(`\n🔄 Reload VSCode to activate the extension:`);
-console.log(`   - Press Ctrl+Shift+P`);
-console.log(`   - Type "Reload Window" and press Enter\n`);

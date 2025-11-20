@@ -14,7 +14,7 @@ export function createOpenFileCommand() {
 }
 
 export function createCopyPathCommand() {
-  return registerCommand(Command.CopyPath, (item: any) => {
+  return registerCommand(Command.CopyPath, (item) => {
     if (item && item.resourceUri) {
       vscode.env.clipboard.writeText(item.resourceUri.fsPath);
       showToastMessage(ToastKind.Info, `Copied: ${item.resourceUri.fsPath}`);
@@ -23,7 +23,7 @@ export function createCopyPathCommand() {
 }
 
 export function createCopyRelativePathCommand() {
-  return registerCommand(Command.CopyRelativePath, (item: any) => {
+  return registerCommand(Command.CopyRelativePath, (item) => {
     if (item && item.resourceUri) {
       const relativePath = vscode.workspace.asRelativePath(item.resourceUri);
       vscode.env.clipboard.writeText(relativePath);

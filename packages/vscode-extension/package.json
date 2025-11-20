@@ -33,7 +33,6 @@
   ],
   "main": "./out/extension.js",
   "scripts": {
-    "postinstall": "tsx scripts/setup-rust-binary.ts",
     "build": "tsx esbuild.config.ts",
     "postbuild": "tsx scripts/copy-binaries.ts && tsx scripts/install-local.ts",
     "lint": "biome check src",
