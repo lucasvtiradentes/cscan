@@ -274,7 +274,7 @@ export function activate(context: vscode.ExtensionContext) {
   const searchProvider = new SearchResultProvider();
   searchProvider.setResults(deserializedResults);
 
-  const treeView = vscode.window.createTreeView('cscanExplorer', {
+  const treeView = vscode.window.createTreeView('cscannerExplorer', {
     treeDataProvider: searchProvider,
   });
 
@@ -516,17 +516,17 @@ The `setup-rust-binary.ts` script:
 Extension sets VSCode context keys for conditional menu visibility:
 
 ```typescript
-vscode.commands.executeCommand('setContext', 'cscanViewMode', 'list' | 'tree');
-vscode.commands.executeCommand('setContext', 'cscanGroupMode', 'default' | 'rule');
-vscode.commands.executeCommand('setContext', 'cscanScanMode', 'workspace' | 'branch');
-vscode.commands.executeCommand('setContext', 'cscanSearching', true | false);
+vscode.commands.executeCommand('setContext', 'cscannerViewMode', 'list' | 'tree');
+vscode.commands.executeCommand('setContext', 'cscannerGroupMode', 'default' | 'rule');
+vscode.commands.executeCommand('setContext', 'cscannerScanMode', 'workspace' | 'branch');
+vscode.commands.executeCommand('setContext', 'cscannerSearching', true | false);
 ```
 
 **Usage in package.json:**
 ```json
 {
   "command": "cscanner.setTreeView",
-  "when": "view == cscanExplorer && cscanViewMode == list",
+  "when": "view == cscannerExplorer && cscannerViewMode == list",
   "group": "navigation@30"
 }
 ```
@@ -535,14 +535,14 @@ vscode.commands.executeCommand('setContext', 'cscanSearching', true | false);
 
 Tree items have `contextValue` for context menu filtering:
 
-- `cscanNodeFolder` - Folder items
-- `cscanNodeFile` - File items (copy path available)
-- `cscanNodeIssue` - Issue items
-- `cscanNodeRuleGroup` - Rule group items
+- `cscannerNodeFolder` - Folder items
+- `cscannerNodeFile` - File items (copy path available)
+- `cscannerNodeIssue` - Issue items
+- `cscannerNodeRuleGroup` - Rule group items
 
 ### Logging
 
-Extension logs to `$TMPDIR/cscanlogs.txt`:
+Extension logs to `$TMPDIR/cscannerlogs.txt`:
 
 ```typescript
 import { logger } from './common/utils/logger';

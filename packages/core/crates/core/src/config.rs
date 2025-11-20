@@ -7,7 +7,7 @@ use std::hash::{Hash, Hasher};
 use std::path::Path;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CscanConfig {
+pub struct CscannerConfig {
     #[serde(default)]
     pub rules: HashMap<String, RuleConfig>,
     #[serde(default = "default_include")]
@@ -76,7 +76,7 @@ fn default_exclude() -> Vec<String> {
     ]
 }
 
-impl CscanConfig {
+impl CscannerConfig {
     pub fn load_from_file(path: &Path) -> Result<Self, Box<dyn std::error::Error>> {
         let content = std::fs::read_to_string(path)?;
         let config: Self = serde_json::from_str(&content)?;
@@ -184,7 +184,7 @@ impl CscanConfig {
     }
 }
 
-impl Default for CscanConfig {
+impl Default for CscannerConfig {
     fn default() -> Self {
         let mut rules = HashMap::new();
 
@@ -236,7 +236,7 @@ mod tests {
 
     #[test]
     fn test_default_config() {
-        let config = CscanConfig::default();
+        let config = CscannerConfig::default();
         assert!(config.rules.contains_key("no-any-type"));
         assert_eq!(config.include.len(), 1);
         assert!(config.exclude.len() > 0);
@@ -244,7 +244,7 @@ mod tests {
 
     #[test]
     fn test_glob_matching() {
-        let config = CscanConfig::default();
+        let config = CscannerConfig::default();
         let compiled = config.compile_rule("no-any-type").unwrap();
 
         assert!(config.matches_file(Path::new("src/test.ts"), &compiled));

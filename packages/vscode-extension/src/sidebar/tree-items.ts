@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { getCommandId } from '../common/constants';
-import { FolderNode, IssueResult, ViewMode } from '../common/types';
+import { Command, TreeItemContextValue, ViewMode } from '../common/lib/vscode-utils';
+import { FolderNode, IssueResult, NodeKind } from '../common/types';
 import { getFolderIssueCount } from './tree-builder';
 
 export class RuleGroupItem extends vscode.TreeItem {
@@ -13,7 +14,7 @@ export class RuleGroupItem extends vscode.TreeItem {
 
     this.description = `${results.length} ${results.length === 1 ? 'issue' : 'issues'}`;
     this.iconPath = new vscode.ThemeIcon('list-filter');
-    this.contextValue = 'CscanNodeRuleGroup';
+    this.contextValue = TreeItemContextValue.RuleGroup;
   }
 }
 
@@ -23,8 +24,8 @@ export class FolderResultItem extends vscode.TreeItem {
 
     const count = getFolderIssueCount(node);
     this.description = `${count} ${count === 1 ? 'issue' : 'issues'}`;
-    this.iconPath = new vscode.ThemeIcon('folder');
-    this.contextValue = 'CscanNodeFolder';
+    this.iconPath = new vscode.ThemeIcon(NodeKind.Folder);
+    this.contextValue = TreeItemContextValue.Folder;
   }
 }
 
@@ -39,8 +40,8 @@ export class FileResultItem extends vscode.TreeItem {
     );
 
     this.description = `${results.length} ${results.length === 1 ? 'issue' : 'issues'}`;
-    this.iconPath = new vscode.ThemeIcon('file');
-    this.contextValue = 'CscanNodeFile';
+    this.iconPath = new vscode.ThemeIcon(NodeKind.File);
+    this.contextValue = TreeItemContextValue.File;
     this.resourceUri = vscode.Uri.file(filePath);
   }
 }
@@ -53,12 +54,12 @@ export class LineResultItem extends vscode.TreeItem {
     this.tooltip = result.text;
 
     this.command = {
-      command: getCommandId('openFile'),
+      command: getCommandId(Command.OpenFile),
       title: 'Open File',
       arguments: [result.uri, result.line, result.column],
     };
 
-    this.iconPath = new vscode.ThemeIcon(result.type === 'colonAny' ? 'symbol-variable' : 'symbol-keyword');
-    this.contextValue = 'CscanNodeIssue';
+    this.iconPath = new vscode.ThemeIcon('symbol-variable');
+    this.contextValue = TreeItemContextValue.Issue;
   }
 }

@@ -6,6 +6,7 @@ import { IssueResult } from '../types';
 import { getExtensionPath } from '../utils/extension-helper';
 import { LOG_FILE_PATH, logger } from '../utils/logger';
 import { RustClient } from './rust-client';
+import { getCurrentWorkspaceFolder, openTextDocument } from './vscode-utils';
 
 let rustClient: RustClient | null = null;
 
@@ -49,7 +50,7 @@ export function getRustBinaryPath(): string | null {
 }
 
 export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Promise<IssueResult[]> {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const workspaceFolder = getCurrentWorkspaceFolder();
   if (!workspaceFolder) {
     return [];
   }
@@ -59,14 +60,14 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
   if (!binaryPath) {
     vscode.window
       .showErrorMessage(
-        'Cscan: Rust binary not found. Please build the Rust core:\n\n' +
+        'Cscanner: Rust binary not found. Please build the Rust core:\n\n' +
           'cd packages/core && cargo build --release\n\n' +
           `Check logs at ${LOG_FILE_PATH} for details.`,
         'Open Logs',
       )
       .then((selection) => {
         if (selection === 'Open Logs') {
-          vscode.workspace.openTextDocument(LOG_FILE_PATH).then((doc) => {
+          openTextDocument(vscode.Uri.file(LOG_FILE_PATH)).then((doc) => {
             vscode.window.showTextDocument(doc);
           });
         }
@@ -90,10 +91,10 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
   } catch (error) {
     logger.error(`Rust backend failed: ${error}`);
     vscode.window
-      .showErrorMessage(`Cscan: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`, 'Open Logs')
+      .showErrorMessage(`Cscanner: Rust backend error: ${error}\n\nCheck logs at ${LOG_FILE_PATH}`, 'Open Logs')
       .then((selection) => {
         if (selection === 'Open Logs') {
-          vscode.workspace.openTextDocument(LOG_FILE_PATH).then((doc) => {
+          openTextDocument(vscode.Uri.file(LOG_FILE_PATH)).then((doc) => {
             vscode.window.showTextDocument(doc);
           });
         }
@@ -103,7 +104,7 @@ export async function scanWorkspace(fileFilter?: Set<string>, config?: any): Pro
 }
 
 export async function scanFile(filePath: string): Promise<IssueResult[]> {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const workspaceFolder = getCurrentWorkspaceFolder();
   if (!workspaceFolder) {
     return [];
   }
@@ -129,7 +130,7 @@ export async function scanFile(filePath: string): Promise<IssueResult[]> {
 }
 
 export async function scanContent(filePath: string, content: string, config?: any): Promise<IssueResult[]> {
-  const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+  const workspaceFolder = getCurrentWorkspaceFolder();
   if (!workspaceFolder) {
     return [];
   }

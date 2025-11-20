@@ -36,35 +36,39 @@ importers:
         specifier: ^5.7.0
         version: 5.9.3
     optionalDependencies:
-      cscanner-darwin-arm64:
-        specifier: workspace:*
-        version: link:npm/darwin-arm64
-      cscanner-darwin-x64:
-        specifier: workspace:*
-        version: link:npm/darwin-x64
-      cscanner-linux-arm64:
-        specifier: workspace:*
-        version: link:npm/linux-arm64
-      cscanner-linux-x64:
-        specifier: workspace:*
-        version: link:npm/linux-x64
-      cscanner-win32-x64:
-        specifier: workspace:*
-        version: link:npm/win32-x64
+      '@cscanner/cli-darwin-arm64':
+        specifier: 2.0.10
+        version: 2.0.10
+      '@cscanner/cli-darwin-x64':
+        specifier: 2.0.10
+        version: 2.0.10
+      '@cscanner/cli-linux-arm64':
+        specifier: 2.0.10
+        version: 2.0.10
+      '@cscanner/cli-linux-x64':
+        specifier: 2.0.10
+        version: 2.0.10
+      '@cscanner/cli-win32-x64':
+        specifier: 2.0.10
+        version: 2.0.10
 
-  packages/cli/npm/darwin-arm64: {}
+  packages/cli/npm/cli-darwin-arm64: {}
 
-  packages/cli/npm/darwin-x64: {}
+  packages/cli/npm/cli-darwin-x64: {}
 
-  packages/cli/npm/linux-arm64: {}
+  packages/cli/npm/cli-linux-arm64: {}
 
-  packages/cli/npm/linux-x64: {}
+  packages/cli/npm/cli-linux-x64: {}
 
-  packages/cli/npm/win32-x64: {}
+  packages/cli/npm/cli-win32-x64: {}
 
   packages/core: {}
 
   packages/vscode-extension:
+    dependencies:
+      zod:
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@types/node':
         specifier: ^22.0.0
@@ -195,6 +199,31 @@ packages:
 
   '@changesets/write@0.4.0':
     resolution: {integrity: sha512-CdTLvIOPiCNuH71pyDu3rA+Q0n65cmAbXnwWH84rKGiFumFzkmHNT8KHTMEchcxN+Kl8I54xGUhJ7l3E7X396Q==}
+
+  '@cscanner/cli-darwin-arm64@2.0.10':
+    resolution: {integrity: sha512-VIznqs/EOgfvH/pJWSDXz7ztaLwaVuBCHwaiw2aYZVh9hdMsLDqg0l628tL65kD7Jo2yXSMM05/PwdE+hrCKyw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@cscanner/cli-darwin-x64@2.0.10':
+    resolution: {integrity: sha512-1jQvVRNxQMh98e3SQOpqz8w+Ge+aXD2jJIqV/bWr+Plj+38Oi27I1JDLki8GWKjEugvqVAU8jnBU/NWoMT4x6Q==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@cscanner/cli-linux-arm64@2.0.10':
+    resolution: {integrity: sha512-8yhGCD0y9nMzyJC1WhEPEVlNcgDd9w0qkRxiSUncW5saMMba8QdwzLBWdwbpnseL86+paDJ0Xyvx20OK61qT9g==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@cscanner/cli-linux-x64@2.0.10':
+    resolution: {integrity: sha512-0aHM9sWSdyoFzgPsEnXT0SqUoOLftNqltbJoQjZ9v7gNhKJqaxcf+KQILSHxkRHTuKTRSvnVXoryTrwVQhoflw==}
+    cpu: [x64]
+    os: [linux]
+
+  '@cscanner/cli-win32-x64@2.0.10':
+    resolution: {integrity: sha512-sd0QMVK8RSlmAO5Kqn16KwCrNiVnOxS8yWyvZZ5+XVF3LKtGrtSdm5Sin/P4xXjMsCnCunecnMM7L2KAF3gD6g==}
+    cpu: [x64]
+    os: [win32]
 
   '@esbuild/aix-ppc64@0.24.2':
     resolution: {integrity: sha512-thpVCb/rhxE/BnMLQ7GReQLLN8q9qbHmI55F4489/ByVg2aQaQ6kbcLb6FHkocZzQhxc4gx0sCk0tJkKBFzDhA==}
@@ -1060,6 +1089,9 @@ packages:
     engines: {node: '>= 14.6'}
     hasBin: true
 
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
 snapshots:
 
   '@babel/runtime@7.28.4': {}
@@ -1242,6 +1274,21 @@ snapshots:
       fs-extra: 7.0.1
       human-id: 4.1.2
       prettier: 2.8.8
+
+  '@cscanner/cli-darwin-arm64@2.0.10':
+    optional: true
+
+  '@cscanner/cli-darwin-x64@2.0.10':
+    optional: true
+
+  '@cscanner/cli-linux-arm64@2.0.10':
+    optional: true
+
+  '@cscanner/cli-linux-x64@2.0.10':
+    optional: true
+
+  '@cscanner/cli-win32-x64@2.0.10':
+    optional: true
 
   '@esbuild/aix-ppc64@0.24.2':
     optional: true
@@ -1933,3 +1980,5 @@ snapshots:
       strip-ansi: 7.1.2
 
   yaml@2.8.1: {}
+
+  zod@4.1.12: {}

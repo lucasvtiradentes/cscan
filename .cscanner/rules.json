@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "no-any-type": {
+      "enabled": true,
+      "type": "ast",
+      "severity": "error",
+      "include": [],
+      "exclude": [],
+      "message": "Found 'any' type annotation",
+      "pattern": null
+    }
+  },
+  "include": ["**/*.{ts,tsx}"],
+  "exclude": ["node_modules/**", "dist/**", "build/**", ".git/**"]
+}

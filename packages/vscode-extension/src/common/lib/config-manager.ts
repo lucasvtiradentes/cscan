@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import * as vscode from 'vscode';
 import { logger } from '../utils/logger';
 
-export interface CscanConfig {
+export interface CscannerConfig {
   rules: Record<string, any>;
   include: string[];
   exclude: string[];
@@ -35,7 +35,7 @@ export async function hasLocalConfig(workspacePath: string): Promise<boolean> {
   }
 }
 
-export async function loadConfig(configPath: vscode.Uri): Promise<CscanConfig | null> {
+export async function loadConfig(configPath: vscode.Uri): Promise<CscannerConfig | null> {
   try {
     const data = await vscode.workspace.fs.readFile(configPath);
     return JSON.parse(Buffer.from(data).toString('utf8'));
@@ -62,7 +62,7 @@ export async function getEffectiveConfigPath(
 export async function loadEffectiveConfig(
   context: vscode.ExtensionContext,
   workspacePath: string,
-): Promise<CscanConfig | null> {
+): Promise<CscannerConfig | null> {
   const configPath = await getEffectiveConfigPath(context, workspacePath);
   return loadConfig(configPath);
 }
@@ -70,7 +70,7 @@ export async function loadEffectiveConfig(
 export async function saveGlobalConfig(
   context: vscode.ExtensionContext,
   workspacePath: string,
-  config: CscanConfig,
+  config: CscannerConfig,
 ): Promise<void> {
   const configPath = getGlobalConfigPath(context, workspacePath);
   const configDir = vscode.Uri.joinPath(configPath, '..');
@@ -81,7 +81,7 @@ export async function saveGlobalConfig(
   logger.info(`Saved global config for workspace: ${workspacePath} at ${configPath.fsPath}`);
 }
 
-export async function saveLocalConfig(workspacePath: string, config: CscanConfig): Promise<void> {
+export async function saveLocalConfig(workspacePath: string, config: CscannerConfig): Promise<void> {
   const localConfigDir = vscode.Uri.joinPath(vscode.Uri.file(workspacePath), '.cscanner');
   const localConfigPath = getLocalConfigPath(workspacePath);
 
@@ -91,7 +91,7 @@ export async function saveLocalConfig(workspacePath: string, config: CscanConfig
   logger.info(`Saved local config for workspace: ${workspacePath}`);
 }
 
-export function getDefaultConfig(): CscanConfig {
+export function getDefaultConfig(): CscannerConfig {
   return {
     rules: {},
     include: ['**/*.ts', '**/*.tsx'],
@@ -105,7 +105,7 @@ export function isAutoManagedConfig(configContent: string): boolean {
   return configContent.includes(AUTO_MANAGED_MARKER);
 }
 
-export function addAutoManagedMarker(config: CscanConfig): string {
+export function addAutoManagedMarker(config: CscannerConfig): string {
   const lines = JSON.stringify(config, null, 2).split('\n');
   lines.splice(1, 0, `  "${AUTO_MANAGED_MARKER}": true,`);
   return lines.join('\n');

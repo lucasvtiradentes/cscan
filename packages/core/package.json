@@ -8,6 +8,7 @@
     "build:rust": "cargo build --release",
     "test": "cargo test --verbose",
     "lint": "cargo clippy -- -D warnings",
+    "lint:fix": "cargo clippy --fix --allow-dirty --allow-staged -- -D warnings",
     "clippy": "cargo clippy -- -D warnings",
     "format": "cargo fmt",
     "format:rust": "cargo fmt",

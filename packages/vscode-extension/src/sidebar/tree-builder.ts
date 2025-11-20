@@ -1,9 +1,9 @@
 import { join, relative, sep } from 'node:path';
-import { FileNode, FolderNode, IssueResult } from '../common/types';
+import { FileNode, FolderNode, IssueResult, NodeKind } from '../common/types';
 import { logger } from '../common/utils/logger';
 
 function countIssues(node: FolderNode | FileNode): number {
-  if (node.type === 'file') {
+  if (node.type === NodeKind.File) {
     return node.results.length;
   }
 
@@ -47,7 +47,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
 
       if (!current.has(part)) {
         current.set(part, {
-          type: 'folder',
+          type: NodeKind.Folder,
           path: currentPath,
           name: part,
           children: new Map(),
@@ -55,7 +55,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
       }
 
       const node = current.get(part);
-      if (node && node.type === 'folder') {
+      if (node && node.type === NodeKind.Folder) {
         current = node.children;
       }
     }
@@ -65,7 +65,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
 
     if (!current.has(fileName)) {
       current.set(fileName, {
-        type: 'file',
+        type: NodeKind.File,
         path: filePath,
         name: fileName,
         results: [],
@@ -73,7 +73,7 @@ export function buildFolderTree(results: IssueResult[], workspaceRoot: string): 
     }
 
     const fileNode = current.get(fileName);
-    if (fileNode && fileNode.type === 'file') {
+    if (fileNode && fileNode.type === NodeKind.File) {
       fileNode.results.push(result);
     }
   }

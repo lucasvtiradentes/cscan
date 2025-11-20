@@ -98,6 +98,10 @@
     "lint": {
       "outputLogs": "new-only",
       "inputs": ["./src/**", "./crates/**", "./Cargo.toml", "./biome.json"]
+    },
+    "lint:fix": {
+      "outputLogs": "new-only",
+      "inputs": ["./src/**", "./crates/**", "./Cargo.toml", "./biome.json"]
     }
   }
 }
