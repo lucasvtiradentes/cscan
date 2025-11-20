@@ -1,5 +1,5 @@
 name: 'Build Rust Binary'
-description: 'Builds cscanner-server binary for a specific target platform'
+description: 'Builds tscanner-server binary for a specific target platform'
 
 inputs:
   target:
@@ -44,11 +44,11 @@ runs:
       run: |
         cd packages/core/target/${{ inputs.target }}/release
         if [[ "${{ inputs.os }}" == "windows-latest" ]]; then
-          cp cscanner-server.exe cscanner-server-${{ inputs.target }}.exe
-          cp cscanner.exe cscanner-${{ inputs.target }}.exe
+          cp tscanner-server.exe tscanner-server-${{ inputs.target }}.exe
+          cp tscanner.exe tscanner-${{ inputs.target }}.exe
         else
-          cp cscanner-server cscanner-server-${{ inputs.target }}
-          cp cscanner cscanner-${{ inputs.target }}
+          cp tscanner-server tscanner-server-${{ inputs.target }}
+          cp tscanner tscanner-${{ inputs.target }}
         fi
 
     - name: Upload server binary (Unix)
@@ -56,25 +56,25 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: binary-server-${{ inputs.target }}
-        path: packages/core/target/${{ inputs.target }}/release/cscanner-server-${{ inputs.target }}
+        path: packages/core/target/${{ inputs.target }}/release/tscanner-server-${{ inputs.target }}
 
     - name: Upload server binary (Windows)
       if: inputs.os == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
         name: binary-server-${{ inputs.target }}
-        path: packages/core/target/${{ inputs.target }}/release/cscanner-server-${{ inputs.target }}.exe
+        path: packages/core/target/${{ inputs.target }}/release/tscanner-server-${{ inputs.target }}.exe
 
     - name: Upload CLI binary (Unix)
       if: inputs.os != 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
         name: binary-cli-${{ inputs.target }}
-        path: packages/core/target/${{ inputs.target }}/release/cscanner-${{ inputs.target }}
+        path: packages/core/target/${{ inputs.target }}/release/tscanner-${{ inputs.target }}
 
     - name: Upload CLI binary (Windows)
       if: inputs.os == 'windows-latest'
       uses: actions/upload-artifact@v4
       with:
         name: binary-cli-${{ inputs.target }}
-        path: packages/core/target/${{ inputs.target }}/release/cscanner-${{ inputs.target }}.exe
+        path: packages/core/target/${{ inputs.target }}/release/tscanner-${{ inputs.target }}.exe

@@ -35,7 +35,7 @@ export function getStatusBarName(): string {
   return IS_DEV ? addDevLabel(EXTENSION_DISPLAY_NAME) : EXTENSION_DISPLAY_NAME;
 }
 
-export const BINARY_BASE_NAME = 'cscanner-server';
+export const BINARY_BASE_NAME = 'tscanner-server';
 
 export function getBinaryName(): string {
   return process.platform === 'win32' ? `${BINARY_BASE_NAME}.exe` : BINARY_BASE_NAME;

@@ -31,10 +31,10 @@
     "core#build": {
       "outputLogs": "new-only",
       "outputs": [
-        "target/release/cscanner",
-        "target/release/cscanner.exe",
-        "target/release/cscanner-server",
-        "target/release/cscanner-server.exe"
+        "target/release/tscanner",
+        "target/release/tscanner.exe",
+        "target/release/tscanner-server",
+        "target/release/tscanner-server.exe"
       ],
       "inputs": [
         "src/**",
@@ -43,13 +43,13 @@
         "Cargo.lock"
       ]
     },
-    "cscanner#build": {
+    "tscanner#build": {
       "outputLogs": "new-only",
       "dependsOn": ["core#build"],
       "outputs": ["dist/**", "binaries/**"],
       "inputs": ["./src/**", "./scripts/**", "./tsconfig.json", "./package.json", "../core/target/release/**"]
     },
-    "cscanner-vscode#build": {
+    "tscanner-vscode#build": {
       "outputLogs": "new-only",
       "dependsOn": ["core#build"],
       "outputs": ["out/**", "binaries/**"],

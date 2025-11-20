@@ -1,8 +1,8 @@
 <a name="TOC"></a>
 
 <div align="center">
-<img width="128" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/packages/vscode-extension/resources/icon.png" alt="cscanner Extension logo">
-<h4>cscanner - VS Code Extension</h4>
+<img width="128" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/packages/vscode-extension/resources/icon.png" alt="tscanner Extension logo">
+<h4>tscanner - VS Code Extension</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>
@@ -11,7 +11,7 @@
 
 </div>
 
-<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/divider.png" /></a>
+<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/divider.png" /></a>
 
 ## 🎺 Overview
 
@@ -19,7 +19,7 @@ VSCode extension for validating code patterns, detecting anti-patterns, and enfo
 
 <a name="TOC"></a>
 
-## ⭐ Features<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## ⭐ Features<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 **View Modes**
 - **Tree View** - Hierarchical folder structure with expandable nodes
@@ -54,24 +54,24 @@ VSCode extension for validating code patterns, detecting anti-patterns, and enfo
 - **Parallel Processing** - Multi-core file analysis
 - **GZIP Compression** - 80%+ response size reduction
 
-## 💡 Usage<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 💡 Usage<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Getting Started
 
 1. Open a TypeScript/TSX workspace in VSCode
-2. Click the cscanner icon in activity bar
+2. Click the tscanner icon in activity bar
 3. Configure rules via settings menu
 4. View issues in sidebar tree
 
 ### Commands
 
 **Command Palette (Ctrl/Cmd + Shift + P):**
-- `cscanner: Scan Workspace` - Run full scan
-- `cscanner: Hard Scan` - Clear cache and rescan
-- `cscanner: Open Settings` - Configure scan mode and rules
-- `cscanner: Go to Next Issue` (F8) - Navigate to next issue
-- `cscanner: Go to Previous Issue` (Shift+F8) - Navigate to previous issue
-- `cscanner: Show Logs` - Open extension log file
+- `tscanner: Scan Workspace` - Run full scan
+- `tscanner: Hard Scan` - Clear cache and rescan
+- `tscanner: Open Settings` - Configure scan mode and rules
+- `tscanner: Go to Next Issue` (F8) - Navigate to next issue
+- `tscanner: Go to Previous Issue` (Shift+F8) - Navigate to previous issue
+- `tscanner: Show Logs` - Open extension log file
 
 **Sidebar Toolbar:**
 - **Refresh** - Re-scan workspace
@@ -80,7 +80,7 @@ VSCode extension for validating code patterns, detecting anti-patterns, and enfo
 
 ### Settings Menu
 
-Access via status bar click or `cscanner: Open Settings` command:
+Access via status bar click or `tscanner: Open Settings` command:
 
 **1. Manage Rules**
 - Multi-select interface with categorized rules
@@ -94,8 +94,8 @@ Access via status bar click or `cscanner: Open Settings` command:
   - Choose current branch
   - Select from local/remote branches
 
-**3. Open Project cscanner Configs**
-- Open local `.cscanner/rules.json`
+**3. Open Project tscanner Configs**
+- Open local `.tscanner/rules.json`
 - Open global config file
 - Create config from template
 
@@ -143,7 +143,7 @@ no-any-type (2 issues)
 
 **Workspace Mode:**
 - Scans all `.ts`/`.tsx` files in workspace
-- Respects `.cscanner/rules.json` include/exclude patterns
+- Respects `.tscanner/rules.json` include/exclude patterns
 - Ideal for full codebase analysis
 
 **Branch Mode:**
@@ -166,7 +166,7 @@ git diff main -- src/index.ts      # Get line ranges
 
 ### Configuration File
 
-Create `.cscanner/rules.json` in workspace root:
+Create `.tscanner/rules.json` in workspace root:
 
 ```json
 {
@@ -200,28 +200,28 @@ Create `.cscanner/rules.json` in workspace root:
 ```
 
 **Config Locations:**
-- **Local:** `.cscanner/rules.json` in workspace root (takes precedence)
-- **Global:** `~/.vscode/extensions/.cscanner-config-{workspace-hash}.json`
+- **Local:** `.tscanner/rules.json` in workspace root (takes precedence)
+- **Global:** `~/.vscode/extensions/.tscanner-config-{workspace-hash}.json`
 
 ### Disable Directives
 
 Inline comments to disable rules:
 
 ```typescript
-// cscanner-disable-file
+// tscanner-disable-file
 // Disables all rules for entire file
 
-// cscanner-disable rule1, rule2
+// tscanner-disable rule1, rule2
 const x: any = 5;  // This line is ignored
 
-// cscanner-disable-line rule1
+// tscanner-disable-line rule1
 const y: any = 5;  // This line is ignored
 
-// cscanner-disable-next-line rule1
+// tscanner-disable-next-line rule1
 const z: any = 5;  // Next line is ignored
 ```
 
-## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Source Structure
 
@@ -265,16 +265,16 @@ export function activate(context: vscode.ExtensionContext) {
   if (activationKey === currentWorkspace) return;
 
   // 2. Restore workspace state
-  const viewMode = context.workspaceState.get('cscanner.viewMode', 'list');
-  const groupMode = context.workspaceState.get('cscanner.groupMode', 'default');
-  const scanMode = context.workspaceState.get('cscanner.scanMode', 'workspace');
-  const cachedResults = context.workspaceState.get('cscanner.cachedResults', []);
+  const viewMode = context.workspaceState.get('tscanner.viewMode', 'list');
+  const groupMode = context.workspaceState.get('tscanner.groupMode', 'default');
+  const scanMode = context.workspaceState.get('tscanner.scanMode', 'workspace');
+  const cachedResults = context.workspaceState.get('tscanner.cachedResults', []);
 
   // 3. Initialize providers
   const searchProvider = new SearchResultProvider();
   searchProvider.setResults(deserializedResults);
 
-  const treeView = vscode.window.createTreeView('cscannerExplorer', {
+  const treeView = vscode.window.createTreeView('tscannerExplorer', {
     treeDataProvider: searchProvider,
   });
 
@@ -289,7 +289,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // 6. Initial scan after 2s
   setTimeout(() => {
-    vscode.commands.executeCommand('cscanner.findIssue');
+    vscode.commands.executeCommand('tscanner.findIssue');
   }, 2000);
 }
 ```
@@ -314,7 +314,7 @@ export class RustClient {
   async start(): Promise<void> {
     this.process = spawn(binaryPath, [], {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { RUST_LOG: 'core=warn,cscanner_server=info' }
+      env: { RUST_LOG: 'core=warn,tscanner_server=info' }
     });
 
     // Handle stdout (JSON-RPC responses)
@@ -426,7 +426,7 @@ export async function getModifiedLineRanges(
 }
 ```
 
-## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Build Commands
 
@@ -444,10 +444,10 @@ pnpm run dev                     # Watch mode for development
 pnpm run build
 ```
 
-This bundles the extension and copies it to `~/.vscode/extensions/cscanner-vscode/`.
+This bundles the extension and copies it to `~/.vscode/extensions/tscanner-vscode/`.
 
 **Extension locations:**
-- Development: `~/.vscode/extensions/cscanner-vscode/`
+- Development: `~/.vscode/extensions/tscanner-vscode/`
 - Production: Install from `.vsix` package
 
 ### Development Workflow
@@ -467,7 +467,7 @@ pnpm run dev
 1. Open `packages/vscode-extension` in VSCode
 2. Press `F5` to launch Extension Development Host
 3. Open a TypeScript workspace in new window
-4. Click cscanner icon in activity bar
+4. Click tscanner icon in activity bar
 
 ### Package Scripts
 
@@ -516,17 +516,17 @@ The `setup-rust-binary.ts` script:
 Extension sets VSCode context keys for conditional menu visibility:
 
 ```typescript
-vscode.commands.executeCommand('setContext', 'cscannerViewMode', 'list' | 'tree');
-vscode.commands.executeCommand('setContext', 'cscannerGroupMode', 'default' | 'rule');
-vscode.commands.executeCommand('setContext', 'cscannerScanMode', 'workspace' | 'branch');
-vscode.commands.executeCommand('setContext', 'cscannerSearching', true | false);
+vscode.commands.executeCommand('setContext', 'tscannerViewMode', 'list' | 'tree');
+vscode.commands.executeCommand('setContext', 'tscannerGroupMode', 'default' | 'rule');
+vscode.commands.executeCommand('setContext', 'tscannerScanMode', 'workspace' | 'branch');
+vscode.commands.executeCommand('setContext', 'tscannerSearching', true | false);
 ```
 
 **Usage in package.json:**
 ```json
 {
-  "command": "cscanner.setTreeView",
-  "when": "view == cscannerExplorer && cscannerViewMode == list",
+  "command": "tscanner.setTreeView",
+  "when": "view == tscannerExplorer && tscannerViewMode == list",
   "group": "navigation@30"
 }
 ```
@@ -535,14 +535,14 @@ vscode.commands.executeCommand('setContext', 'cscannerSearching', true | false);
 
 Tree items have `contextValue` for context menu filtering:
 
-- `cscannerNodeFolder` - Folder items
-- `cscannerNodeFile` - File items (copy path available)
-- `cscannerNodeIssue` - Issue items
-- `cscannerNodeRuleGroup` - Rule group items
+- `tscannerNodeFolder` - Folder items
+- `tscannerNodeFile` - File items (copy path available)
+- `tscannerNodeIssue` - Issue items
+- `tscannerNodeRuleGroup` - Rule group items
 
 ### Logging
 
-Extension logs to `$TMPDIR/cscannerlogs.txt`:
+Extension logs to `$TMPDIR/tscannerlogs.txt`:
 
 ```typescript
 import { logger } from './common/utils/logger';
@@ -555,6 +555,6 @@ logger.error(`Failed to scan: ${error}`);
 **Log levels:** INFO, DEBUG, WARN, ERROR
 **Format:** `[2025-01-17T10:30:45.123-03:00] [INFO] Extension activated`
 
-## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](../../LICENSE) file for details.

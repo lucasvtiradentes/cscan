@@ -84,8 +84,8 @@ jobs:
         if: needs.push_to_main_ci.outputs.should_release == 'true'
         run: |
           mkdir -p packages/vscode-extension/out/binaries
-          find artifacts -type f -name 'cscanner-server-*' -exec cp {} packages/vscode-extension/out/binaries/ \;
-          chmod +x packages/vscode-extension/out/binaries/cscanner-server-* 2>/dev/null || true
+          find artifacts -type f -name 'tscanner-server-*' -exec cp {} packages/vscode-extension/out/binaries/ \;
+          chmod +x packages/vscode-extension/out/binaries/tscanner-server-* 2>/dev/null || true
           echo "📦 Binaries ready for extension:"
           ls -lah packages/vscode-extension/out/binaries/
 
@@ -110,11 +110,11 @@ jobs:
             dest_dir="packages/cli/npm/$npm_platform"
 
             if [[ "$rust_target" == *"windows"* ]]; then
-              binary_pattern="cscanner-${rust_target}.exe"
-              dest_name="cscanner.exe"
+              binary_pattern="tscanner-${rust_target}.exe"
+              dest_name="tscanner.exe"
             else
-              binary_pattern="cscanner-${rust_target}"
-              dest_name="cscanner"
+              binary_pattern="tscanner-${rust_target}"
+              dest_name="tscanner"
             fi
 
             binary_file=$(find artifacts -type f -name "$binary_pattern" 2>/dev/null | head -1)
@@ -135,20 +135,20 @@ jobs:
 
           if [ $found_count -gt 0 ]; then
             echo "📦 CLI binaries ready:"
-            find packages/cli/npm -type f \( -name "cscanner" -o -name "cscanner.exe" \) -exec ls -lh {} \;
+            find packages/cli/npm -type f \( -name "tscanner" -o -name "tscanner.exe" \) -exec ls -lh {} \;
           fi
 
       - name: Rebuild extension with binaries
         if: needs.push_to_main_ci.outputs.should_release == 'true'
         run: |
           echo "🔨 Rebuilding VSCode extension with organized binaries..."
-          pnpm turbo run build --filter=cscanner-vscode --force
+          pnpm turbo run build --filter=tscanner-vscode --force
           echo "✅ Extension rebuild complete with binaries included"
 
       - name: Generate scoped npm packages
         if: needs.push_to_main_ci.outputs.should_release == 'true'
         run: |
-          echo "📦 Generating scoped @cscanner packages..."
+          echo "📦 Generating scoped @tscanner packages..."
           node packages/cli/scripts/generate-packages.mjs
           echo "✅ Scoped packages generated"
 

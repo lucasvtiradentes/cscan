@@ -1,4 +1,4 @@
-# @cscanner/cli-linux-arm64
+# @tscanner/cli-linux-arm64
 
 ## 2.0.11
 

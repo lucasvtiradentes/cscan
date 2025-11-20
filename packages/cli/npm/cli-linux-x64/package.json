@@ -1,9 +1,9 @@
 {
-  "name": "@cscanner/cli-linux-x64",
+  "name": "@tscanner/cli-linux-x64",
   "version": "2.0.11",
   "license": "MIT",
-  "repository": "https://github.com/lucasvtiradentes/cscanner.git",
-  "main": "cscanner",
+  "repository": "https://github.com/lucasvtiradentes/tscanner.git",
+  "main": "tscanner",
   "os": [
     "linux"
   ],
@@ -11,6 +11,6 @@
     "x64"
   ],
   "files": [
-    "cscanner"
+    "tscanner"
   ]
 }

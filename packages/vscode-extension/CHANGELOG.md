@@ -1,4 +1,4 @@
-# cscanner-vscode
+# tscanner-vscode
 
 ## 2.0.11
 

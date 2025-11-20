@@ -1,4 +1,4 @@
-# @cscanner/cli-darwin-arm64
+# @tscanner/cli-darwin-arm64
 
 ## 2.0.11
 

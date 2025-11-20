@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import {
-  CscannerConfig,
+  TscannerConfig,
   getDefaultConfig,
   loadEffectiveConfig,
   saveGlobalConfig,
@@ -51,7 +51,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
     const binaryPath = getRustBinaryPath();
     if (!binaryPath) {
-      showToastMessage(ToastKind.Error, 'Cscanner: Rust binary not found. Please build the Rust core first.');
+      showToastMessage(ToastKind.Error, 'Tscanner: Rust binary not found. Please build the Rust core first.');
       return;
     }
 
@@ -155,7 +155,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       logger.info(`User selected ${enabledRules.size} rules: ${Array.from(enabledRules).join(', ')}`);
 
-      const config: CscannerConfig = existingConfig;
+      const config: TscannerConfig = existingConfig;
 
       if (!config.rules) {
         config.rules = {};
@@ -185,7 +185,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
 
       if (isUserManaged) {
         await saveLocalConfig(workspacePath, config);
-        logger.info('Updated user-managed local .cscanner/rules.json');
+        logger.info('Updated user-managed local .tscanner/rules.json');
       } else {
         const locationChoice = await vscode.window.showQuickPick(
           [
@@ -198,7 +198,7 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
             {
               label: '$(file) Project Folder',
               description: 'Local to this project only',
-              detail: 'Creates .cscanner/rules.json in project (can be committed to git)',
+              detail: 'Creates .tscanner/rules.json in project (can be committed to git)',
               value: 'local',
             },
           ],
@@ -221,8 +221,8 @@ export function createManageRulesCommand(updateStatusBar: () => Promise<void>, c
           showToastMessage(ToastKind.Info, 'Rules saved to extension storage');
         } else {
           await saveLocalConfig(workspacePath, config);
-          logger.info('Saved to local .cscanner/rules.json (user-managed)');
-          showToastMessage(ToastKind.Info, 'Rules saved to .cscanner/rules.json');
+          logger.info('Saved to local .tscanner/rules.json (user-managed)');
+          showToastMessage(ToastKind.Info, 'Rules saved to .tscanner/rules.json');
         }
       }
 

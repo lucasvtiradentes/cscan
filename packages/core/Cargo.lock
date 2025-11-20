@@ -300,39 +300,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28"
 
 [[package]]
-name = "cscanner_cli"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "clap",
- "colored",
- "core",
- "dirs",
- "md5",
- "pathdiff",
- "serde",
- "serde_json",
- "tracing",
- "tracing-subscriber",
- "walkdir",
-]
-
-[[package]]
-name = "cscanner_server"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "base64",
- "core",
- "flate2",
- "serde",
- "serde_json",
- "time",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "dashmap"
 version = "6.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1541,6 +1508,39 @@ checksum = "dd69c5aa8f924c7519d6372789a74eac5b94fb0f8fcf0d4a97eb0bfc3e785f39"
 dependencies = [
  "serde",
  "stable_deref_trait",
+]
+
+[[package]]
+name = "tscanner_cli"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "colored",
+ "core",
+ "dirs",
+ "md5",
+ "pathdiff",
+ "serde",
+ "serde_json",
+ "tracing",
+ "tracing-subscriber",
+ "walkdir",
+]
+
+[[package]]
+name = "tscanner_server"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "base64",
+ "core",
+ "flate2",
+ "serde",
+ "serde_json",
+ "time",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

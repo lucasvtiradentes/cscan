@@ -1,4 +1,4 @@
-# @cscanner/cli-darwin-x64
+# @tscanner/cli-darwin-x64
 
 ## 2.0.11
 

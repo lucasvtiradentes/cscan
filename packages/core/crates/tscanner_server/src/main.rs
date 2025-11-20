@@ -1,5 +1,5 @@
 use base64::Engine;
-use core::{CscannerConfig, FileCache, FileWatcher, Scanner};
+use core::{FileCache, FileWatcher, Scanner, TscannerConfig};
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use serde::{Deserialize, Serialize};
@@ -31,7 +31,7 @@ struct Notification {
 #[derive(Debug, Deserialize)]
 struct ScanParams {
     root: PathBuf,
-    config: Option<CscannerConfig>,
+    config: Option<TscannerConfig>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -50,7 +50,7 @@ struct ScanContentParams {
     root: PathBuf,
     file: PathBuf,
     content: String,
-    config: Option<CscannerConfig>,
+    config: Option<TscannerConfig>,
 }
 
 struct ServerState {
@@ -93,7 +93,7 @@ fn main() {
         .with(tracing_subscriber::filter::LevelFilter::WARN)
         .init();
 
-    info!("Cscanner server started");
+    info!("Tscanner server started");
 
     let mut state = ServerState::new();
     let stdin = io::stdin();
@@ -223,14 +223,14 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                 info!("Using config from request params (global storage)");
                 cfg
             } else {
-                match CscannerConfig::load_from_workspace(&params.root) {
+                match TscannerConfig::load_from_workspace(&params.root) {
                     Ok(c) => {
-                        info!("Loaded configuration from workspace (.cscanner/rules.json)");
+                        info!("Loaded configuration from workspace (.tscanner/rules.json)");
                         c
                     }
                     Err(e) => {
                         info!("Using default configuration: {}", e);
-                        CscannerConfig::default()
+                        TscannerConfig::default()
                     }
                 }
             };
@@ -306,7 +306,7 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
 
             info!("Scanning single file: {:?}", params.file);
 
-            let config = CscannerConfig::load_from_workspace(&params.root).unwrap_or_default();
+            let config = TscannerConfig::load_from_workspace(&params.root).unwrap_or_default();
 
             let scanner = match Scanner::with_cache(config, state.cache.clone()) {
                 Ok(s) => s,
@@ -366,14 +366,14 @@ fn handle_request(request: Request, state: &mut ServerState) -> Response {
                 info!("Using config from request params (global storage)");
                 cfg
             } else {
-                match CscannerConfig::load_from_workspace(&params.root) {
+                match TscannerConfig::load_from_workspace(&params.root) {
                     Ok(c) => {
-                        info!("Loaded configuration from workspace (.cscanner/rules.json)");
+                        info!("Loaded configuration from workspace (.tscanner/rules.json)");
                         c
                     }
                     Err(e) => {
                         info!("Using default configuration: {}", e);
-                        CscannerConfig::default()
+                        TscannerConfig::default()
                     }
                 }
             };

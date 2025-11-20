@@ -1,7 +1,7 @@
 <a name="TOC"></a>
 
 <div align="center">
-<h4>cscanner</h4>
+<h4>tscanner</h4>
 <p>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <br>
@@ -10,29 +10,29 @@
 
 </div>
 
-<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/divider.png" /></a>
+<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/divider.png" /></a>
 
 ## 🎺 Overview
 
-Standalone command-line interface for cscanner, the high-performance TypeScript/TSX code quality scanner powered by Rust.
+Standalone command-line interface for tscanner, the high-performance TypeScript/TSX code quality scanner powered by Rust.
 
 <a name="TOC"></a>
 
-## 📦 Installation<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📦 Installation<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Global Installation
 
 ```bash
-npm install -g cscanner
-pnpm add -g cscanner
-yarn global add cscanner
+npm install -g tscanner
+pnpm add -g tscanner
+yarn global add tscanner
 ```
 
 ### npx (No Installation)
 
 ```bash
-npx cscanner check
-npx cscanner rules
+npx tscanner check
+npx tscanner rules
 ```
 
 ### Supported Platforms
@@ -42,15 +42,15 @@ Pre-built binaries available for:
 - **macOS**: Intel (x64), Apple Silicon (ARM64)
 - **Windows**: x64
 
-## 💡 Usage<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 💡 Usage<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Initialize Configuration
 
-Create default `.cscanner/rules.json`:
+Create default `.tscanner/rules.json`:
 
 ```bash
-cscanner init
-cscanner init /path/to/project
+tscanner init
+tscanner init /path/to/project
 ```
 
 ### Check Code Quality
@@ -58,9 +58,9 @@ cscanner init /path/to/project
 Scan files and report issues:
 
 ```bash
-cscanner check
-cscanner check /path/to/project
-cscanner check --no-cache
+tscanner check
+tscanner check /path/to/project
+tscanner check --no-cache
 ```
 
 **Exit codes:**
@@ -72,8 +72,8 @@ cscanner check --no-cache
 Display configured rules:
 
 ```bash
-cscanner rules
-cscanner rules /path/to/project
+tscanner rules
+tscanner rules /path/to/project
 ```
 
 ### Example Output
@@ -94,8 +94,8 @@ Scanned 2 files in 45ms
 
 **Rules Command:**
 ```
-cscanner Rules Configuration
-Config: /home/user/project/.cscanner/rules.json
+tscanner Rules Configuration
+Config: /home/user/project/.tscanner/rules.json
 
 23 enabled rules:
 
@@ -108,21 +108,21 @@ Config: /home/user/project/.cscanner/rules.json
 5 disabled rules
 ```
 
-## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Multi-Package Distribution
 
 This package uses a multi-package architecture for distributing pre-compiled binaries:
 
 **Main Package:**
-- `cscanner` - Wrapper scripts and platform detection
+- `tscanner` - Wrapper scripts and platform detection
 
 **Platform Packages (optional dependencies):**
-- `@cscanner/linux-x64` - Linux x64 binary
-- `@cscanner/linux-arm64` - Linux ARM64 binary
-- `@cscanner/darwin-x64` - macOS Intel binary
-- `@cscanner/darwin-arm64` - macOS Apple Silicon binary
-- `@cscanner/win32-x64` - Windows x64 binary
+- `@tscanner/linux-x64` - Linux x64 binary
+- `@tscanner/linux-arm64` - Linux ARM64 binary
+- `@tscanner/darwin-x64` - macOS Intel binary
+- `@tscanner/darwin-arm64` - macOS Apple Silicon binary
+- `@tscanner/win32-x64` - Windows x64 binary
 
 npm automatically installs only the binary for your platform.
 
@@ -131,22 +131,22 @@ npm automatically installs only the binary for your platform.
 ```
 packages/cli/
 ├── src/
-│   ├── cscanner.ts             # Main wrapper script
+│   ├── tscanner.ts             # Main wrapper script
 │   └── postinstall.ts       # Installation validation
 ├── dist/                    # Compiled JavaScript (TypeScript output)
-│   ├── cscanner.js
-│   ├── cscanner.d.ts
+│   ├── tscanner.js
+│   ├── tscanner.d.ts
 │   ├── postinstall.js
 │   └── postinstall.d.ts
 ├── npm/                     # Platform binaries (copied by build)
 │   ├── linux-x64/
 │   │   ├── package.json
-│   │   └── cscanner
+│   │   └── tscanner
 │   ├── linux-arm64/
 │   ├── darwin-x64/
 │   ├── darwin-arm64/
 │   └── win32-x64/
-│       └── cscanner.exe
+│       └── tscanner.exe
 ├── scripts/
 │   └── copy-binaries.ts     # Copies Rust binaries to npm/
 ├── package.json
@@ -156,12 +156,12 @@ packages/cli/
 
 ### How It Works
 
-1. User installs `cscanner`
+1. User installs `tscanner`
 2. npm installs appropriate platform package via `optionalDependencies`
-3. `dist/cscanner.js` detects platform and spawns correct binary
+3. `dist/tscanner.js` detects platform and spawns correct binary
 4. Binary executes with args passed through
 
-## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Build Commands
 
@@ -179,7 +179,7 @@ pnpm run dev                 # Watch mode for TypeScript
 **1. Build Rust binaries:**
 ```bash
 cd ../core
-cargo build --release --bin cscanner
+cargo build --release --bin tscanner
 ```
 
 **2. Compile TypeScript + copy binaries:**
@@ -191,28 +191,28 @@ pnpm run build
 **3. Test locally:**
 ```bash
 npm link
-cscanner --version
-cscanner check
+tscanner --version
+tscanner check
 ```
 
 ### Configuration Resolution
 
-cscanner searches for configuration in this priority order:
+tscanner searches for configuration in this priority order:
 
 1. **Local Project Config** (recommended)
-   - `.cscanner/rules.json` in project root
+   - `.tscanner/rules.json` in project root
    - User-managed, version-controlled
 
 2. **VSCode Global Config** (compatibility mode)
-   - `~/.vscode/extensions/.cscanner-config-{hash}.json`
+   - `~/.vscode/extensions/.tscanner-config-{hash}.json`
    - Auto-managed by VSCode extension
    - Hash based on workspace path (MD5)
 
-If no configuration is found, cscanner exits with helpful error message.
+If no configuration is found, tscanner exits with helpful error message.
 
 ### Configuration File
 
-`.cscanner/rules.json` format:
+`.tscanner/rules.json` format:
 
 ```json
 {
@@ -245,7 +245,7 @@ If no configuration is found, cscanner exits with helpful error message.
 }
 ```
 
-## 📦 Publishing with Changesets<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📦 Publishing with Changesets<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 This monorepo uses `@changesets/cli` for version management.
 
@@ -257,7 +257,7 @@ pnpm changeset
 ```
 
 Select packages to version:
-- `cscanner` (main package)
+- `tscanner` (main package)
 - Platform packages (all 5)
 
 **3. Copy binaries to npm packages:**
@@ -316,7 +316,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-## 🚀 Use Cases<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🚀 Use Cases<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### CI/CD Pipeline
 
@@ -324,7 +324,7 @@ jobs:
 #!/bin/bash
 set -e
 
-cscanner check || {
+tscanner check || {
   echo "Code quality issues found"
   exit 1
 }
@@ -337,17 +337,17 @@ echo "✅ Code quality checks passed"
 ```bash
 #!/bin/sh
 
-if ! command -v cscanner &> /dev/null; then
-  echo "cscanner not installed, skipping"
+if ! command -v tscanner &> /dev/null; then
+  echo "tscanner not installed, skipping"
   exit 0
 fi
 
-if [ ! -f .cscanner/rules.json ]; then
-  echo "No cscanner config, skipping"
+if [ ! -f .tscanner/rules.json ]; then
+  echo "No tscanner config, skipping"
   exit 0
 fi
 
-cscanner check --no-cache
+tscanner check --no-cache
 ```
 
 ### VS Code Task
@@ -359,19 +359,19 @@ cscanner check --no-cache
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "cscanner: Check",
+      "label": "tscanner: Check",
       "type": "shell",
-      "command": "cscanner check",
+      "command": "tscanner check",
       "problemMatcher": []
     }
   ]
 }
 ```
 
-## 📊 Performance<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📊 Performance<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 **Caching:**
-- File-level cache: `~/.cache/cscanner/cache_{config_hash}.json`
+- File-level cache: `~/.cache/tscanner/cache_{config_hash}.json`
 - Invalidated on file change or config update
 - Use `--no-cache` to bypass
 
@@ -380,7 +380,7 @@ cscanner check --no-cache
 - Scales with available CPU cores
 - Typical: 100-500 files in <1s
 
-## 🔍 Comparison<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🔍 Comparison<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 | Feature | CLI | VSCode Extension |
 |---------|-----|------------------|
@@ -391,6 +391,6 @@ cscanner check --no-cache
 | Navigation | ❌ No jump-to-issue | ✅ Click to navigate |
 | Use Case | CI/CD, pre-commit | Interactive development |
 
-## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](../../LICENSE) file for details.

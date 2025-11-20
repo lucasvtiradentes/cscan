@@ -1,5 +1,5 @@
 [package]
-name = "cscanner_cli"
+name = "tscanner_cli"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -7,7 +7,7 @@ license.workspace = true
 repository.workspace = true
 
 [[bin]]
-name = "cscanner"
+name = "tscanner"
 path = "src/main.rs"
 
 [dependencies]

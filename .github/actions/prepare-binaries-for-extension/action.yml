@@ -13,7 +13,7 @@ runs:
       shell: bash
       run: |
         mkdir -p packages/vscode-extension/binaries
-        find artifacts -type f -name 'cscanner-server-*' -exec cp {} packages/vscode-extension/binaries/ \;
-        chmod +x packages/vscode-extension/binaries/cscanner-server-* 2>/dev/null || true
+        find artifacts -type f -name 'tscanner-server-*' -exec cp {} packages/vscode-extension/binaries/ \;
+        chmod +x packages/vscode-extension/binaries/tscanner-server-* 2>/dev/null || true
         echo "📦 Binaries organized:"
         ls -lah packages/vscode-extension/binaries/

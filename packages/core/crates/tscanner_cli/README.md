@@ -1,6 +1,6 @@
-# cscanner CLI
+# tscanner CLI
 
-Standalone command-line interface for cscanner, the high-performance TypeScript/TSX code quality scanner.
+Standalone command-line interface for tscanner, the high-performance TypeScript/TSX code quality scanner.
 
 ## Installation
 
@@ -8,28 +8,28 @@ Standalone command-line interface for cscanner, the high-performance TypeScript/
 
 ```bash
 cd packages/core
-cargo build --release --bin cscanner
-cp target/release/cscanner /usr/local/bin/
+cargo build --release --bin tscanner
+cp target/release/tscanner /usr/local/bin/
 ```
 
 ### Cross-Platform Binaries
 
 Available platforms:
-- `cscanner-x86_64-unknown-linux-gnu` (Linux x86_64)
-- `cscanner-aarch64-unknown-linux-gnu` (Linux ARM64)
-- `cscanner-x86_64-apple-darwin` (macOS Intel)
-- `cscanner-aarch64-apple-darwin` (macOS Apple Silicon)
-- `cscanner-x86_64-pc-windows-msvc.exe` (Windows x64)
+- `tscanner-x86_64-unknown-linux-gnu` (Linux x86_64)
+- `tscanner-aarch64-unknown-linux-gnu` (Linux ARM64)
+- `tscanner-x86_64-apple-darwin` (macOS Intel)
+- `tscanner-aarch64-apple-darwin` (macOS Apple Silicon)
+- `tscanner-x86_64-pc-windows-msvc.exe` (Windows x64)
 
 ## Usage
 
 ### Initialize Configuration
 
-Create a default `.cscanner/rules.json` configuration file:
+Create a default `.tscanner/rules.json` configuration file:
 
 ```bash
-cscanner init
-cscanner init /path/to/project
+tscanner init
+tscanner init /path/to/project
 ```
 
 ### Check Code Quality
@@ -37,9 +37,9 @@ cscanner init /path/to/project
 Scan files and report issues:
 
 ```bash
-cscanner check
-cscanner check /path/to/project
-cscanner check --no-cache
+tscanner check
+tscanner check /path/to/project
+tscanner check --no-cache
 ```
 
 Exit codes:
@@ -51,8 +51,8 @@ Exit codes:
 Display all configured rules:
 
 ```bash
-cscanner rules
-cscanner rules /path/to/project
+tscanner rules
+tscanner rules /path/to/project
 ```
 
 Shows:
@@ -64,22 +64,22 @@ Shows:
 
 ## Configuration Resolution
 
-cscanner searches for configuration in this priority order:
+tscanner searches for configuration in this priority order:
 
 1. **Local Project Config** (recommended)
-   - `.cscanner/rules.json` in project root
+   - `.tscanner/rules.json` in project root
    - User-managed, version-controlled
 
 2. **VSCode Global Config** (compatibility mode)
-   - `~/.vscode/extensions/.cscanner-config-{hash}.json`
+   - `~/.vscode/extensions/.tscanner-config-{hash}.json`
    - Auto-managed by VSCode extension
    - Hash based on workspace path (MD5)
 
-If no configuration is found, cscanner exits with an error and helpful message.
+If no configuration is found, tscanner exits with an error and helpful message.
 
 ## Configuration File
 
-`.cscanner/rules.json` format:
+`.tscanner/rules.json` format:
 
 ```json
 {
@@ -119,9 +119,9 @@ If no configuration is found, cscanner exits with an error and helpful message.
 ```bash
 cd my-typescript-project
 
-cscanner init
+tscanner init
 
-cscanner check
+tscanner check
 ```
 
 ### CI/CD Integration
@@ -130,8 +130,8 @@ cscanner check
 #!/bin/bash
 set -e
 
-cscanner check || {
-  echo "cscanner found code quality issues"
+tscanner check || {
+  echo "tscanner found code quality issues"
   exit 1
 }
 
@@ -143,17 +143,17 @@ echo "Code quality checks passed!"
 ```bash
 #!/bin/sh
 
-if ! command -v cscanner &> /dev/null; then
-  echo "cscanner not installed, skipping checks"
+if ! command -v tscanner &> /dev/null; then
+  echo "tscanner not installed, skipping checks"
   exit 0
 fi
 
-if [ ! -f .cscanner/rules.json ]; then
-  echo "No cscanner config found, skipping checks"
+if [ ! -f .tscanner/rules.json ]; then
+  echo "No tscanner config found, skipping checks"
   exit 0
 fi
 
-cscanner check --no-cache
+tscanner check --no-cache
 ```
 
 ## Output Format
@@ -180,8 +180,8 @@ Scanned 2 files in 45ms
 ### Rules Command
 
 ```
-cscanner Rules Configuration
-Config: /home/user/project/.cscanner/rules.json
+tscanner Rules Configuration
+Config: /home/user/project/.tscanner/rules.json
 
 23 enabled rules:
 
@@ -197,7 +197,7 @@ Config: /home/user/project/.cscanner/rules.json
 ## Performance
 
 **Caching:**
-- File-level cache stored in `~/.cache/cscanner/`
+- File-level cache stored in `~/.cache/tscanner/`
 - Cache key: `cache_{config_hash}.json`
 - Invalidated on file change or config update
 - Use `--no-cache` to bypass
@@ -210,7 +210,7 @@ Config: /home/user/project/.cscanner/rules.json
 ## Environment Variables
 
 ```bash
-RUST_LOG=core=debug,cscanner_cli=debug cscanner check
+RUST_LOG=core=debug,tscanner_cli=debug tscanner check
 ```
 
 Log levels: `error`, `warn`, `info`, `debug`, `trace`
@@ -230,17 +230,17 @@ Log levels: `error`, `warn`, `info`, `debug`, `trace`
 
 **No configuration found:**
 ```bash
-cscanner init
+tscanner init
 ```
 
 **Slow scans:**
 ```bash
-cscanner check --no-cache
+tscanner check --no-cache
 ```
 
 **Enable debug logs:**
 ```bash
-RUST_LOG=debug cscanner check
+RUST_LOG=debug tscanner check
 ```
 
 ## Development
@@ -249,14 +249,14 @@ Build from source:
 
 ```bash
 cd packages/core
-cargo build --bin cscanner
-cargo run --bin cscanner -- check
+cargo build --bin tscanner
+cargo run --bin tscanner -- check
 ```
 
 Run tests:
 
 ```bash
-cargo test --bin cscanner
+cargo test --bin tscanner
 ```
 
 ## License

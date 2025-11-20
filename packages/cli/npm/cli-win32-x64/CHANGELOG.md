@@ -1,4 +1,4 @@
-# @cscanner/cli-win32-x64
+# @tscanner/cli-win32-x64
 
 ## 2.0.11
 

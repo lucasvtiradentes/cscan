@@ -1,5 +1,5 @@
 {
-  "name": "cscanner",
+  "name": "tscanner",
   "private": true,
   "version": "1.0.0",
   "description": "High-performance TypeScript code quality scanner with custom rule support",

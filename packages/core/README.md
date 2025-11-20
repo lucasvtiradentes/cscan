@@ -10,7 +10,7 @@
 
 </div>
 
-<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/divider.png" /></a>
+<a href="#"><img src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/divider.png" /></a>
 
 ## 🎺 Overview
 
@@ -18,7 +18,7 @@ High-performance Rust engine for validating code patterns, detecting anti-patter
 
 <a name="TOC"></a>
 
-## 📦 Crate Structure<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📦 Crate Structure<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 This is a Cargo workspace with three crates:
 
@@ -37,11 +37,11 @@ core/
 ├── parser.rs           // SWC TypeScript/TSX parser
 ├── registry.rs         // Rule registry with inventory
 ├── cache.rs            // FileCache with DashMap + disk
-├── config.rs           // cscannerConfig, RuleConfig
+├── config.rs           // tscannerConfig, RuleConfig
 ├── watcher.rs          // File system watcher
 ├── utils.rs            // Line/column utilities
 ├── ast_utils.rs        // AST helper functions
-├── disable_comments.rs // cscanner-disable directives
+├── disable_comments.rs // tscanner-disable directives
 └── rules/
     ├── mod.rs                      // Rule trait + inventory
     ├── metadata.rs                 // RuleMetadata + categories
@@ -51,21 +51,21 @@ core/
     └── ... (20 more rules)
 ```
 
-### cscanner_server (Binary)
+### tscanner_server (Binary)
 
 JSON-RPC server for VSCode extension communication.
 
-**Binary name:** `cscanner-server`
-**Location:** `crates/cscanner_server/`
+**Binary name:** `tscanner-server`
+**Location:** `crates/tscanner_server/`
 
-### cscanner_cli (Binary - Stub)
+### tscanner_cli (Binary - Stub)
 
 Planned standalone CLI tool (currently stub).
 
-**Binary name:** `cscanner`
-**Location:** `crates/cscanner_cli/`
+**Binary name:** `tscanner`
+**Location:** `crates/tscanner_cli/`
 
-## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🏗️ Architecture<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Scanner System
 
@@ -73,7 +73,7 @@ Planned standalone CLI tool (currently stub).
 ```rust
 pub struct Scanner {
     registry: RuleRegistry,
-    config: cscannerConfig,
+    config: tscannerConfig,
     cache: Arc<FileCache>,
 }
 
@@ -164,7 +164,7 @@ pub struct RuleRegistry {
 }
 
 impl RuleRegistry {
-    pub fn with_config(config: &cscannerConfig) -> Result<Self> {
+    pub fn with_config(config: &tscannerConfig) -> Result<Self> {
         let mut rules = HashMap::new();
 
         // Collect all registered rules
@@ -219,7 +219,7 @@ struct CacheEntry {
 impl FileCache {
     pub fn with_config_hash(config_hash: u64) -> Self {
         let cache_dir = PathBuf::from(env::var("HOME").unwrap())
-            .join(".cache/cscanner");
+            .join(".cache/tscanner");
 
         let mut cache = Self {
             entries: DashMap::new(),
@@ -227,7 +227,7 @@ impl FileCache {
             cache_dir: Some(cache_dir.clone()),
         };
 
-        // Load from disk: ~/.cache/cscanner/cache_{config_hash}.json
+        // Load from disk: ~/.cache/tscanner/cache_{config_hash}.json
         cache.load_from_disk(&cache_dir, config_hash);
         cache
     }
@@ -260,7 +260,7 @@ impl FileCache {
 **Configuration Structure:**
 ```rust
 #[derive(Serialize, Deserialize)]
-pub struct cscannerConfig {
+pub struct tscannerConfig {
     pub rules: HashMap<String, RuleConfig>,
     pub include: Vec<String>,  // Default: ["**/*.{ts,tsx}"]
     pub exclude: Vec<String>,  // Default: ["node_modules/**", "dist/**", ...]
@@ -295,7 +295,7 @@ pub struct CompiledRuleConfig {
 
 **Config Hash (Cache Key):**
 ```rust
-impl cscannerConfig {
+impl tscannerConfig {
     pub fn compute_hash(&self) -> u64 {
         let mut hasher = DefaultHasher::new();
 
@@ -316,7 +316,7 @@ impl cscannerConfig {
 
 **Validation:**
 ```rust
-impl cscannerConfig {
+impl tscannerConfig {
     pub fn validate(&self) -> Result<()> {
         // Check regex patterns
         for (name, rule_config) in &self.rules {
@@ -352,16 +352,16 @@ impl cscannerConfig {
 Supports inline rule disabling:
 
 ```typescript
-// cscanner-disable-file
+// tscanner-disable-file
 // Disables entire file
 
-// cscanner-disable rule1, rule2
+// tscanner-disable rule1, rule2
 const x: any = 5;  // This line is ignored
 
-// cscanner-disable-line rule1
+// tscanner-disable-line rule1
 const y: any = 5;  // This line is ignored
 
-// cscanner-disable-next-line rule1
+// tscanner-disable-next-line rule1
 const z: any = 5;  // Next line is ignored
 ```
 
@@ -387,7 +387,7 @@ impl DisableDirectives {
 }
 ```
 
-## 📋 Rules: Pattern Validation & Anti-Pattern Detection<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📋 Rules: Pattern Validation & Anti-Pattern Detection<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Complete Rule Inventory (23 Rules)
 
@@ -535,7 +535,7 @@ impl Rule for PreferConstRule {
 }
 ```
 
-## 🔌 JSON-RPC API<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🔌 JSON-RPC API<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Protocol
 
@@ -721,7 +721,7 @@ After creating a watcher with `watch` method, the server sends notifications for
 }
 ```
 
-## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 🔧 Development<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 ### Build Commands
 
@@ -735,13 +735,13 @@ cargo watch -x build            # Auto-rebuild on change
 ### Running the Server
 
 ```bash
-cargo run --bin cscanner-server
+cargo run --bin tscanner-server
 ```
 
 Then send JSON-RPC requests via stdin:
 
 ```bash
-echo '{"id":1,"method":"scan","params":{"root":"."}}' | cargo run --bin cscanner-server
+echo '{"id":1,"method":"scan","params":{"root":"."}}' | cargo run --bin tscanner-server
 ```
 
 ### Adding a New Rule
@@ -845,6 +845,6 @@ codegen-units = 1       # Single codegen unit for better optimization
 strip = true            # Strip debug symbols
 ```
 
-## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/cscanner/main/.github/image/up_arrow.png" width="22"></a>
+## 📜 License<a href="#TOC"><img align="right" src="https://raw.githubusercontent.com/lucasvtiradentes/tscanner/main/.github/image/up_arrow.png" width="22"></a>
 
 MIT License - see [LICENSE](../../LICENSE) file for details.

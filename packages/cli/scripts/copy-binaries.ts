@@ -1,14 +1,14 @@
-import { platform, arch } from 'os';
+import { chmodSync, copyFileSync, existsSync, mkdirSync } from 'fs';
+import { arch, platform } from 'os';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { existsSync, copyFileSync, mkdirSync, chmodSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const SCRIPT_DIR = __dirname;
 const CLI_DIR = join(SCRIPT_DIR, '..');
-const CSCANNER_CORE_DIR = join(CLI_DIR, '..', 'core');
+const TSCANNER_CORE_DIR = join(CLI_DIR, '..', 'core');
 
 console.log('📦 Copying Rust binary for current platform...');
 
@@ -39,13 +39,13 @@ if (!NPM_PLATFORM) {
   process.exit(0);
 }
 
-let SOURCE_PATH = join(CSCANNER_CORE_DIR, 'target', 'release', 'cscanner');
+let SOURCE_PATH = join(TSCANNER_CORE_DIR, 'target', 'release', 'tscanner');
 if (NPM_PLATFORM.startsWith('win32')) {
   SOURCE_PATH += '.exe';
 }
 
 const DEST_DIR = join(CLI_DIR, 'npm', NPM_PLATFORM);
-let DEST_PATH = join(DEST_DIR, 'cscanner');
+let DEST_PATH = join(DEST_DIR, 'tscanner');
 if (NPM_PLATFORM.startsWith('win32')) {
   DEST_PATH += '.exe';
 }

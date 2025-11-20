@@ -1,4 +1,4 @@
-# cscanner
+# tscanner
 
 ## 2.0.11
 

@@ -1,7 +1,7 @@
 {
   "name": "core",
   "private": true,
-  "description": "Rust core library for cscanner code quality scanner",
+  "description": "Rust core library for tscanner code quality scanner",
   "scripts": {
     "build": "cargo build --release",
     "test": "cargo test --verbose",
