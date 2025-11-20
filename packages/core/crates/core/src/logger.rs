@@ -52,7 +52,7 @@ impl Logger {
     }
 
     pub fn info(&self, message: &str) {
-        self.write("INFO", message);
+        self.write("INFO ", message);
     }
 
     pub fn error(&self, message: &str) {
@@ -60,7 +60,7 @@ impl Logger {
     }
 
     pub fn warn(&self, message: &str) {
-        self.write("WARN", message);
+        self.write("WARN ", message);
     }
 
     pub fn debug(&self, message: &str) {

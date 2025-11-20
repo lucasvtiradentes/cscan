@@ -38,7 +38,7 @@ enum Commands {
 }
 
 fn main() -> Result<()> {
-    init_logger("rust_cli");
+    init_logger("rust_cli        ");
 
     let cli = Cli::parse();
 

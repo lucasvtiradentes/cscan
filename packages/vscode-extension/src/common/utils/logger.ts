@@ -26,7 +26,7 @@ class Logger {
   }
 
   info(message: string) {
-    this.write('INFO', message);
+    this.write('INFO ', message);
   }
 
   error(message: string) {
@@ -34,7 +34,7 @@ class Logger {
   }
 
   warn(message: string) {
-    this.write('WARN', message);
+    this.write('WARN ', message);
   }
 
   debug(message: string) {
