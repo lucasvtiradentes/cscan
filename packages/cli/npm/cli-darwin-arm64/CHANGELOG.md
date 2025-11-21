@@ -1,5 +1,11 @@
 # @tscanner/cli-darwin-arm64
 
+## 0.0.4
+
+### Patch Changes
+
+- 9f9a4f0: fix cli error
+
 ## 0.0.3
 
 ### Patch Changes

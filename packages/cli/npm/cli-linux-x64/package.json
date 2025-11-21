@@ -1,6 +1,6 @@
 {
   "name": "@tscanner/cli-linux-x64",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "repository": "https://github.com/lucasvtiradentes/tscanner.git",
   "main": "tscanner",

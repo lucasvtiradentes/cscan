@@ -3,7 +3,7 @@
   "private": true,
   "displayName": "tscanner",
   "description": "High-performance TypeScript code quality scanner with custom rules, Git integration, and instant LLM feedback",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "lucasvtiradentes",
   "license": "MIT",
   "icon": "resources/icon.png",
