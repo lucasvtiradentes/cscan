@@ -6,10 +6,8 @@
   "packageManager": "pnpm@10.22.0",
   "scripts": {
     "prepare": "husky",
-    "start": "npm run cli:prod",
-    "dev": "npm run cli:dev",
-    "cli:dev": "tsx ./packages/cli/src/main.ts",
-    "cli:prod": "node ./packages/cli/dist/main.js",
+    "start": "node ./packages/cli/dist/main.js",
+    "dev": "tsx ./packages/cli/src/main.ts",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",

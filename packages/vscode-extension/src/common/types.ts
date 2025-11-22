@@ -70,7 +70,6 @@ export interface TscannerConfig {
     string,
     { type: string; pattern?: string; message: string; enabled?: boolean; severity?: 'error' | 'warning' }
   >;
-  rules?: Record<string, any>;
   include?: string[];
   exclude?: string[];
 }
@@ -80,7 +79,6 @@ export function hasConfiguredRules(config: TscannerConfig | null): boolean {
 
   return !!(
     (config.builtinRules && Object.keys(config.builtinRules).length > 0) ||
-    (config.customRules && Object.keys(config.customRules).length > 0) ||
-    (config.rules && Object.keys(config.rules).length > 0)
+    (config.customRules && Object.keys(config.customRules).length > 0)
   );
 }
